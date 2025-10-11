@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Login from './routes/auth/Login'
-import Register from './routes/auth/Register'
+import Login from './routes/auth/Login.tsx'
+import Register from './routes/auth/Register.tsx'
 
 function App() {
   return (
