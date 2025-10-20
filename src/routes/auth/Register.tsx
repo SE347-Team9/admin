@@ -40,7 +40,7 @@ export const Register: React.FC = () => {
       <div className="register-card">
         {/* Logo */}
         <div className="register-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FF9F43" strokeWidth="2">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
