@@ -1,12 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
 import { 
-  RefreshCw, 
-  Package, 
-  FileText, 
-  BarChart3, 
-  CreditCard, 
-  Building2,
   Home,
+  BarChart3,
+  BookOpen,
+  Building2,
+  Users,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react'
@@ -22,22 +20,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
 
   const menuItems = [
     {
-      id: 'export',
-      icon: RefreshCw,
-      label: 'Quản lý xuất hàng',
-      path: '/export-management'
-    },
-    {
-      id: 'receive',
-      icon: Package,
-      label: 'Nhận hàng',
-      path: '/receive-goods'
-    },
-    {
-      id: 'request',
-      icon: FileText,
-      label: 'Gửi yêu cầu phân phối',
-      path: '/distribution-request'
+      id: 'home',
+      icon: Home,
+      label: 'Trang chủ',
+      path: '/dashboard'
     },
     {
       id: 'report',
@@ -46,16 +32,22 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       path: '/reports'
     },
     {
-      id: 'payment',
-      icon: CreditCard,
-      label: 'Quản lý thanh toán',
-      path: '/payment-management'
+      id: 'regulations',
+      icon: BookOpen,
+      label: 'Quản lý quy định',
+      path: '/regulations'
     },
     {
       id: 'agency',
       icon: Building2,
       label: 'Quản lý đại lý',
       path: '/agency-management'
+    },
+    {
+      id: 'account',
+      icon: Users,
+      label: 'Quản lý tài khoản',
+      path: '/account-management'
     }
   ]
 
