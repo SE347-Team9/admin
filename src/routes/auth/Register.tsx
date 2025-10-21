@@ -53,15 +53,15 @@ export const Register: React.FC = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="register-form">
           {/* Username Field */}
-          <div className="form-group">
-            <label htmlFor="username" className="form-label">
+          <div className="register-form__group">
+            <label htmlFor="username" className="register-form__label">
               Tên đăng nhập
             </label>
             <input
               type="text"
               id="username"
               name="username"
-              className="form-input"
+              className="register-form__input"
               placeholder="Nhập tên đăng nhập"
               value={formData.username}
               onChange={handleChange}
@@ -69,15 +69,15 @@ export const Register: React.FC = () => {
           </div>
 
           {/* Email Field */}
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
+          <div className="register-form__group">
+            <label htmlFor="email" className="register-form__label">
               Email
             </label>
             <input
               type="email"
               id="email"
               name="email"
-              className="form-input"
+              className="register-form__input"
               placeholder="Nhập email"
               value={formData.email}
               onChange={handleChange}
@@ -85,15 +85,15 @@ export const Register: React.FC = () => {
           </div>
 
           {/* Password Field */}
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
+          <div className="register-form__group">
+            <label htmlFor="password" className="register-form__label">
               Mật khẩu
             </label>
             <input
               type="password"
               id="password"
               name="password"
-              className="form-input"
+              className="register-form__input"
               placeholder="Nhập mật khẩu"
               value={formData.password}
               onChange={handleChange}
@@ -101,15 +101,15 @@ export const Register: React.FC = () => {
           </div>
 
           {/* Confirm Password Field */}
-          <div className="form-group">
-            <label htmlFor="confirmPassword" className="form-label">
+          <div className="register-form__group">
+            <label htmlFor="confirmPassword" className="register-form__label">
               Xác nhận mật khẩu
             </label>
             <input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
-              className="form-input"
+              className="register-form__input"
               placeholder="Nhập lại mật khẩu"
               value={formData.confirmPassword}
               onChange={handleChange}
