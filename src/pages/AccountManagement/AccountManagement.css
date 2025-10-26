@@ -1,0 +1,348 @@
+.account-management-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+/* Account Management specific header styling */
+.account-management-page .account-header {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.account-management-page .header-icon-box {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.account-management-page .header-text {
+  flex: 1;
+}
+
+.account-management-page .account-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+}
+
+.account-management-page .account-subtitle {
+  font-size: 15px;
+  color: #718096;
+  margin: 0;
+}
+
+/* Statistics Cards Grid */
+.account-management-page .stats-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.account-management-page .stats-card {
+  border-radius: 16px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.account-management-page .stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.account-management-page .stats-card.gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.account-management-page .stats-card.gradient-green {
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+}
+
+.account-management-page .stats-card.gradient-red {
+  background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+}
+
+.account-management-page .stats-card.gradient-yellow {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+}
+
+.account-management-page .stats-card-content {
+  position: relative;
+  z-index: 2;
+}
+
+.account-management-page .stats-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 12px;
+}
+
+.account-management-page .stats-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+}
+
+.account-management-page .stats-icon {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  color: #fff;
+  z-index: 1;
+}
+
+/* Accounts Section */
+.account-management-page .accounts-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.account-management-page .section-header {
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.account-management-page .header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #3b82f6;
+}
+
+.account-management-page .header-left h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.account-management-page .btn-create-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.account-management-page .btn-create-account:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Accounts Table */
+.account-management-page .accounts-table-container {
+  overflow-x: auto;
+}
+
+.account-management-page .accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.account-management-page .accounts-table thead {
+  background: #f8fafc;
+}
+
+.account-management-page .accounts-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.account-management-page .accounts-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s ease;
+}
+
+.account-management-page .accounts-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.account-management-page .accounts-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.account-management-page .accounts-table td {
+  padding: 18px 20px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.account-management-page .account-code {
+  font-weight: 700;
+  color: #3b82f6;
+  font-size: 15px;
+}
+
+.account-management-page .text-muted {
+  color: #94a3b8;
+}
+
+/* Role Badges */
+.account-management-page .role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.account-management-page .role-badge.role-admin {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.account-management-page .role-badge.role-agency {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.account-management-page .role-badge.role-staff {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Status Badges */
+.account-management-page .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.account-management-page .status-badge.status-active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.account-management-page .status-badge.status-inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.account-management-page .status-badge.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Action Buttons */
+.account-management-page .action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.account-management-page .btn-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.account-management-page .btn-icon:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.account-management-page .btn-icon.btn-view:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.account-management-page .btn-icon.btn-edit:hover {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+.account-management-page .btn-icon.btn-delete:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .account-management-page .stats-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .account-management-page .stats-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-management-page .stats-value {
+    font-size: 28px;
+  }
+
+  .account-management-page .section-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .account-management-page .btn-create-account {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .account-management-page .accounts-table-container {
+    overflow-x: auto;
+  }
+
+  .account-management-page .accounts-table {
+    min-width: 1000px;
+  }
+
+  .account-management-page .action-buttons {
+    flex-wrap: wrap;
+  }
+}
