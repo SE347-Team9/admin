@@ -1,0 +1,311 @@
+/* Edit Account Page */
+.edit-account-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+  min-height: 100vh;
+}
+
+/* Header Section */
+.edit-account__header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px;
+  padding: 32px 40px;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.12);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.edit-account__header-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.edit-account__header-text {
+  flex: 1;
+}
+
+.edit-account__title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.edit-account__subtitle {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
+}
+
+.edit-account__back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #475569;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #cbd5e1;
+}
+
+.edit-account__back-btn:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Card */
+.edit-account__form-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+/* Section Title */
+.edit-account__section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #3b82f6;
+  margin: 32px 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e0f2fe;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.edit-account__section-title:first-child {
+  margin-top: 0;
+}
+
+/* Form Layout */
+.edit-account__form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.edit-account__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-account__form-group--full {
+  margin-bottom: 24px;
+}
+
+/* Labels */
+.edit-account__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-account__required {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* Input Wrapper */
+.edit-account__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.edit-account__input-icon {
+  position: absolute;
+  left: 16px;
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Input Fields */
+.edit-account__input {
+  width: 100%;
+  padding: 14px 20px 14px 48px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #1a202c;
+  background: white;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.edit-account__input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.edit-account__input::placeholder {
+  color: #94a3b8;
+}
+
+.edit-account__input--readonly {
+  background: #f8fafc;
+  color: #64748b;
+  cursor: not-allowed;
+  padding-left: 20px;
+}
+
+.edit-account__input--readonly:focus {
+  border-color: #e2e8f0;
+  box-shadow: none;
+}
+
+/* Hint Text */
+.edit-account__hint {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* Select Dropdown */
+.edit-account__select {
+  width: 100%;
+  padding: 14px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #1a202c;
+  background: white;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-family: inherit;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+  padding-right: 48px;
+}
+
+.edit-account__select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.edit-account__select option {
+  padding: 12px;
+}
+
+/* Action Buttons */
+.edit-account__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 2px solid #e0f2fe;
+}
+
+.edit-account__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.edit-account__btn--cancel {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #475569;
+  border: 2px solid #cbd5e1;
+}
+
+.edit-account__btn--cancel:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.edit-account__btn--submit {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.edit-account__btn--submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.edit-account__btn--submit:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .edit-account__form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-account__header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .edit-account__title {
+    font-size: 28px;
+  }
+
+  .edit-account__subtitle {
+    font-size: 14px;
+  }
+
+  .edit-account__back-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .edit-account__form-card {
+    padding: 24px;
+  }
+
+  .edit-account__actions {
+    flex-direction: column-reverse;
+  }
+
+  .edit-account__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

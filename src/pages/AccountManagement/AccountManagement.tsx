@@ -1,4 +1,4 @@
-import { Users, Eye, Pencil, Trash2, UserPlus, CheckCircle2, XCircle, Clock } from 'lucide-react'
+import { Users, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import './AccountManagement.css'
@@ -134,18 +134,19 @@ const AccountManagement = () => {
     }
   }
 
-  const handleDeleteAccount = (account: Account) => {
-    if (window.confirm(`Bạn có chắc chắn muốn xóa tài khoản "${account.username}"?`)) {
-      toast.success(`Đã xóa tài khoản ${account.username}`)
-    }
-  }
-
   const handleViewAccount = (accountId: string) => {
     navigate(`/view-account/${accountId}`)
   }
 
   const handleEditAccount = (accountId: string) => {
     navigate(`/edit-account/${accountId}`)
+  }
+
+  const handleDeleteAccount = (account: Account) => {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa tài khoản "${account.username}"?`)) {
+      toast.success(`Đã xóa tài khoản ${account.username}`)
+      // TODO: Call API to delete account
+    }
   }
 
   return (
@@ -273,7 +274,7 @@ const AccountManagement = () => {
                         title="Chỉnh sửa"
                         onClick={() => handleEditAccount(account.id)}
                       >
-                        <Pencil size={18} />
+                        <Edit size={18} />
                       </button>
                       <button 
                         className="btn-icon btn-delete" 

@@ -7,6 +7,7 @@ import ViewReport from './pages/Report/ViewReport.tsx'
 import AccountManagement from './pages/AccountManagement/AccountManagement.tsx'
 import AddAccount from './pages/AccountManagement/AddAccount.tsx'
 import ViewAccount from './pages/AccountManagement/ViewAccount.tsx'
+import EditAccount from './pages/AccountManagement/EditAccount.tsx'
 import MainLayout from './components/layout/MainLayout.tsx'
 import NotFound from './routes/NotFound/NotFound.tsx'
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/account-management" element={<MainLayout><AccountManagement /></MainLayout>} />
         <Route path="/add-account" element={<MainLayout><AddAccount /></MainLayout>} />
         <Route path="/view-account/:id" element={<MainLayout><ViewAccount /></MainLayout>} />
+        <Route path="/edit-account/:id" element={<MainLayout><EditAccount /></MainLayout>} />
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

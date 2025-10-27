@@ -268,12 +268,14 @@
 /* Action Buttons */
 .account-management-page .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
 }
 
 .account-management-page .btn-icon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,28 +285,52 @@
   color: #64748b;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
 }
 
-.account-management-page .btn-icon:hover {
-  background: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
-  transform: translateY(-1px);
+.account-management-page .btn-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.account-management-page .btn-icon.btn-view {
+  color: #3b82f6;
+  border-color: #e0e7ff;
 }
 
 .account-management-page .btn-icon.btn-view:hover {
   background: #3b82f6;
+  color: white;
   border-color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.account-management-page .btn-icon.btn-edit {
+  color: #10b981;
+  border-color: #d1fae5;
 }
 
 .account-management-page .btn-icon.btn-edit:hover {
   background: #10b981;
+  color: white;
   border-color: #10b981;
+  transform: translateY(-2px);
+}
+
+.account-management-page .btn-icon.btn-delete {
+  color: #ef4444;
+  border-color: #fee2e2;
 }
 
 .account-management-page .btn-icon.btn-delete:hover {
   background: #ef4444;
+  color: white;
   border-color: #ef4444;
+  transform: translateY(-2px);
 }
 
 /* Responsive */
