@@ -1,0 +1,251 @@
+import { Building2, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import './AgencyManagement.css'
+
+interface Agency {
+  id: string
+  code: string
+  name: string
+  address: string
+  phone: string
+  email: string
+  status: 'active' | 'inactive'
+  statusLabel: string
+  createdAt: string
+}
+
+const AgencyManagement = () => {
+  const navigate = useNavigate()
+
+  // Statistics data
+  const totalAgencies = 10
+  const activeAgencies = 8
+  const inactiveAgencies = 2
+
+  // Mock data
+  const agencies: Agency[] = [
+    {
+      id: '1',
+      code: 'DL001',
+      name: 'Đại lý Nghĩa',
+      address: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
+      phone: '02232434242',
+      email: 'nghiaagency@gmail.com',
+      status: 'active',
+      statusLabel: 'Hoạt động',
+      createdAt: '01/01/2024'
+    },
+    {
+      id: '2',
+      code: 'DL002',
+      name: 'Đại lý Đại',
+      address: 'Số 2, Phố Đông Đa, Đông Đa, Hà Nội',
+      phone: '02232434242',
+      email: 'daiagency@gmail.com',
+      status: 'active',
+      statusLabel: 'Hoạt động',
+      createdAt: '15/02/2024'
+    },
+    {
+      id: '3',
+      code: 'DL003',
+      name: 'Đại lý An Khang',
+      address: 'Số 3, Phố Hai Bà Trưng, Hoàn Kiếm, Hà Nội',
+      phone: '0369852147',
+      email: 'ankhang@gmail.com',
+      status: 'active',
+      statusLabel: 'Hoạt động',
+      createdAt: '20/03/2024'
+    },
+    {
+      id: '4',
+      code: 'DL004',
+      name: 'Đại lý Minh Phát',
+      address: 'Số 4, Phố Lê Thanh Tông, Hoan Kiếm, Hà Nội',
+      phone: '0912345678',
+      email: 'minhphat@gmail.com',
+      status: 'inactive',
+      statusLabel: 'Ngừng hoạt động',
+      createdAt: '10/04/2024'
+    },
+    {
+      id: '5',
+      code: 'DL005',
+      name: 'Đại lý Thái Hà',
+      address: 'Số 5, Phố Thái Hà, Đống Đa, Hà Nội',
+      phone: '0901234567',
+      email: 'thaiha@gmail.com',
+      status: 'active',
+      statusLabel: 'Hoạt động',
+      createdAt: '25/10/2025'
+    }
+  ]
+
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'status-active'
+      case 'inactive':
+        return 'status-inactive'
+      default:
+        return ''
+    }
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <CheckCircle2 size={14} />
+      case 'inactive':
+        return <XCircle size={14} />
+      default:
+        return <CheckCircle2 size={14} />
+    }
+  }
+
+  const handleDeleteAgency = (agency: Agency) => {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa đại lý "${agency.name}"?`)) {
+      toast.success(`Đã xóa đại lý ${agency.name}`)
+    }
+  }
+
+  const handleViewAgency = (agencyId: string) => {
+    navigate(`/view-agency/${agencyId}`)
+  }
+
+  const handleEditAgency = (agencyId: string) => {
+    navigate(`/edit-agency/${agencyId}`)
+  }
+
+  return (
+    <div className="agency-management-page">
+      {/* Page Header */}
+      <div className="agency-header">
+        <div className="header-icon-box">
+          <Building2 size={36} />
+        </div>
+        <div className="header-text">
+          <h1 className="agency-title">Quản lý đại lý</h1>
+          <p className="agency-subtitle">
+            Quản lý thông tin đại lý, phân loại và theo dõi trạng thái hoạt động.
+          </p>
+        </div>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="stats-cards-grid">
+        <div className="stats-card gradient-blue">
+          <div className="stats-card-content">
+            <div className="stats-label">Tổng đại lý</div>
+            <div className="stats-value">{totalAgencies}</div>
+          </div>
+          <div className="stats-icon">
+            <Building2 size={44} strokeWidth={2.5} />
+          </div>
+        </div>
+
+        <div className="stats-card gradient-green">
+          <div className="stats-card-content">
+            <div className="stats-label">Đang hoạt động</div>
+            <div className="stats-value">{activeAgencies}</div>
+          </div>
+          <div className="stats-icon">
+            <CheckCircle2 size={44} strokeWidth={2.5} />
+          </div>
+        </div>
+
+        <div className="stats-card gradient-red">
+          <div className="stats-card-content">
+            <div className="stats-label">Ngừng hoạt động</div>
+            <div className="stats-value">{inactiveAgencies}</div>
+          </div>
+          <div className="stats-icon">
+            <XCircle size={44} strokeWidth={2.5} />
+          </div>
+        </div>
+      </div>
+
+      {/* Agencies List Section */}
+      <div className="agencies-section">
+        <div className="section-header">
+          <div className="header-left">
+            <Building2 size={24} />
+            <h2>Danh sách đại lý ({agencies.length})</h2>
+          </div>
+          <button 
+            className="btn-create-agency"
+            onClick={() => navigate('/add-agency')}
+          >
+            <UserPlus size={20} />
+            Thêm đại lý
+          </button>
+        </div>
+
+        <div className="agencies-table-container">
+          <table className="agencies-table">
+            <thead>
+              <tr>
+                <th>MÃ ĐẠI LÝ</th>
+                <th>TÊN ĐẠI LÝ</th>
+                <th>ĐỊA CHỈ</th>
+                <th>SỐ ĐIỆN THOẠI</th>
+                <th>EMAIL</th>
+                <th>TRẠNG THÁI</th>
+                <th>NGÀY TẠO</th>
+                <th>THAO TÁC</th>
+              </tr>
+            </thead>
+            <tbody>
+              {agencies.map((agency) => (
+                <tr key={agency.id}>
+                  <td>
+                    <span className="agency-code">{agency.code}</span>
+                  </td>
+                  <td>{agency.name}</td>
+                  <td className="text-muted">{agency.address}</td>
+                  <td className="text-muted">{agency.phone}</td>
+                  <td className="text-muted">{agency.email}</td>
+                  <td>
+                    <span className={`status-badge ${getStatusClass(agency.status)}`}>
+                      {getStatusIcon(agency.status)}
+                      {agency.statusLabel}
+                    </span>
+                  </td>
+                  <td className="text-muted">{agency.createdAt}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <button 
+                        className="btn-icon btn-view" 
+                        title="Xem chi tiết"
+                        onClick={() => handleViewAgency(agency.id)}
+                      >
+                        <Eye size={18} />
+                      </button>
+                      <button 
+                        className="btn-icon btn-edit" 
+                        title="Chỉnh sửa"
+                        onClick={() => handleEditAgency(agency.id)}
+                      >
+                        <Edit size={18} />
+                      </button>
+                      <button 
+                        className="btn-icon btn-delete" 
+                        title="Xóa"
+                        onClick={() => handleDeleteAgency(agency)}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default AgencyManagement

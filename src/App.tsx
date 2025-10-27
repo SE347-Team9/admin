@@ -8,6 +8,9 @@ import AccountManagement from './pages/AccountManagement/AccountManagement.tsx'
 import AddAccount from './pages/AccountManagement/AddAccount.tsx'
 import ViewAccount from './pages/AccountManagement/ViewAccount.tsx'
 import EditAccount from './pages/AccountManagement/EditAccount.tsx'
+import AgencyManagement from './pages/AgencyManagement/AgencyManagement.tsx'
+import ViewAgency from './pages/AgencyManagement/ViewAgency.tsx'
+import EditAgency from './pages/AgencyManagement/EditAgency.tsx'
 import MainLayout from './components/layout/MainLayout.tsx'
 import NotFound from './routes/NotFound/NotFound.tsx'
 
@@ -24,6 +27,9 @@ function App() {
         <Route path="/add-account" element={<MainLayout><AddAccount /></MainLayout>} />
         <Route path="/view-account/:id" element={<MainLayout><ViewAccount /></MainLayout>} />
         <Route path="/edit-account/:id" element={<MainLayout><EditAccount /></MainLayout>} />
+        <Route path="/agency-management" element={<MainLayout><AgencyManagement /></MainLayout>} />
+        <Route path="/view-agency/:id" element={<MainLayout><ViewAgency /></MainLayout>} />
+        <Route path="/edit-agency/:id" element={<MainLayout><EditAgency /></MainLayout>} />
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
