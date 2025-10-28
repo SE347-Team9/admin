@@ -23,7 +23,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       id: 'home',
       icon: Home,
       label: 'Trang chủ',
-      path: '/dashboard'
+      path: '/home'
     },
     {
       id: 'report',

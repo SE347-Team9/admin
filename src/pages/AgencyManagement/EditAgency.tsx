@@ -212,7 +212,7 @@ const EditAgency = () => {
               disabled={isLoading}
             >
               <ArrowLeft size={18} />
-              Hủy bỏ
+              Quay lại danh sách
             </button>
             <button
               type="submit"

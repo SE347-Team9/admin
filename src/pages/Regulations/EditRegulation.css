@@ -1,0 +1,417 @@
+/* ============================================
+   EDIT REGULATION PAGE - Admin
+   ============================================ */
+.edit-regulation-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+  min-height: 100vh;
+}
+
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+.edit-regulation__header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px;
+  padding: 32px 40px;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.12);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.edit-regulation__header-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.edit-regulation__header-icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.edit-regulation__header-text {
+  flex: 1;
+}
+
+.edit-regulation__title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.edit-regulation__subtitle {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ============================================
+   CONTENT SECTION
+   ============================================ */
+.edit-regulation__content {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.08);
+  overflow: hidden;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.edit-regulation__form {
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ============================================
+   FORM SECTIONS
+   ============================================ */
+.edit-regulation__form-section {
+  padding: 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%);
+  border-radius: 14px;
+  border-left: 4px solid #3b82f6;
+}
+
+.edit-regulation__section-title {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================
+   FORM GROUPS
+   ============================================ */
+.edit-regulation__form-group {
+  margin-bottom: 16px;
+}
+
+.edit-regulation__form-group:last-child {
+  margin-bottom: 0;
+}
+
+.edit-regulation__form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.edit-regulation__required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+/* ============================================
+   FORM INPUTS & TEXTAREA
+   ============================================ */
+.edit-regulation__form-input,
+.edit-regulation__form-select,
+.edit-regulation__form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1a202c;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.edit-regulation__form-input:focus,
+.edit-regulation__form-select:focus,
+.edit-regulation__form-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.edit-regulation__form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+}
+
+.edit-regulation__form-input--disabled,
+.edit-regulation__form-textarea--disabled {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #d1d5db;
+}
+
+.edit-regulation__form-input--disabled:focus,
+.edit-regulation__form-textarea--disabled:focus {
+  border-color: #d1d5db;
+  box-shadow: none;
+}
+
+.edit-regulation__form-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ============================================
+   FORM ROWS
+   ============================================ */
+.edit-regulation__form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* ============================================
+   FORM ACTIONS
+   ============================================ */
+.edit-regulation__form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 2px solid #f1f5f9;
+  margin-top: 8px;
+}
+
+.edit-regulation__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.edit-regulation__btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.edit-regulation__btn--back {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.edit-regulation__btn--back:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.2);
+}
+
+.edit-regulation__btn--back:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.edit-regulation__btn--submit {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+}
+
+.edit-regulation__btn--submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.edit-regulation__btn--submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   SPINNER
+   ============================================ */
+.edit-regulation__spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin-regulation 0.8s linear infinite;
+}
+
+@keyframes spin-regulation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1200px) {
+  .edit-regulation-page {
+    padding: 20px;
+  }
+
+  .edit-regulation__header {
+    padding: 24px 32px;
+  }
+
+  .edit-regulation__form {
+    padding: 24px 32px;
+  }
+
+  .edit-regulation__form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-regulation-page {
+    padding: 16px;
+  }
+
+  .edit-regulation__header {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
+    gap: 16px;
+  }
+
+  .edit-regulation__header-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .edit-regulation__header-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .edit-regulation__title {
+    font-size: 28px;
+  }
+
+  .edit-regulation__subtitle {
+    font-size: 14px;
+  }
+
+  .edit-regulation__form {
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .edit-regulation__form-section {
+    padding: 16px;
+  }
+
+  .edit-regulation__section-title {
+    font-size: 16px;
+  }
+
+  .edit-regulation__form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .edit-regulation__form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .edit-regulation__btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-regulation-page {
+    padding: 12px;
+  }
+
+  .edit-regulation__header {
+    padding: 16px;
+  }
+
+  .edit-regulation__header-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .edit-regulation__header-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .edit-regulation__title {
+    font-size: 24px;
+  }
+
+  .edit-regulation__subtitle {
+    font-size: 13px;
+  }
+
+  .edit-regulation__form {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .edit-regulation__form-section {
+    padding: 12px;
+  }
+
+  .edit-regulation__section-title {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .edit-regulation__form-group label {
+    font-size: 13px;
+  }
+
+  .edit-regulation__form-input,
+  .edit-regulation__form-select,
+  .edit-regulation__form-textarea {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .edit-regulation__form-textarea {
+    min-height: 100px;
+  }
+
+  .edit-regulation__btn {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}

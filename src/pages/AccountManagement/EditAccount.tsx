@@ -1,23 +1,11 @@
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Users, Mail, Phone, Lock, ArrowLeft, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { toast } from 'react-toastify'
 import './EditAccount.css'
 
-interface Account {
-  id: string
-  code: string
-  username: string
-  fullName: string
-  email: string
-  phone: string
-  role: 'admin' | 'agency' | 'staff'
-  status: 'active' | 'inactive' | 'pending'
-}
-
 const EditAccount = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
 
   // Mock data - In real app, fetch from API based on id
   const [formData, setFormData] = useState({
@@ -105,10 +93,6 @@ const EditAccount = () => {
           <h1 className="edit-account__title">Chỉnh sửa tài khoản</h1>
           <p className="edit-account__subtitle">Cập nhật thông tin tài khoản người dùng</p>
         </div>
-        <button className="edit-account__back-btn" onClick={handleCancel}>
-          <ArrowLeft size={20} />
-          <span>Quay lại danh sách</span>
-        </button>
       </div>
 
       {/* Form Section */}
@@ -278,7 +262,8 @@ const EditAccount = () => {
             className="edit-account__btn edit-account__btn--cancel"
             onClick={handleCancel}
           >
-            Hủy bỏ
+            <ArrowLeft size={20} />
+            Quay lại danh sách
           </button>
           <button
             type="submit"

@@ -52,28 +52,6 @@
   font-weight: 500;
 }
 
-.edit-account__back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  color: #475569;
-  border: none;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid #cbd5e1;
-}
-
-.edit-account__back-btn:hover {
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
 /* Form Card */
 .edit-account__form-card {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
@@ -289,11 +267,6 @@
 
   .edit-account__subtitle {
     font-size: 14px;
-  }
-
-  .edit-account__back-btn {
-    width: 100%;
-    justify-content: center;
   }
 
   .edit-account__form-card {

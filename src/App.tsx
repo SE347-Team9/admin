@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './routes/auth/Login.tsx'
 import Register from './routes/auth/Register.tsx'
+import Home from './routes/home/index.tsx'
 import Reports from './pages/Report/Reports.tsx'
 import AddReport from './pages/Report/AddReport.tsx'
 import ViewReport from './pages/Report/ViewReport.tsx'
@@ -11,6 +12,9 @@ import EditAccount from './pages/AccountManagement/EditAccount.tsx'
 import AgencyManagement from './pages/AgencyManagement/AgencyManagement.tsx'
 import ViewAgency from './pages/AgencyManagement/ViewAgency.tsx'
 import EditAgency from './pages/AgencyManagement/EditAgency.tsx'
+import Regulations from './pages/Regulations/Regulations.tsx'
+import ViewRegulation from './pages/Regulations/ViewRegulation.tsx'
+import EditRegulation from './pages/Regulations/EditRegulation.tsx'
 import MainLayout from './components/layout/MainLayout.tsx'
 import NotFound from './routes/NotFound/NotFound.tsx'
 
@@ -20,6 +24,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/home" element={<MainLayout><Home /></MainLayout>} />
         <Route path="/reports" element={<MainLayout><Reports /></MainLayout>} />
         <Route path="/add-report" element={<MainLayout><AddReport /></MainLayout>} />
         <Route path="/view-report/:reportId" element={<MainLayout><ViewReport /></MainLayout>} />
@@ -30,7 +35,10 @@ function App() {
         <Route path="/agency-management" element={<MainLayout><AgencyManagement /></MainLayout>} />
         <Route path="/view-agency/:id" element={<MainLayout><ViewAgency /></MainLayout>} />
         <Route path="/edit-agency/:id" element={<MainLayout><EditAgency /></MainLayout>} />
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/regulations" element={<MainLayout><Regulations /></MainLayout>} />
+        <Route path="/view-regulation/:id" element={<MainLayout><ViewRegulation /></MainLayout>} />
+        <Route path="/edit-regulation/:id" element={<MainLayout><EditRegulation /></MainLayout>} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

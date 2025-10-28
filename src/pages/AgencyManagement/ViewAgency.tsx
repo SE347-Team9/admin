@@ -31,12 +31,6 @@ const ViewAgency = () => {
   return (
     <div className="view-agency-page">
       <div className="view-agency-container">
-        {/* Back Button */}
-        <button className="view-agency__back-button" onClick={handleBack}>
-          <ArrowLeft size={20} />
-          Quay lại
-        </button>
-
         {/* Header */}
         <div className="view-agency__header">
           <div className="view-agency__header-icon">

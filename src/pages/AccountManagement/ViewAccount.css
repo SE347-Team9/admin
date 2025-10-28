@@ -1,229 +1,370 @@
+/* ============================================
+   VIEW ACCOUNT PAGE - Admin
+   ============================================ */
 .view-account-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-bottom: 40px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 60px 20px;
 }
 
-.view-account-header {
+.view-account-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+.view-account__header {
   background: white;
   border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 32px;
+  padding: 32px 40px;
+  margin-bottom: 40px;
   display: flex;
   align-items: center;
   gap: 24px;
+  border: 1px solid #e0f0ff;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
 }
 
-.view-account-page .header-icon-box {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+.view-account__header-icon {
   width: 72px;
   height: 72px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-.view-account-title {
-  font-size: 32px;
+.view-account__header-icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.view-account__header-content {
+  flex: 1;
+}
+
+.view-account__title {
+  font-size: 28px;
   font-weight: 700;
   color: #1a202c;
   margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
 }
 
-.view-account-subtitle {
-  font-size: 15px;
+.view-account__subtitle {
+  font-size: 14px;
   color: #718096;
   margin: 0;
+  font-weight: 500;
 }
 
-.view-account-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+/* ============================================
+   CONTENT CARD
+   ============================================ */
+.view-account__content {
+  margin-bottom: 32px;
 }
 
-.account-info-card {
+.view-account__card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 32px;
+  padding: 40px;
+  border: 1px solid #e0f0ff;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.card-header h3 {
+.view-account__card-title {
   font-size: 20px;
   font-weight: 700;
   color: #1a202c;
-  margin: 0;
+  margin: 0 0 28px 0;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e0f0ff;
+  letter-spacing: -0.3px;
 }
 
-.btn-edit-small {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-edit-small:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-}
-
-.info-grid {
+/* ============================================
+   INFO GRID
+   ============================================ */
+.view-account__info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  gap: 28px 32px;
 }
 
-.info-item {
+.view-account__info-item {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.info-item label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
+.view-account__info-item--full {
+  grid-column: 1 / -1;
+}
+
+.view-account__info-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f4c81;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.info-value {
+.view-account__info-value {
   font-size: 16px;
-  color: #1a202c;
   font-weight: 500;
+  color: #1a202c;
+  line-height: 1.5;
 }
 
-.info-value.code {
-  color: #3b82f6;
+.view-account__code {
+  display: inline-block;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  color: #15803d;
+  border-radius: 8px;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 15px;
+  border: 1px solid #bbf7d0;
+  width: fit-content;
+  font-family: 'Monaco', 'Courier New', monospace;
 }
 
-.info-badge {
+.view-account__role {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 6px;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   width: fit-content;
+  text-transform: capitalize;
 }
 
-.info-badge.role-admin {
-  background: #fef3c7;
+.view-account__role.admin {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   color: #92400e;
+  border: 1px solid #fcd34d;
 }
 
-.info-badge.role-agency {
-  background: #dbeafe;
+.view-account__role.staff {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   color: #1e40af;
+  border: 1px solid #93c5fd;
 }
 
-.info-badge.role-staff {
-  background: #e0e7ff;
-  color: #3730a3;
+.view-account__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  width: fit-content;
+  text-transform: capitalize;
 }
 
-.info-badge.status-active {
-  background: #d1fae5;
-  color: #065f46;
+.view-account__status.active {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
-.info-badge.status-inactive {
-  background: #fee2e2;
+.view-account__status.inactive {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
   color: #991b1b;
+  border: 1px solid #fca5a5;
 }
 
-.info-badge.status-pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.action-section {
+/* ============================================
+   FOOTER ACTIONS
+   ============================================ */
+.view-account__footer {
   display: flex;
-  gap: 16px;
+  align-items: center;
   justify-content: flex-end;
+  gap: 12px;
+  padding: 28px 0 0 0;
+  margin-top: 28px;
+  border-top: 2px solid #f1f5f9;
 }
 
-.btn-back,
-.btn-edit {
+.view-account__btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 32px;
-  border: none;
+  padding: 12px 20px;
   border-radius: 10px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  border: none;
 }
 
-.btn-back {
-  background: #f1f5f9;
-  color: #64748b;
+.view-account__btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
-.btn-back:hover {
-  background: #e2e8f0;
+.view-account__btn--secondary {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.view-account__btn--secondary:hover {
+  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.2);
 }
 
-.btn-edit {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+.view-account__btn--primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
+  border: none;
 }
 
-.btn-edit:hover {
+.view-account__btn--primary:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
 @media (max-width: 768px) {
-  .info-grid {
-    grid-template-columns: 1fr;
+  .view-account-page {
+    padding: 40px 16px;
   }
 
-  .card-header {
+  .view-account-container {
+    max-width: 100%;
+  }
+
+  .view-account__header {
     flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
+    text-align: center;
+    padding: 24px;
+    margin-bottom: 32px;
   }
 
-  .btn-edit-small {
+  .view-account__title {
+    font-size: 22px;
+  }
+
+  .view-account__info-grid {
+    grid-template-columns: 1fr;
+    gap: 20px 16px;
+  }
+
+  .view-account__info-item--full {
+    grid-column: 1;
+  }
+
+  .view-account__card {
+    padding: 24px;
+  }
+
+  .view-account__card-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .view-account__footer {
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 0 0 0;
+    margin-top: 20px;
+  }
+
+  .view-account__btn {
     width: 100%;
     justify-content: center;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-account-page {
+    padding: 32px 12px;
   }
 
-  .action-section {
-    flex-direction: column-reverse;
+  .view-account__card {
+    padding: 16px;
+    border-radius: 12px;
   }
 
-  .btn-back,
-  .btn-edit {
+  .view-account__header {
+    padding: 16px;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .view-account__header-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .view-account__header-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .view-account__title {
+    font-size: 18px;
+  }
+
+  .view-account__subtitle {
+    font-size: 12px;
+  }
+
+  .view-account__info-grid {
+    gap: 16px 12px;
+  }
+
+  .view-account__info-label {
+    font-size: 11px;
+  }
+
+  .view-account__info-value {
+    font-size: 14px;
+  }
+
+  .view-account__card-title {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .view-account__footer {
+    padding: 16px 0 0 0;
+    margin-top: 16px;
+  }
+
+  .view-account__btn {
+    padding: 10px 12px;
+    font-size: 13px;
+    min-height: 40px;
+    gap: 6px;
+  }
+
+  .view-account__back-button {
     width: 100%;
     justify-content: center;
+    margin-bottom: 16px;
   }
 }
