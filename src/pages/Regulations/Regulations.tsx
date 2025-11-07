@@ -130,7 +130,6 @@ const Regulations = () => {
                         title="Xem chi tiết"
                       >
                         <Eye size={18} />
-                        <span>Xem</span>
                       </button>
                       <button
                         className="regulations__action-btn regulations__action-btn--edit"
@@ -138,7 +137,6 @@ const Regulations = () => {
                         title="Chỉnh sửa"
                       >
                         <Edit size={18} />
-                        <span>Sửa</span>
                       </button>
                       <button
                         className="regulations__action-btn regulations__action-btn--delete"
@@ -146,7 +144,6 @@ const Regulations = () => {
                         title="Xóa"
                       >
                         <Trash2 size={18} />
-                        <span>Xóa</span>
                       </button>
                     </div>
                   </td>

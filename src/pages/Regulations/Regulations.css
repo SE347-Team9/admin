@@ -204,54 +204,57 @@
 .regulations__action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: none;
-  font-size: 12px;
-  font-weight: 600;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 10px;
+  border: 2px solid;
+  background: white;
   cursor: pointer;
   transition: all 0.2s ease;
-  white-space: nowrap;
 }
 
 .regulations__action-btn--view {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  color: #1e40af;
-  border: 1px solid #93c5fd;
+  color: #3b82f6;
+  border-color: #dbeafe;
+  background: white;
 }
 
 .regulations__action-btn--view:hover {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: #3b82f6;
   color: white;
+  border-color: #3b82f6;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .regulations__action-btn--edit {
-  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-  color: #15803d;
-  border: 1px solid #86efac;
+  color: #10b981;
+  border-color: #d1fae5;
+  background: white;
 }
 
 .regulations__action-btn--edit:hover {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #10b981;
   color: white;
+  border-color: #10b981;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
 
 .regulations__action-btn--delete {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  color: #991b1b;
-  border: 1px solid #fca5a5;
+  color: #ef4444;
+  border-color: #fecaca;
+  background: white;
 }
 
 .regulations__action-btn--delete:hover {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: #ef4444;
   color: white;
+  border-color: #ef4444;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
 /* No Data State */
@@ -296,14 +299,6 @@
   .regulations__col-actions {
     width: 200px;
   }
-
-  .regulations__action-btn span {
-    display: none;
-  }
-
-  .regulations__action-btn {
-    padding: 10px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -328,12 +323,8 @@
     min-width: 1000px;
   }
 
-  .regulations__action-btn span {
-    display: none;
-  }
-
   .regulations__action-btn {
-    padding: 8px;
-    font-size: 11px;
+    width: 36px;
+    height: 36px;
   }
 }

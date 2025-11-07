@@ -10,6 +10,7 @@ import AddAccount from './pages/AccountManagement/AddAccount.tsx'
 import ViewAccount from './pages/AccountManagement/ViewAccount.tsx'
 import EditAccount from './pages/AccountManagement/EditAccount.tsx'
 import AgencyManagement from './pages/AgencyManagement/AgencyManagement.tsx'
+import AddAgency from './pages/AgencyManagement/AddAgency.tsx'
 import ViewAgency from './pages/AgencyManagement/ViewAgency.tsx'
 import EditAgency from './pages/AgencyManagement/EditAgency.tsx'
 import Regulations from './pages/Regulations/Regulations.tsx'
@@ -33,6 +34,7 @@ function App() {
         <Route path="/view-account/:id" element={<MainLayout><ViewAccount /></MainLayout>} />
         <Route path="/edit-account/:id" element={<MainLayout><EditAccount /></MainLayout>} />
         <Route path="/agency-management" element={<MainLayout><AgencyManagement /></MainLayout>} />
+        <Route path="/add-agency" element={<MainLayout><AddAgency /></MainLayout>} />
         <Route path="/view-agency/:id" element={<MainLayout><ViewAgency /></MainLayout>} />
         <Route path="/edit-agency/:id" element={<MainLayout><EditAgency /></MainLayout>} />
         <Route path="/regulations" element={<MainLayout><Regulations /></MainLayout>} />
