@@ -201,7 +201,16 @@
 
 @keyframes badge-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.6; }
+}
+
+.nav-item.active .nav-badge {
+  color: white;
+}
+
+.sidebar.collapsed .nav-badge {
+  opacity: 0;
+  width: 0;
 }
 
 /* Responsive */

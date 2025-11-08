@@ -1,5 +1,6 @@
 import { Building2, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
 import './AgencyManagement.css'
 
@@ -17,6 +18,8 @@ interface Agency {
 
 const AgencyManagement = () => {
   const navigate = useNavigate()
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteAgency, setDeleteAgency] = useState<Agency | null>(null)
 
   // Statistics data
   const totalAgencies = 10
@@ -24,7 +27,7 @@ const AgencyManagement = () => {
   const inactiveAgencies = 2
 
   // Mock data
-  const agencies: Agency[] = [
+  const [agencies, setAgencies] = useState<Agency[]>([
     {
       id: '1',
       code: 'DL001',
@@ -80,7 +83,7 @@ const AgencyManagement = () => {
       statusLabel: 'Hoạt động',
       createdAt: '25/10/2025'
     }
-  ]
+  ])
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -105,9 +108,22 @@ const AgencyManagement = () => {
   }
 
   const handleDeleteAgency = (agency: Agency) => {
-    if (window.confirm(`Bạn có chắc chắn muốn xóa đại lý "${agency.name}"?`)) {
-      toast.success(`Đã xóa đại lý ${agency.name}`)
+    setDeleteAgency(agency)
+    setShowDeleteModal(true)
+  }
+
+  const handleConfirmDelete = () => {
+    if (deleteAgency) {
+      setAgencies(prev => prev.filter(agency => agency.id !== deleteAgency.id))
+      toast.success(`Đã xóa đại lý ${deleteAgency.name}`)
     }
+    setShowDeleteModal(false)
+    setDeleteAgency(null)
+  }
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false)
+    setDeleteAgency(null)
   }
 
   const handleViewAgency = (agencyId: string) => {
@@ -244,6 +260,26 @@ const AgencyManagement = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal xác nhận xóa đại lý */}
+      {showDeleteModal && deleteAgency && (
+        <div className="modal-overlay" onClick={handleCancelDelete}>
+          <div className="modal-content modal-delete-modern" onClick={e => e.stopPropagation()}>
+            <div className="modal-delete-modern-iconbox">
+              <Trash2 size={32} />
+            </div>
+            <div className="modal-delete-modern-title">Xác nhận xóa đại lý</div>
+            <div className="modal-delete-modern-desc">
+              Bạn có chắc chắn muốn xóa đại lý <b>{deleteAgency.name}</b>?
+            </div>
+            <div className="modal-delete-modern-warning">Hành động này không thể hoàn tác.</div>
+            <div className="modal-delete-modern-actions">
+              <button className="btn-modal-cancel-modern" onClick={handleCancelDelete}>Hủy</button>
+              <button className="btn-modal-delete-modern" onClick={handleConfirmDelete}>Xóa đại lý</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

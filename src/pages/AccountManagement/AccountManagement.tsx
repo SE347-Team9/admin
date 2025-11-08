@@ -1,5 +1,6 @@
 import { Users, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
 import './AccountManagement.css'
 
@@ -19,6 +20,8 @@ interface Account {
 
 const AccountManagement = () => {
   const navigate = useNavigate()
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteAccount, setDeleteAccount] = useState<Account | null>(null)
 
   // Statistics data
   const totalAccounts = 15
@@ -27,7 +30,7 @@ const AccountManagement = () => {
   const pendingAccounts = 1
 
   // Mock data
-  const accounts: Account[] = [
+  const [accounts, setAccounts] = useState<Account[]>([
     {
       id: '1',
       code: 'ADM001',
@@ -93,7 +96,7 @@ const AccountManagement = () => {
       statusLabel: 'Chờ duyệt',
       createdAt: '25/10/2025'
     }
-  ]
+  ])
 
   const getRoleClass = (role: string) => {
     switch (role) {
@@ -143,10 +146,22 @@ const AccountManagement = () => {
   }
 
   const handleDeleteAccount = (account: Account) => {
-    if (window.confirm(`Bạn có chắc chắn muốn xóa tài khoản "${account.username}"?`)) {
-      toast.success(`Đã xóa tài khoản ${account.username}`)
-      // TODO: Call API to delete account
+    setDeleteAccount(account)
+    setShowDeleteModal(true)
+  }
+
+  const handleConfirmDelete = () => {
+    if (deleteAccount) {
+      setAccounts(prev => prev.filter(acc => acc.id !== deleteAccount.id))
+      toast.success(`Đã xóa tài khoản ${deleteAccount.username}`)
     }
+    setShowDeleteModal(false)
+    setDeleteAccount(null)
+  }
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false)
+    setDeleteAccount(null)
   }
 
   return (
@@ -291,6 +306,26 @@ const AccountManagement = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal xác nhận xóa tài khoản */}
+      {showDeleteModal && deleteAccount && (
+        <div className="modal-overlay" onClick={handleCancelDelete}>
+          <div className="modal-content modal-delete-modern" onClick={e => e.stopPropagation()}>
+            <div className="modal-delete-modern-iconbox">
+              <Trash2 size={32} />
+            </div>
+            <div className="modal-delete-modern-title">Xác nhận xóa tài khoản</div>
+            <div className="modal-delete-modern-desc">
+              Bạn có chắc chắn muốn xóa tài khoản <b>{deleteAccount.username}</b>?
+            </div>
+            <div className="modal-delete-modern-warning">Hành động này không thể hoàn tác.</div>
+            <div className="modal-delete-modern-actions">
+              <button className="btn-modal-cancel-modern" onClick={handleCancelDelete}>Hủy</button>
+              <button className="btn-modal-delete-modern" onClick={handleConfirmDelete}>Xóa tài khoản</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

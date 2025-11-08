@@ -15,9 +15,11 @@ interface Regulation {
 const Regulations = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteRegulation, setDeleteRegulation] = useState<Regulation | null>(null)
 
   // Mock data
-  const regulations: Regulation[] = [
+  const [regulations, setRegulations] = useState<Regulation[]>([
     {
       id: '1',
       code: 'max_debt_level_1',
@@ -46,7 +48,7 @@ const Regulations = () => {
       description: 'Giá trị đơn hàng tối thiểu',
       lastUpdated: '15:45 28 thg 10, 2025'
     }
-  ]
+  ])
 
   const filteredRegulations = regulations.filter(regulation =>
     regulation.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -65,10 +67,23 @@ const Regulations = () => {
     navigate(`/edit-regulation/${id}`)
   }
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa quy định này?')) {
-      toast.success('Xóa quy định thành công')
+  const handleDelete = (regulation: Regulation) => {
+    setDeleteRegulation(regulation)
+    setShowDeleteModal(true)
+  }
+
+  const handleConfirmDelete = () => {
+    if (deleteRegulation) {
+      setRegulations(prev => prev.filter(reg => reg.id !== deleteRegulation.id))
+      toast.success(`Đã xóa quy định ${deleteRegulation.code}`)
     }
+    setShowDeleteModal(false)
+    setDeleteRegulation(null)
+  }
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false)
+    setDeleteRegulation(null)
   }
 
   return (
@@ -140,7 +155,7 @@ const Regulations = () => {
                       </button>
                       <button
                         className="regulations__action-btn regulations__action-btn--delete"
-                        onClick={() => handleDelete(regulation.id)}
+                        onClick={() => handleDelete(regulation)}
                         title="Xóa"
                       >
                         <Trash2 size={18} />
@@ -160,6 +175,26 @@ const Regulations = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal xác nhận xóa quy định */}
+      {showDeleteModal && deleteRegulation && (
+        <div className="modal-overlay" onClick={handleCancelDelete}>
+          <div className="modal-content modal-delete-modern" onClick={e => e.stopPropagation()}>
+            <div className="modal-delete-modern-iconbox">
+              <Trash2 size={32} />
+            </div>
+            <div className="modal-delete-modern-title">Xác nhận xóa quy định</div>
+            <div className="modal-delete-modern-desc">
+              Bạn có chắc chắn muốn xóa quy định <b>{deleteRegulation.code}</b>?
+            </div>
+            <div className="modal-delete-modern-warning">Hành động này không thể hoàn tác.</div>
+            <div className="modal-delete-modern-actions">
+              <button className="btn-modal-cancel-modern" onClick={handleCancelDelete}>Hủy</button>
+              <button className="btn-modal-delete-modern" onClick={handleConfirmDelete}>Xóa quy định</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
