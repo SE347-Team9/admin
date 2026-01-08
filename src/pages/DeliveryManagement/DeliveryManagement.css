@@ -1,0 +1,434 @@
+.delivery-management-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.delivery-management-page .delivery-header {
+  background: linear-gradient(135deg, #f0f9ff 0%, #f0f4ff 100%);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.08);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  border: 1px solid #dbeafe;
+}
+
+.delivery-management-page .header-icon-box {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.delivery-management-page .delivery-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+}
+
+.delivery-management-page .delivery-subtitle {
+  font-size: 15px;
+  color: #718096;
+  margin: 0;
+}
+
+.delivery-management-page .stats-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.delivery-management-page .stats-card {
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delivery-management-page .stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.delivery-management-page .stats-card.gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.delivery-management-page .stats-card.gradient-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.delivery-management-page .stats-card.gradient-orange {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.delivery-management-page .stats-card.gradient-gray {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+.delivery-management-page .stats-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 8px;
+}
+
+.delivery-management-page .stats-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+}
+
+.delivery-management-page .stats-icon {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.delivery-management-page .drivers-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.delivery-management-page .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.delivery-management-page .header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #3b82f6;
+}
+
+.delivery-management-page .header-left h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.delivery-management-page .btn-create-driver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delivery-management-page .btn-create-driver:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.delivery-management-page .drivers-table-container {
+  overflow-x: auto;
+}
+
+.delivery-management-page .drivers-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.delivery-management-page .drivers-table th {
+  background: #f8fafc;
+  padding: 16px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.delivery-management-page .drivers-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.delivery-management-page .drivers-table tr:hover {
+  background: #f8fafc;
+}
+
+.delivery-management-page .driver-code {
+  background: #eff6ff;
+  color: #3b82f6;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.delivery-management-page .driver-name {
+  font-weight: 500;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.delivery-management-page .driver-phone {
+  color: #1e293b;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.delivery-management-page .vehicle-info {
+  color: #1e293b;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.delivery-management-page .license-plate {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 11px;
+  font-family: monospace;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.delivery-management-page .areas-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.delivery-management-page .area-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: #f1f5f9;
+  color: #1e293b;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.delivery-management-page .area-tag.more {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.delivery-management-page .delivery-count {
+  color: #334155;
+  font-weight: 500;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.delivery-management-page .text-center {
+  text-align: center;
+}
+
+.delivery-management-page .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.delivery-management-page .status-badge.status-available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.delivery-management-page .status-badge.status-delivering {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.delivery-management-page .status-badge.status-off {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.delivery-management-page .action-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.delivery-management-page .btn-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.delivery-management-page .btn-icon.btn-view {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.delivery-management-page .btn-icon.btn-view:hover {
+  background: #3b82f6;
+  color: white;
+}
+
+.delivery-management-page .btn-icon.btn-edit {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.delivery-management-page .btn-icon.btn-edit:hover {
+  background: #f59e0b;
+  color: white;
+}
+
+.delivery-management-page .btn-icon.btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.delivery-management-page .btn-icon.btn-delete:hover {
+  background: #dc2626;
+  color: white;
+}
+
+.delivery-management-page .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.delivery-management-page .modal-delete-modern {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.delivery-management-page .modal-delete-modern-iconbox {
+  width: 64px;
+  height: 64px;
+  background: #fee2e2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: #dc2626;
+}
+
+.delivery-management-page .modal-delete-modern-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.delivery-management-page .modal-delete-modern-desc {
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.delivery-management-page .modal-delete-modern-warning {
+  color: #dc2626;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.delivery-management-page .modal-delete-modern-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.delivery-management-page .btn-modal-cancel-modern {
+  padding: 10px 24px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.delivery-management-page .btn-modal-cancel-modern:hover {
+  background: #f8fafc;
+}
+
+.delivery-management-page .btn-modal-delete-modern {
+  padding: 10px 24px;
+  border: none;
+  background: #dc2626;
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.delivery-management-page .btn-modal-delete-modern:hover {
+  background: #b91c1c;
+}
+
+@media (max-width: 1200px) {
+  .delivery-management-page .stats-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .delivery-management-page .stats-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .delivery-management-page .section-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+}
