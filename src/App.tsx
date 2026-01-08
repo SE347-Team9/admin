@@ -18,6 +18,10 @@ import EditAgency from "./pages/AgencyManagement/EditAgency.tsx";
 import Regulations from "./pages/Regulations/Regulations.tsx";
 import ViewRegulation from "./pages/Regulations/ViewRegulation.tsx";
 import EditRegulation from "./pages/Regulations/EditRegulation.tsx";
+import DeliveryManagement from './pages/DeliveryManagement/DeliveryManagement.tsx';
+import AddDriver from './pages/DeliveryManagement/AddDriver.tsx';
+import ViewDriver from './pages/DeliveryManagement/ViewDriver.tsx';
+import EditDriver from './pages/DeliveryManagement/EditDriver.tsx';
 import SupplierManagement from "./pages/SupplierManagement/SupplierManagement.tsx";
 import AddSupplier from "./pages/SupplierManagement/AddSupplier.tsx";
 import ViewSupplier from "./pages/SupplierManagement/ViewSupplier.tsx";
@@ -195,6 +199,10 @@ function App() {
             </MainLayout>
           }
         />
+        <Route path="/delivery-management" element={<MainLayout><DeliveryManagement /></MainLayout>} />
+        <Route path="/add-driver" element={<MainLayout><AddDriver /></MainLayout>} />
+        <Route path="/view-driver/:id" element={<MainLayout><ViewDriver /></MainLayout>} />
+        <Route path="/edit-driver/:id" element={<MainLayout><EditDriver /></MainLayout>} />
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

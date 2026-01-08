@@ -5,7 +5,6 @@ import {
   BookOpen,
   Building2,
   Users,
-  Truck,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -41,14 +40,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
     {
       id: "agency",
       icon: Building2,
-      label: "Quản lý đại lý",
-      path: "/agency-management",
-    },
-    {
-      id: "supplier",
-      icon: Truck,
-      label: "Quản lý NCC",
-      path: "/supplier-management",
+      label: 'Quản lý đại lý',
+      path: '/agency-management'
     },
     {
       id: "account",
