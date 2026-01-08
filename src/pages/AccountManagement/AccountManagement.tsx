@@ -1,4 +1,4 @@
-import { Users, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle, Clock } from 'lucide-react'
+import { Users, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle, ShieldCheck, Building2, UserCog } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
@@ -13,21 +13,23 @@ interface Account {
   phone: string
   role: 'admin' | 'agency' | 'staff'
   roleLabel: string
-  status: 'active' | 'inactive' | 'pending'
+  status: 'active' | 'inactive'
   statusLabel: string
   createdAt: string
 }
+
+type TabType = 'all' | 'admin' | 'staff' | 'agency'
 
 const AccountManagement = () => {
   const navigate = useNavigate()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteAccount, setDeleteAccount] = useState<Account | null>(null)
+  const [activeTab, setActiveTab] = useState<TabType>('all')
 
   // Statistics data
-  const totalAccounts = 15
+  const totalAccounts = 14
   const activeAccounts = 12
   const inactiveAccounts = 2
-  const pendingAccounts = 1
 
   // Mock data
   const [accounts, setAccounts] = useState<Account[]>([
@@ -92,8 +94,8 @@ const AccountManagement = () => {
       phone: '0901234567',
       role: 'staff',
       roleLabel: 'Nhân viên',
-      status: 'pending',
-      statusLabel: 'Chờ duyệt',
+      status: 'active',
+      statusLabel: 'Hoạt động',
       createdAt: '25/10/2025'
     }
   ])
@@ -117,8 +119,6 @@ const AccountManagement = () => {
         return 'status-active'
       case 'inactive':
         return 'status-inactive'
-      case 'pending':
-        return 'status-pending'
       default:
         return ''
     }
@@ -130,8 +130,6 @@ const AccountManagement = () => {
         return <CheckCircle2 size={14} />
       case 'inactive':
         return <XCircle size={14} />
-      case 'pending':
-        return <Clock size={14} />
       default:
         return <CheckCircle2 size={14} />
     }
@@ -164,6 +162,33 @@ const AccountManagement = () => {
     setDeleteAccount(null)
   }
 
+  // Filter accounts by role
+  const adminAccounts = accounts.filter(acc => acc.role === 'admin')
+  const staffAccounts = accounts.filter(acc => acc.role === 'staff')
+  const agencyAccounts = accounts.filter(acc => acc.role === 'agency')
+
+  const getFilteredAccounts = () => {
+    switch (activeTab) {
+      case 'all':
+        return accounts
+      case 'admin':
+        return adminAccounts
+      case 'staff':
+        return staffAccounts
+      case 'agency':
+        return agencyAccounts
+      default:
+        return accounts
+    }
+  }
+
+  const tabs = [
+    { key: 'all' as TabType, label: 'Tất cả', icon: Users, count: accounts.length, color: '#6366f1' },
+    { key: 'admin' as TabType, label: 'Quản trị viên', icon: ShieldCheck, count: adminAccounts.length, color: '#3b82f6' },
+    { key: 'staff' as TabType, label: 'Nhân viên', icon: UserCog, count: staffAccounts.length, color: '#f59e0b' },
+    { key: 'agency' as TabType, label: 'Đại lý', icon: Building2, count: agencyAccounts.length, color: '#10b981' },
+  ]
+
   return (
     <div className="account-management-page">
       {/* Page Header */}
@@ -180,7 +205,7 @@ const AccountManagement = () => {
       </div>
 
       {/* Statistics Cards */}
-      <div className="stats-cards-grid">
+      <div className="stats-cards-grid stats-cards-grid--three">
         <div className="stats-card gradient-blue">
           <div className="stats-card-content">
             <div className="stats-label">Tổng tài khoản</div>
@@ -210,16 +235,6 @@ const AccountManagement = () => {
             <XCircle size={44} strokeWidth={2.5} />
           </div>
         </div>
-
-        <div className="stats-card gradient-yellow">
-          <div className="stats-card-content">
-            <div className="stats-label">Chờ duyệt</div>
-            <div className="stats-value">{pendingAccounts}</div>
-          </div>
-          <div className="stats-icon">
-            <Clock size={44} strokeWidth={2.5} />
-          </div>
-        </div>
       </div>
 
       {/* Accounts List Section */}
@@ -238,6 +253,22 @@ const AccountManagement = () => {
           </button>
         </div>
 
+        {/* Tabs chia theo Role */}
+        <div className="role-tabs">
+          {tabs.map(tab => (
+            <button
+              key={tab.key}
+              className={`role-tab ${activeTab === tab.key ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.key)}
+              style={{ '--tab-color': tab.color } as React.CSSProperties}
+            >
+              <tab.icon size={20} />
+              <span className="tab-label">{tab.label}</span>
+              <span className="tab-count">{tab.count}</span>
+            </button>
+          ))}
+        </div>
+
         <div className="accounts-table-container">
           <table className="accounts-table">
             <thead>
@@ -247,61 +278,63 @@ const AccountManagement = () => {
                 <th>HỌ VÀ TÊN</th>
                 <th>EMAIL</th>
                 <th>SỐ ĐIỆN THOẠI</th>
-                <th>VAI TRÒ</th>
                 <th>TRẠNG THÁI</th>
                 <th>NGÀY TẠO</th>
                 <th>THAO TÁC</th>
               </tr>
             </thead>
             <tbody>
-              {accounts.map((account) => (
-                <tr key={account.id}>
-                  <td>
-                    <span className="account-code">{account.code}</span>
-                  </td>
-                  <td>{account.username}</td>
-                  <td>{account.fullName}</td>
-                  <td className="text-muted">{account.email}</td>
-                  <td className="text-muted">{account.phone}</td>
-                  <td>
-                    <span className={`role-badge ${getRoleClass(account.role)}`}>
-                      {account.roleLabel}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`status-badge ${getStatusClass(account.status)}`}>
-                      {getStatusIcon(account.status)}
-                      {account.statusLabel}
-                    </span>
-                  </td>
-                  <td className="text-muted">{account.createdAt}</td>
-                  <td>
-                    <div className="action-buttons">
-                      <button 
-                        className="btn-icon btn-view" 
-                        title="Xem chi tiết"
-                        onClick={() => handleViewAccount(account.id)}
-                      >
-                        <Eye size={18} />
-                      </button>
-                      <button 
-                        className="btn-icon btn-edit" 
-                        title="Chỉnh sửa"
-                        onClick={() => handleEditAccount(account.id)}
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button 
-                        className="btn-icon btn-delete" 
-                        title="Xóa"
-                        onClick={() => handleDeleteAccount(account)}
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
+              {getFilteredAccounts().length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="empty-message">
+                    Không có tài khoản nào trong danh mục này.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                getFilteredAccounts().map((account) => (
+                  <tr key={account.id}>
+                    <td>
+                      <span className="account-code">{account.code}</span>
+                    </td>
+                    <td>{account.username}</td>
+                    <td>{account.fullName}</td>
+                    <td className="text-muted">{account.email}</td>
+                    <td className="text-muted">{account.phone}</td>
+                    <td>
+                      <span className={`status-badge ${getStatusClass(account.status)}`}>
+                        {getStatusIcon(account.status)}
+                        {account.statusLabel}
+                      </span>
+                    </td>
+                    <td className="text-muted">{account.createdAt}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button 
+                          className="btn-icon btn-view" 
+                          title="Xem chi tiết"
+                          onClick={() => handleViewAccount(account.id)}
+                        >
+                          <Eye size={18} />
+                        </button>
+                        <button 
+                          className="btn-icon btn-edit" 
+                          title="Chỉnh sửa"
+                          onClick={() => handleEditAccount(account.id)}
+                        >
+                          <Edit size={18} />
+                        </button>
+                        <button 
+                          className="btn-icon btn-delete" 
+                          title="Xóa"
+                          onClick={() => handleDeleteAccount(account)}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

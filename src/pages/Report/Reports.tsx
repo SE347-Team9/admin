@@ -1,5 +1,6 @@
-import { FileText, Eye, FileSpreadsheet, Download, TrendingUp, TrendingDown, CheckCircle2 } from 'lucide-react'
+import { FileText, Eye, FileSpreadsheet, Download, CheckCircle2, Package, Truck, CreditCard } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useState, useMemo } from 'react'
 import * as XLSX from 'xlsx'
 import html2pdf from 'html2pdf.js'
 import { toast } from 'react-toastify'
@@ -8,19 +9,18 @@ import './Reports.css'
 interface Report {
   id: string
   code: string
-  title: string
-  type: 'revenue' | 'debt'
+  type: 'import' | 'distribution' | 'debt'
   typeLabel: string
-  createdDate: string
+  period: string
+  value: number
   status: 'completed'
   statusLabel: string
-  createdAt: string
 }
 
-interface AgencyRevenue {
+interface AgencyImport {
   code: string
   name: string
-  revenue: number
+  importValue: number
 }
 
 interface AgencyDebt {
@@ -31,62 +31,80 @@ interface AgencyDebt {
 
 const Reports = () => {
   const navigate = useNavigate()
+  const [typeFilter, setTypeFilter] = useState<string>('all')
+
   // Statistics data
-  const totalRevenue = 2430000
+  const totalImportValue = 125000000
+  const totalDistributionValue = 98500000
   const totalDebt = 36460000
-  const agencyCount = 2
 
   // Mock data
   const reports: Report[] = [
     {
       id: '1',
-      code: 'BC4',
-      title: 'Báo cáo doanh số',
-      type: 'revenue',
-      typeLabel: 'Doanh thu',
-      createdDate: '11/10/2025',
+      code: 'BC1',
+      type: 'import',
+      typeLabel: 'Nhập kho',
+      period: '10/2025',
+      value: 45000000,
       status: 'completed',
-      statusLabel: 'Hoàn thành',
-      createdAt: '1/1/1970'
+      statusLabel: 'Hoàn thành'
     },
     {
       id: '2',
-      code: 'BC5',
-      title: 'Báo cáo công nợ',
-      type: 'debt',
-      typeLabel: 'Công nợ',
-      createdDate: '11/9/2025',
+      code: 'BC2',
+      type: 'distribution',
+      typeLabel: 'Phân phối',
+      period: '10/2025',
+      value: 32000000,
       status: 'completed',
-      statusLabel: 'Hoàn thành',
-      createdAt: '1/1/1970'
+      statusLabel: 'Hoàn thành'
     },
     {
       id: '3',
-      code: 'BC1',
-      title: 'Báo cáo doanh số',
-      type: 'revenue',
-      typeLabel: 'Doanh thu',
-      createdDate: '30/6/2024',
+      code: 'BC3',
+      type: 'debt',
+      typeLabel: 'Công nợ',
+      period: '09/2025',
+      value: 24060000,
       status: 'completed',
-      statusLabel: 'Hoàn thành',
-      createdAt: '30/6/2024'
+      statusLabel: 'Hoàn thành'
     },
     {
       id: '4',
-      code: 'BC2',
-      title: 'Báo cáo công nợ',
-      type: 'debt',
-      typeLabel: 'Công nợ',
-      createdDate: '30/6/2024',
+      code: 'BC4',
+      type: 'import',
+      typeLabel: 'Nhập kho',
+      period: '06/2024',
+      value: 38000000,
       status: 'completed',
-      statusLabel: 'Hoàn thành',
-      createdAt: '30/6/2024'
+      statusLabel: 'Hoàn thành'
     }
   ]
 
-  const topRevenueAgencies: AgencyRevenue[] = [
-    { code: 'DL1', name: 'Đại lý Nghĩa', revenue: 1530000 },
-    { code: 'DL2', name: 'Đại lý Đại', revenue: 900000 }
+  // Count reports by type
+  const importReports = reports.filter(r => r.type === 'import')
+  const distributionReports = reports.filter(r => r.type === 'distribution')
+  const debtReports = reports.filter(r => r.type === 'debt')
+
+  // Filter reports
+  const filteredReports = useMemo(() => {
+    if (typeFilter === 'all') return reports
+    return reports.filter(r => r.type === typeFilter)
+  }, [reports, typeFilter])
+
+  // Tabs definition
+  type TabType = 'all' | 'import' | 'distribution' | 'debt'
+  const tabs = [
+    { key: 'all' as TabType, label: 'Tất cả', icon: FileText, count: reports.length, color: '#3b82f6' },
+    { key: 'import' as TabType, label: 'Nhập kho', icon: Package, count: importReports.length, color: '#10b981' },
+    { key: 'distribution' as TabType, label: 'Phân phối', icon: Truck, count: distributionReports.length, color: '#8b5cf6' },
+    { key: 'debt' as TabType, label: 'Công nợ', icon: CreditCard, count: debtReports.length, color: '#ef4444' },
+  ]
+
+  const topImportAgencies: AgencyImport[] = [
+    { code: 'DL1', name: 'Đại lý Nghĩa', importValue: 45000000 },
+    { code: 'DL2', name: 'Đại lý Đại', importValue: 32000000 }
   ]
 
   const topDebtAgencies: AgencyDebt[] = [
@@ -96,8 +114,10 @@ const Reports = () => {
 
   const getTypeClass = (type: string) => {
     switch (type) {
-      case 'revenue':
-        return 'type-revenue'
+      case 'import':
+        return 'type-import'
+      case 'distribution':
+        return 'type-distribution'
       case 'debt':
         return 'type-debt'
       default:
@@ -107,10 +127,12 @@ const Reports = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'revenue':
-        return <TrendingUp size={14} />
+      case 'import':
+        return <Package size={14} />
+      case 'distribution':
+        return <Truck size={14} />
       case 'debt':
-        return <TrendingDown size={14} />
+        return <CreditCard size={14} />
       default:
         return <FileText size={14} />
     }
@@ -123,25 +145,32 @@ const Reports = () => {
     // Report details
     const reportDetails = [
       { 'Thông tin': 'Mã báo cáo', 'Giá trị': report.code },
-      { 'Thông tin': 'Tiêu đề', 'Giá trị': report.title },
       { 'Thông tin': 'Loại báo cáo', 'Giá trị': report.typeLabel },
-      { 'Thông tin': 'Kỳ báo cáo', 'Giá trị': report.createdDate },
-      { 'Thông tin': 'Trạng thái', 'Giá trị': report.statusLabel },
-      { 'Thông tin': 'Ngày tạo', 'Giá trị': report.createdAt }
+      { 'Thông tin': 'Kỳ báo cáo', 'Giá trị': report.period },
+      { 'Thông tin': 'Giá trị', 'Giá trị': report.value.toLocaleString('vi-VN') + ' đ' },
+      { 'Thông tin': 'Trạng thái', 'Giá trị': report.statusLabel }
     ]
     
     const ws = XLSX.utils.json_to_sheet(reportDetails)
     XLSX.utils.book_append_sheet(wb, ws, 'Chi tiết báo cáo')
     
     // Add relevant data based on report type
-    if (report.type === 'revenue') {
-      const revenueData = topRevenueAgencies.map(agency => ({
+    if (report.type === 'import') {
+      const importData = topImportAgencies.map(agency => ({
         'Mã đại lý': agency.code,
         'Tên đại lý': agency.name,
-        'Doanh số': agency.revenue
+        'Giá trị nhập kho': agency.importValue
       }))
-      const ws2 = XLSX.utils.json_to_sheet(revenueData)
-      XLSX.utils.book_append_sheet(wb, ws2, 'Doanh số đại lý')
+      const ws2 = XLSX.utils.json_to_sheet(importData)
+      XLSX.utils.book_append_sheet(wb, ws2, 'Giá trị nhập kho đại lý')
+    } else if (report.type === 'distribution') {
+      const distributionData = topImportAgencies.map(agency => ({
+        'Mã đại lý': agency.code,
+        'Tên đại lý': agency.name,
+        'Giá trị phân phối': agency.importValue * 0.8
+      }))
+      const ws2 = XLSX.utils.json_to_sheet(distributionData)
+      XLSX.utils.book_append_sheet(wb, ws2, 'Giá trị phân phối đại lý')
     } else if (report.type === 'debt') {
       const debtData = topDebtAgencies.map(agency => ({
         'Mã đại lý': agency.code,
@@ -171,24 +200,20 @@ const Reports = () => {
             <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.code}</td>
           </tr>
           <tr>
-            <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Tiêu đề:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.title}</td>
-          </tr>
-          <tr style="background-color: #f5f5f5;">
             <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Loại báo cáo:</td>
             <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.typeLabel}</td>
           </tr>
-          <tr>
+          <tr style="background-color: #f5f5f5;">
             <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Kỳ báo cáo:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.createdDate}</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.period}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Giá trị:</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.value.toLocaleString('vi-VN')} đ</td>
           </tr>
           <tr style="background-color: #f5f5f5;">
             <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Trạng thái:</td>
             <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.statusLabel}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Ngày tạo:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.createdAt}</td>
           </tr>
         </table>
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #888;">
@@ -234,11 +259,21 @@ const Reports = () => {
       <div className="stats-cards-grid">
         <div className="stats-card gradient-green-blue">
           <div className="stats-card-content">
-            <div className="stats-label">Tổng doanh thu</div>
-            <div className="stats-value">{totalRevenue.toLocaleString('vi-VN')} đ</div>
+            <div className="stats-label">Tổng giá trị nhập kho</div>
+            <div className="stats-value">{totalImportValue.toLocaleString('vi-VN')} đ</div>
           </div>
           <div className="stats-icon">
-            <TrendingUp size={48} strokeWidth={2.5} />
+            <Package size={48} strokeWidth={2.5} />
+          </div>
+        </div>
+
+        <div className="stats-card gradient-purple">
+          <div className="stats-card-content">
+            <div className="stats-label">Tổng giá trị phân phối</div>
+            <div className="stats-value">{totalDistributionValue.toLocaleString('vi-VN')} đ</div>
+          </div>
+          <div className="stats-icon">
+            <Truck size={48} strokeWidth={2.5} />
           </div>
         </div>
 
@@ -248,17 +283,7 @@ const Reports = () => {
             <div className="stats-value">{totalDebt.toLocaleString('vi-VN')} đ</div>
           </div>
           <div className="stats-icon">
-            <TrendingDown size={48} strokeWidth={2.5} />
-          </div>
-        </div>
-
-        <div className="stats-card gradient-purple">
-          <div className="stats-card-content">
-            <div className="stats-label">Số lượng đại lý</div>
-            <div className="stats-value">{agencyCount}</div>
-          </div>
-          <div className="stats-icon">
-            <CheckCircle2 size={48} strokeWidth={2.5} />
+            <CreditCard size={48} strokeWidth={2.5} />
           </div>
         </div>
       </div>
@@ -268,15 +293,24 @@ const Reports = () => {
         <div className="section-header">
           <div className="header-left">
             <FileText size={24} />
-            <h2>Danh sách báo cáo ({reports.length})</h2>
+            <h2>Danh sách báo cáo ({filteredReports.length})</h2>
           </div>
-          <button 
-            className="btn-create-report"
-            onClick={() => navigate('/add-report')}
-          >
-            <FileText size={20} />
-            Lập báo cáo
-          </button>
+        </div>
+
+        {/* Tabs lọc theo loại báo cáo */}
+        <div className="report-tabs">
+          {tabs.map(tab => (
+            <button
+              key={tab.key}
+              className={`report-tab ${typeFilter === tab.key ? 'active' : ''}`}
+              onClick={() => setTypeFilter(tab.key)}
+              style={{ '--tab-color': tab.color } as React.CSSProperties}
+            >
+              <tab.icon size={20} />
+              <span className="tab-label">{tab.label}</span>
+              <span className="tab-count">{tab.count}</span>
+            </button>
+          ))}
         </div>
 
         <div className="reports-table-container">
@@ -284,35 +318,35 @@ const Reports = () => {
             <thead>
               <tr>
                 <th>MÃ BÁO CÁO</th>
-                <th>TIÊU ĐỀ</th>
                 <th>LOẠI</th>
                 <th>KỲ BÁO CÁO</th>
+                <th>GIÁ TRỊ</th>
                 <th>TRẠNG THÁI</th>
-                <th>NGÀY TẠO</th>
                 <th>THAO TÁC</th>
               </tr>
             </thead>
             <tbody>
-              {reports.map((report) => (
+              {filteredReports.map((report) => (
                 <tr key={report.id}>
                   <td>
                     <span className="report-code">{report.code}</span>
                   </td>
-                  <td>{report.title}</td>
                   <td>
                     <span className={`type-badge ${getTypeClass(report.type)}`}>
                       {getTypeIcon(report.type)}
                       {report.typeLabel}
                     </span>
                   </td>
-                  <td className="text-muted">{report.createdDate}</td>
+                  <td className="text-muted">{report.period}</td>
+                  <td>
+                    <span className="report-value">{report.value.toLocaleString('vi-VN')} đ</span>
+                  </td>
                   <td>
                     <span className="status-badge status-completed">
                       <CheckCircle2 size={14} />
                       {report.statusLabel}
                     </span>
                   </td>
-                  <td className="text-muted">{report.createdAt}</td>
                   <td>
                     <div className="action-buttons">
                       <button 
@@ -347,11 +381,11 @@ const Reports = () => {
 
       {/* Statistics Section */}
       <div className="statistics-grid">
-        {/* Top Revenue Agencies */}
+        {/* Top Import Agencies */}
         <div className="report-stat-card">
-          <div className="report-stat-card-header">
-            <TrendingUp size={20} />
-            <h3>Danh sách đại lý có doanh số cao nhất</h3>
+          <div className="report-stat-card-header import">
+            <Package size={20} />
+            <h3>Danh sách đại lý có doanh số nhập hàng cao nhất</h3>
           </div>
           <div className="report-stat-card-body">
             <table className="report-stat-table">
@@ -359,19 +393,19 @@ const Reports = () => {
                 <tr>
                   <th>MÃ ĐẠI LÝ</th>
                   <th>TÊN ĐẠI LÝ</th>
-                  <th>DOANH SỐ</th>
+                  <th>GIÁ TRỊ NHẬP</th>
                 </tr>
               </thead>
               <tbody>
-                {topRevenueAgencies.map((agency) => (
+                {topImportAgencies.map((agency) => (
                   <tr key={agency.code}>
                     <td>
                       <span className="report-agency-code">{agency.code}</span>
                     </td>
                     <td>{agency.name}</td>
                     <td>
-                      <span className="report-revenue-value">
-                        {agency.revenue.toLocaleString('vi-VN')} đ
+                      <span className="report-import-value">
+                        {agency.importValue.toLocaleString('vi-VN')} đ
                       </span>
                     </td>
                   </tr>
@@ -384,7 +418,7 @@ const Reports = () => {
         {/* Top Debt Agencies */}
         <div className="report-stat-card">
           <div className="report-stat-card-header debt">
-            <TrendingDown size={20} />
+            <CreditCard size={20} />
             <h3>Danh sách đại lý có công nợ cao nhất</h3>
           </div>
           <div className="report-stat-card-body">

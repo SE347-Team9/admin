@@ -1,23 +1,98 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Users, Mail, Phone, Lock, ArrowLeft, CheckCircle2, XCircle, Clock } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Users, Mail, Phone, Lock, ArrowLeft, CheckCircle2, XCircle, Building2, MapPin, CreditCard } from 'lucide-react'
 import { toast } from 'react-toastify'
 import './EditAccount.css'
 
-const EditAccount = () => {
-  const navigate = useNavigate()
-
-  // Mock data - In real app, fetch from API based on id
-  const [formData, setFormData] = useState({
+// Mock accounts data - In real app, this would come from API
+const mockAccounts = [
+  {
+    id: '1',
     username: 'admin01',
     fullName: 'Nguyễn Văn A',
     email: 'admin01@example.com',
     phone: '0123456789',
     role: 'admin',
     status: 'active',
+    agencyType: '',
+    agencyName: '',
+    agencyOwner: '',
+    agencyAddress: '',
+    debtLimit: ''
+  },
+  {
+    id: '2',
+    username: 'staff01',
+    fullName: 'Trần Văn B',
+    email: 'staff01@example.com',
+    phone: '0987654321',
+    role: 'staff',
+    status: 'active',
+    agencyType: '',
+    agencyName: '',
+    agencyOwner: '',
+    agencyAddress: '',
+    debtLimit: ''
+  },
+  {
+    id: '3',
+    username: 'agency01',
+    fullName: 'Lê Văn C',
+    email: 'agency01@example.com',
+    phone: '0369852147',
+    role: 'agency',
+    status: 'active',
+    agencyType: '1',
+    agencyName: 'Đại lý Nghĩa',
+    agencyOwner: 'Lê Văn C',
+    agencyAddress: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
+    debtLimit: '50000000'
+  }
+]
+
+const EditAccount = () => {
+  const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
+
+  // Form state
+  const [formData, setFormData] = useState({
+    username: '',
+    fullName: '',
+    email: '',
+    phone: '',
+    role: 'staff',
+    status: 'active',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    // Agency specific fields
+    agencyType: '1',
+    agencyName: '',
+    agencyOwner: '',
+    agencyAddress: '',
+    debtLimit: ''
   })
+
+  // Load account data based on ID
+  useEffect(() => {
+    const account = mockAccounts.find(acc => acc.id === id)
+    if (account) {
+      setFormData({
+        username: account.username,
+        fullName: account.fullName,
+        email: account.email,
+        phone: account.phone,
+        role: account.role,
+        status: account.status,
+        password: '',
+        confirmPassword: '',
+        agencyType: account.agencyType || '1',
+        agencyName: account.agencyName || '',
+        agencyOwner: account.agencyOwner || '',
+        agencyAddress: account.agencyAddress || '',
+        debtLimit: account.debtLimit || ''
+      })
+    }
+  }, [id])
 
   const roles = [
     { value: 'admin', label: 'Quản trị viên' },
@@ -27,8 +102,7 @@ const EditAccount = () => {
 
   const statuses = [
     { value: 'active', label: 'Hoạt động', icon: CheckCircle2 },
-    { value: 'inactive', label: 'Ngừng hoạt động', icon: XCircle },
-    { value: 'pending', label: 'Chờ duyệt', icon: Clock }
+    { value: 'inactive', label: 'Ngừng hoạt động', icon: XCircle }
   ]
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -71,6 +145,22 @@ const EditAccount = () => {
 
       if (formData.password !== formData.confirmPassword) {
         toast.error('Mật khẩu xác nhận không khớp')
+        return
+      }
+    }
+
+    // Validation for agency role
+    if (formData.role === 'agency') {
+      if (!formData.agencyName.trim()) {
+        toast.error('Vui lòng nhập tên đại lý!')
+        return
+      }
+      if (!formData.agencyOwner.trim()) {
+        toast.error('Vui lòng nhập tên chủ đại lý!')
+        return
+      }
+      if (!formData.agencyAddress.trim()) {
+        toast.error('Vui lòng nhập địa chỉ đại lý!')
         return
       }
     }
@@ -254,6 +344,108 @@ const EditAccount = () => {
             />
           </div>
         </div>
+
+        {/* Agency Information Section - Only show when role is agency */}
+        {formData.role === 'agency' && (
+          <>
+            <div className="edit-account__section-title edit-account__section-agency">
+              <Building2 size={20} />
+              Thông tin đại lý
+            </div>
+
+            <div className="edit-account__form-row">
+              <div className="edit-account__form-group">
+                <label className="edit-account__label">
+                  Loại đại lý <span className="edit-account__required">*</span>
+                </label>
+                <select
+                  name="agencyType"
+                  className="edit-account__select"
+                  value={formData.agencyType}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="1">Đại lý cấp 1</option>
+                  <option value="2">Đại lý cấp 2</option>
+                </select>
+              </div>
+
+              <div className="edit-account__form-group">
+                <label className="edit-account__label">
+                  Tên đại lý <span className="edit-account__required">*</span>
+                </label>
+                <div className="edit-account__input-wrapper">
+                  <Building2 className="edit-account__input-icon" size={20} />
+                  <input
+                    type="text"
+                    name="agencyName"
+                    className="edit-account__input"
+                    placeholder="Nhập tên đại lý"
+                    value={formData.agencyName}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="edit-account__form-row">
+              <div className="edit-account__form-group">
+                <label className="edit-account__label">
+                  Chủ đại lý <span className="edit-account__required">*</span>
+                </label>
+                <div className="edit-account__input-wrapper">
+                  <Users className="edit-account__input-icon" size={20} />
+                  <input
+                    type="text"
+                    name="agencyOwner"
+                    className="edit-account__input"
+                    placeholder="Nhập tên chủ đại lý"
+                    value={formData.agencyOwner}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="edit-account__form-group">
+                <label className="edit-account__label">
+                  Hạn mức nợ (VNĐ)
+                </label>
+                <div className="edit-account__input-wrapper">
+                  <CreditCard className="edit-account__input-icon" size={20} />
+                  <input
+                    type="number"
+                    name="debtLimit"
+                    className="edit-account__input"
+                    placeholder="VD: 10000000"
+                    value={formData.debtLimit}
+                    onChange={handleInputChange}
+                    min="0"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="edit-account__form-group edit-account__form-group--full">
+              <label className="edit-account__label">
+                Địa chỉ <span className="edit-account__required">*</span>
+              </label>
+              <div className="edit-account__input-wrapper">
+                <MapPin className="edit-account__input-icon" size={20} />
+                <textarea
+                  name="agencyAddress"
+                  className="edit-account__input edit-account__textarea"
+                  placeholder="Nhập địa chỉ đại lý"
+                  value={formData.agencyAddress}
+                  onChange={(e) => setFormData(prev => ({ ...prev, agencyAddress: e.target.value }))}
+                  rows={2}
+                  required
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Action Buttons */}
         <div className="edit-account__actions">
