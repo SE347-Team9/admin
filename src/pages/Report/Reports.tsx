@@ -41,9 +41,9 @@ const Reports = () => {
     {
       id: '1',
       code: 'BC4',
-      title: 'Báo cáo doanh số',
+      title: 'Báo cáo phân phối',
       type: 'revenue',
-      typeLabel: 'Doanh thu',
+      typeLabel: 'Phân phối',
       createdDate: '11/10/2025',
       status: 'completed',
       statusLabel: 'Hoàn thành',
@@ -63,9 +63,9 @@ const Reports = () => {
     {
       id: '3',
       code: 'BC1',
-      title: 'Báo cáo doanh số',
+      title: 'Báo cáo phân phối',
       type: 'revenue',
-      typeLabel: 'Doanh thu',
+      typeLabel: 'Phân phối',
       createdDate: '30/6/2024',
       status: 'completed',
       statusLabel: 'Hoàn thành',
@@ -351,7 +351,7 @@ const Reports = () => {
         <div className="report-stat-card">
           <div className="report-stat-card-header">
             <TrendingUp size={20} />
-            <h3>Danh sách đại lý có doanh số cao nhất</h3>
+            <h3>Danh sách đại lý có giá trị nhận hàng cao nhất</h3>
           </div>
           <div className="report-stat-card-body">
             <table className="report-stat-table">
@@ -359,7 +359,7 @@ const Reports = () => {
                 <tr>
                   <th>MÃ ĐẠI LÝ</th>
                   <th>TÊN ĐẠI LÝ</th>
-                  <th>DOANH SỐ</th>
+                  <th>GIÁ TRỊ</th>
                 </tr>
               </thead>
               <tbody>

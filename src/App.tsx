@@ -15,6 +15,10 @@ import AgencyManagement from './pages/AgencyManagement/AgencyManagement.tsx'
 import AddAgency from './pages/AgencyManagement/AddAgency.tsx'
 import ViewAgency from './pages/AgencyManagement/ViewAgency.tsx'
 import EditAgency from './pages/AgencyManagement/EditAgency.tsx'
+import ProductManagement from './pages/ProductManagement/ProductManagement.tsx'
+import AddProduct from './pages/ProductManagement/AddProduct.tsx'
+import ViewProduct from './pages/ProductManagement/ViewProduct.tsx'
+import EditProduct from './pages/ProductManagement/EditProduct.tsx'
 import Regulations from './pages/Regulations/Regulations.tsx'
 import ViewRegulation from './pages/Regulations/ViewRegulation.tsx'
 import EditRegulation from './pages/Regulations/EditRegulation.tsx'
@@ -55,6 +59,10 @@ function App() {
         <Route path="/add-agency" element={<MainLayout><AddAgency /></MainLayout>} />
         <Route path="/view-agency/:id" element={<MainLayout><ViewAgency /></MainLayout>} />
         <Route path="/edit-agency/:id" element={<MainLayout><EditAgency /></MainLayout>} />
+        <Route path="/product-management" element={<MainLayout><ProductManagement /></MainLayout>} />
+        <Route path="/add-product" element={<MainLayout><AddProduct /></MainLayout>} />
+        <Route path="/view-product/:id" element={<MainLayout><ViewProduct /></MainLayout>} />
+        <Route path="/edit-product/:id" element={<MainLayout><EditProduct /></MainLayout>} />
         <Route path="/regulations" element={<MainLayout><Regulations /></MainLayout>} />
         <Route path="/view-regulation/:id" element={<MainLayout><ViewRegulation /></MainLayout>} />
         <Route path="/edit-regulation/:id" element={<MainLayout><EditRegulation /></MainLayout>} />
