@@ -1,4 +1,4 @@
-import { Building2, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle } from 'lucide-react'
+import { Building2, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle, Award, Crown } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
@@ -11,6 +11,10 @@ interface Agency {
   address: string
   phone: string
   email: string
+  type: 'level_1' | 'level_2'
+  typeLabel: string
+  debtLimit: number
+  currentDebt: number
   status: 'active' | 'inactive'
   statusLabel: string
   createdAt: string
@@ -25,6 +29,8 @@ const AgencyManagement = () => {
   const totalAgencies = 10
   const activeAgencies = 8
   const inactiveAgencies = 2
+  const level1Agencies = 4
+  const level2Agencies = 6
 
   // Mock data
   const [agencies, setAgencies] = useState<Agency[]>([
@@ -35,6 +41,10 @@ const AgencyManagement = () => {
       address: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
       phone: '02232434242',
       email: 'nghiaagency@gmail.com',
+      type: 'level_1',
+      typeLabel: 'Cấp 1',
+      debtLimit: 100000000,
+      currentDebt: 45000000,
       status: 'active',
       statusLabel: 'Hoạt động',
       createdAt: '01/01/2024'
@@ -46,6 +56,10 @@ const AgencyManagement = () => {
       address: 'Số 2, Phố Đông Đa, Đông Đa, Hà Nội',
       phone: '02232434242',
       email: 'daiagency@gmail.com',
+      type: 'level_2',
+      typeLabel: 'Cấp 2',
+      debtLimit: 50000000,
+      currentDebt: 30000000,
       status: 'active',
       statusLabel: 'Hoạt động',
       createdAt: '15/02/2024'
@@ -57,6 +71,10 @@ const AgencyManagement = () => {
       address: 'Số 3, Phố Hai Bà Trưng, Hoàn Kiếm, Hà Nội',
       phone: '0369852147',
       email: 'ankhang@gmail.com',
+      type: 'level_1',
+      typeLabel: 'Cấp 1',
+      debtLimit: 100000000,
+      currentDebt: 75000000,
       status: 'active',
       statusLabel: 'Hoạt động',
       createdAt: '20/03/2024'
@@ -68,6 +86,10 @@ const AgencyManagement = () => {
       address: 'Số 4, Phố Lê Thanh Tông, Hoan Kiếm, Hà Nội',
       phone: '0912345678',
       email: 'minhphat@gmail.com',
+      type: 'level_2',
+      typeLabel: 'Cấp 2',
+      debtLimit: 50000000,
+      currentDebt: 0,
       status: 'inactive',
       statusLabel: 'Ngừng hoạt động',
       createdAt: '10/04/2024'
@@ -79,6 +101,10 @@ const AgencyManagement = () => {
       address: 'Số 5, Phố Thái Hà, Đống Đa, Hà Nội',
       phone: '0901234567',
       email: 'thaiha@gmail.com',
+      type: 'level_1',
+      typeLabel: 'Cấp 1',
+      debtLimit: 100000000,
+      currentDebt: 60000000,
       status: 'active',
       statusLabel: 'Hoạt động',
       createdAt: '25/10/2025'
@@ -105,6 +131,18 @@ const AgencyManagement = () => {
       default:
         return <CheckCircle2 size={14} />
     }
+  }
+
+  const getTypeClass = (type: string) => {
+    return type === 'level_1' ? 'type-level1' : 'type-level2'
+  }
+
+  const getTypeIcon = (type: string) => {
+    return type === 'level_1' ? <Crown size={14} /> : <Award size={14} />
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN').format(amount) + ' đ'
   }
 
   const handleDeleteAgency = (agency: Agency) => {
@@ -161,6 +199,26 @@ const AgencyManagement = () => {
           </div>
         </div>
 
+        <div className="stats-card gradient-purple">
+          <div className="stats-card-content">
+            <div className="stats-label">Đại lý cấp 1</div>
+            <div className="stats-value">{level1Agencies}</div>
+          </div>
+          <div className="stats-icon">
+            <Crown size={44} strokeWidth={2.5} />
+          </div>
+        </div>
+
+        <div className="stats-card gradient-orange">
+          <div className="stats-card-content">
+            <div className="stats-label">Đại lý cấp 2</div>
+            <div className="stats-value">{level2Agencies}</div>
+          </div>
+          <div className="stats-icon">
+            <Award size={44} strokeWidth={2.5} />
+          </div>
+        </div>
+
         <div className="stats-card gradient-green">
           <div className="stats-card-content">
             <div className="stats-label">Đang hoạt động</div>
@@ -204,11 +262,11 @@ const AgencyManagement = () => {
               <tr>
                 <th>MÃ ĐẠI LÝ</th>
                 <th>TÊN ĐẠI LÝ</th>
+                <th>LOẠI</th>
                 <th>ĐỊA CHỈ</th>
                 <th>SỐ ĐIỆN THOẠI</th>
-                <th>EMAIL</th>
+                <th>CÔNG NỢ HIỆN TẠI</th>
                 <th>TRẠNG THÁI</th>
-                <th>NGÀY TẠO</th>
                 <th>THAO TÁC</th>
               </tr>
             </thead>
@@ -219,16 +277,28 @@ const AgencyManagement = () => {
                     <span className="agency-code">{agency.code}</span>
                   </td>
                   <td>{agency.name}</td>
+                  <td>
+                    <span className={`type-badge ${getTypeClass(agency.type)}`}>
+                      {getTypeIcon(agency.type)}
+                      {agency.typeLabel}
+                    </span>
+                  </td>
                   <td className="text-muted">{agency.address}</td>
                   <td className="text-muted">{agency.phone}</td>
-                  <td className="text-muted">{agency.email}</td>
+                  <td>
+                    <div className="debt-info">
+                      <span className={`debt-amount ${agency.currentDebt > agency.debtLimit * 0.8 ? 'debt-warning' : ''}`}>
+                        {formatCurrency(agency.currentDebt)}
+                      </span>
+                      <span className="debt-limit">/ {formatCurrency(agency.debtLimit)}</span>
+                    </div>
+                  </td>
                   <td>
                     <span className={`status-badge ${getStatusClass(agency.status)}`}>
                       {getStatusIcon(agency.status)}
                       {agency.statusLabel}
                     </span>
                   </td>
-                  <td className="text-muted">{agency.createdAt}</td>
                   <td>
                     <div className="action-buttons">
                       <button 

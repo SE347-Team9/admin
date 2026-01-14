@@ -26,6 +26,7 @@ import DeliveryManagement from './pages/DeliveryManagement/DeliveryManagement.ts
 import AddDriver from './pages/DeliveryManagement/AddDriver.tsx'
 import ViewDriver from './pages/DeliveryManagement/ViewDriver.tsx'
 import EditDriver from './pages/DeliveryManagement/EditDriver.tsx'
+import InventoryOverview from './pages/InventoryOverview/InventoryOverview.tsx'
 import MainLayout from './components/layout/MainLayout.tsx'
 import NotFound from './routes/NotFound/NotFound.tsx'
 
@@ -70,6 +71,7 @@ function App() {
         <Route path="/add-driver" element={<MainLayout><AddDriver /></MainLayout>} />
         <Route path="/view-driver/:id" element={<MainLayout><ViewDriver /></MainLayout>} />
         <Route path="/edit-driver/:id" element={<MainLayout><EditDriver /></MainLayout>} />
+        <Route path="/inventory-overview" element={<MainLayout><InventoryOverview /></MainLayout>} />
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
