@@ -1,4 +1,4 @@
-import { FileText, Eye, FileSpreadsheet, Download, CheckCircle2, Package, Truck, CreditCard } from 'lucide-react'
+import { FileText, Eye, FileSpreadsheet, Download, Package, Truck, CreditCard } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState, useMemo } from 'react'
 import * as XLSX from 'xlsx'
@@ -13,8 +13,8 @@ interface Report {
   typeLabel: string
   period: string
   value: number
-  status: 'completed'
-  statusLabel: string
+  employee: string
+  createdDate: string
 }
 
 interface AgencyImport {
@@ -47,8 +47,8 @@ const Reports = () => {
       typeLabel: 'Nhập kho',
       period: '10/2025',
       value: 45000000,
-      status: 'completed',
-      statusLabel: 'Hoàn thành'
+      employee: 'Nguyễn Văn A',
+      createdDate: '15/01/2025'
     },
     {
       id: '2',
@@ -57,8 +57,8 @@ const Reports = () => {
       typeLabel: 'Phân phối',
       period: '10/2025',
       value: 32000000,
-      status: 'completed',
-      statusLabel: 'Hoàn thành'
+      employee: 'Trần Thị B',
+      createdDate: '14/01/2025'
     },
     {
       id: '3',
@@ -67,8 +67,8 @@ const Reports = () => {
       typeLabel: 'Công nợ',
       period: '09/2025',
       value: 24060000,
-      status: 'completed',
-      statusLabel: 'Hoàn thành'
+      employee: 'Lê Văn C',
+      createdDate: '13/01/2025'
     },
     {
       id: '4',
@@ -77,8 +77,8 @@ const Reports = () => {
       typeLabel: 'Nhập kho',
       period: '06/2024',
       value: 38000000,
-      status: 'completed',
-      statusLabel: 'Hoàn thành'
+      employee: 'Phạm Thị D',
+      createdDate: '12/01/2025'
     }
   ]
 
@@ -148,7 +148,8 @@ const Reports = () => {
       { 'Thông tin': 'Loại báo cáo', 'Giá trị': report.typeLabel },
       { 'Thông tin': 'Kỳ báo cáo', 'Giá trị': report.period },
       { 'Thông tin': 'Giá trị', 'Giá trị': report.value.toLocaleString('vi-VN') + ' đ' },
-      { 'Thông tin': 'Trạng thái', 'Giá trị': report.statusLabel }
+      { 'Thông tin': 'Nhân viên', 'Giá trị': report.employee },
+      { 'Thông tin': 'Ngày tạo', 'Giá trị': report.createdDate }
     ]
     
     const ws = XLSX.utils.json_to_sheet(reportDetails)
@@ -212,8 +213,12 @@ const Reports = () => {
             <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.value.toLocaleString('vi-VN')} đ</td>
           </tr>
           <tr style="background-color: #f5f5f5;">
-            <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Trạng thái:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.statusLabel}</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Nhân viên:</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.employee}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Ngày tạo:</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.createdDate}</td>
           </tr>
         </table>
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #888;">
@@ -321,7 +326,8 @@ const Reports = () => {
                 <th>LOẠI</th>
                 <th>KỲ BÁO CÁO</th>
                 <th>GIÁ TRỊ</th>
-                <th>TRẠNG THÁI</th>
+                <th>NHÂN VIÊN</th>
+                <th>NGÀY TẠO</th>
                 <th>THAO TÁC</th>
               </tr>
             </thead>
@@ -341,12 +347,8 @@ const Reports = () => {
                   <td>
                     <span className="report-value">{report.value.toLocaleString('vi-VN')} đ</span>
                   </td>
-                  <td>
-                    <span className="status-badge status-completed">
-                      <CheckCircle2 size={14} />
-                      {report.statusLabel}
-                    </span>
-                  </td>
+                  <td className="text-muted">{report.employee}</td>
+                  <td className="text-muted">{report.createdDate}</td>
                   <td>
                     <div className="action-buttons">
                       <button 
