@@ -1,4 +1,4 @@
-import { Users, Building2, BookOpen, FileText, LayoutDashboard, TrendingUp, AlertTriangle } from 'lucide-react'
+import { Users, Building2, BookOpen, FileText, LayoutDashboard, TrendingUp, AlertTriangle, Warehouse, Package } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import {
   BarChart,
@@ -94,6 +94,24 @@ const Home = () => {
       gradient: 'green',
       change: '+17.3%',
       description: 'so với tháng trước'
+    },
+    {
+      id: 'inventory',
+      label: 'Giá trị tồn kho',
+      value: '2.8 tỷ',
+      icon: Warehouse,
+      gradient: 'cyan',
+      change: '+5.1%',
+      description: 'tổng giá trị hàng trong kho'
+    },
+    {
+      id: 'lowstock',
+      label: 'Sản phẩm cần nhập',
+      value: '12',
+      icon: Package,
+      gradient: 'red',
+      change: '+3',
+      description: 'SP sắp hết/hết hàng'
     },
     {
       id: 'profit',

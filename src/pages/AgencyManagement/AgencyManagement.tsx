@@ -288,6 +288,26 @@ const AgencyManagement = () => {
           </div>
         </div>
 
+        <div className="stats-card gradient-purple">
+          <div className="stats-card-content">
+            <div className="stats-label">Đại lý cấp 1</div>
+            <div className="stats-value">{level1Agencies}</div>
+          </div>
+          <div className="stats-icon">
+            <Crown size={44} strokeWidth={2.5} />
+          </div>
+        </div>
+
+        <div className="stats-card gradient-orange">
+          <div className="stats-card-content">
+            <div className="stats-label">Đại lý cấp 2</div>
+            <div className="stats-value">{level2Agencies}</div>
+          </div>
+          <div className="stats-icon">
+            <Award size={44} strokeWidth={2.5} />
+          </div>
+        </div>
+
         <div className="stats-card gradient-green">
           <div className="stats-card-content">
             <div className="stats-label">Tổng doanh số nhập hàng</div>
@@ -404,6 +424,7 @@ const AgencyManagement = () => {
               <tr>
                 <th>MÃ ĐẠI LÝ</th>
                 <th>TÊN ĐẠI LÝ</th>
+                <th>LOẠI</th>
                 <th>ĐỊA CHỈ</th>
                 <th>SỐ ĐIỆN THOẠI</th>
                 <th>CẤP ĐẠI LÝ</th>

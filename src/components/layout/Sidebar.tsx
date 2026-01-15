@@ -8,6 +8,7 @@ import {
   Truck,
   Boxes,
   Package,
+  Warehouse,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -57,6 +58,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       icon: Package,
       label: 'Quản lý NCC',
       path: '/supplier-management'
+    },
+    {
+      id: 'inventory',
+      icon: Warehouse,
+      label: 'Giám sát kho',
+      path: '/inventory-overview'
     },
     {
       id: 'delivery',
