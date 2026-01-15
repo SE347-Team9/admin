@@ -553,66 +553,52 @@
 }
 
 .agency-management-page .btn-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  color: #64748b;
   cursor: pointer;
   transition: all 0.2s ease;
-  flex-shrink: 0;
   padding: 0;
-  font-size: 18px;
-  line-height: 1;
 }
 
 .agency-management-page .btn-icon svg {
+  width: 18px;
+  height: 18px;
   display: block;
-  width: 20px;
-  height: 20px;
 }
 
 .agency-management-page .btn-icon.btn-view {
-  color: #3b82f6;
-  border-color: #e0e7ff;
+  background: #f0f9ff;
+  color: #0369a1;
 }
 
 .agency-management-page .btn-icon.btn-view:hover {
-  background: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background: #e0f2fe;
+  transform: scale(1.05);
 }
 
 .agency-management-page .btn-icon.btn-edit {
-  color: #10b981;
-  border-color: #d1fae5;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .agency-management-page .btn-icon.btn-edit:hover {
-  background: #10b981;
-  color: white;
-  border-color: #10b981;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  background: #fde68a;
+  transform: scale(1.05);
 }
 
 .agency-management-page .btn-icon.btn-delete {
-  color: #ef4444;
-  border-color: #fee2e2;
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .agency-management-page .btn-icon.btn-delete:hover {
-  background: #ef4444;
-  color: white;
-  border-color: #ef4444;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  background: #fecaca;
+  transform: scale(1.05);
 }
 
 /* Responsive */

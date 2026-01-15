@@ -1,17 +1,14 @@
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { 
   Warehouse, 
   Package, 
   AlertTriangle, 
   TrendingDown,
-  Calendar,
   Clock,
   CheckCircle2,
   XCircle,
   Search,
-  Eye,
-  X,
-  DollarSign
+  Eye
 } from 'lucide-react'
 import './InventoryOverview.css'
 
@@ -33,6 +30,7 @@ interface InventoryItem {
   productName: string
   category: string
   unit: string
+  warehouseType: string
   currentStock: number
   minStockLevel: number
   maxStockLevel: number
@@ -55,11 +53,15 @@ interface StockAlert {
 const InventoryOverview = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'low' | 'out' | 'normal'>('all')
+  const [filterWarehouse, setFilterWarehouse] = useState<string>('all')
   const [activeTab, setActiveTab] = useState<'overview' | 'alerts'>('overview')
   const [selectedProduct, setSelectedProduct] = useState<InventoryItem | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
+  const [expandedBatches] = useState<{ [key: string]: boolean }>({})
+  const [showApproveCenter, setShowApproveCenter] = useState(false)
+  const [receiptApprovalMap, setReceiptApprovalMap] = useState<Record<string, 'approved' | 'rejected'>>({})
+  const [expandedReceipts, setExpandedReceipts] = useState<Record<string, boolean>>({})
 
-  // Mock inventory data - Dữ liệu này sẽ được lấy từ API (cùng nguồn với Staff)
   const [inventory] = useState<InventoryItem[]>([
     {
       id: '1',
@@ -68,6 +70,7 @@ const InventoryOverview = () => {
       productName: 'Bia Hà Nội',
       category: 'Đồ uống có cồn',
       unit: 'Thùng',
+      warehouseType: 'Kho thường',
       currentStock: 150,
       minStockLevel: 50,
       maxStockLevel: 500,
@@ -86,6 +89,7 @@ const InventoryOverview = () => {
       productName: 'Nước ngọt Pepsi',
       category: 'Nước giải khát',
       unit: 'Thùng',
+      warehouseType: 'Kho mát',
       currentStock: 25,
       minStockLevel: 30,
       maxStockLevel: 300,
@@ -103,6 +107,7 @@ const InventoryOverview = () => {
       productName: 'Sữa Vinamilk',
       category: 'Sữa & Sản phẩm từ sữa',
       unit: 'Lốc',
+      warehouseType: 'Kho đông lạnh',
       currentStock: 0,
       minStockLevel: 100,
       maxStockLevel: 1000,
@@ -118,6 +123,7 @@ const InventoryOverview = () => {
       productName: 'Bánh quy Oreo',
       category: 'Bánh kẹo',
       unit: 'Hộp',
+      warehouseType: 'Kho thường',
       currentStock: 200,
       minStockLevel: 80,
       maxStockLevel: 400,
@@ -135,6 +141,7 @@ const InventoryOverview = () => {
       productName: 'Gạo ST25',
       category: 'Lương thực',
       unit: 'Kg',
+      warehouseType: 'Kho mát',
       currentStock: 500,
       minStockLevel: 200,
       maxStockLevel: 2000,
@@ -152,6 +159,7 @@ const InventoryOverview = () => {
       productName: 'Snack Oishi',
       category: 'Bánh kẹo',
       unit: 'Gói',
+      warehouseType: 'Kho thường',
       currentStock: 15,
       minStockLevel: 50,
       maxStockLevel: 300,
@@ -163,6 +171,46 @@ const InventoryOverview = () => {
       ]
     }
   ])
+
+  const receiptGroups = useMemo(() => {
+    const receiptMap: Record<string, {
+      receiptCode: string
+      supplier: string
+      createdDate: string
+      totalAmount: number
+      products: Array<{
+        productName: string
+        unit: string
+        quantity: number
+        remainingQuantity: number
+        costPrice: number
+      }>
+    }> = {}
+
+    inventory.forEach(item => {
+      item.batches.forEach(batch => {
+        if (!receiptMap[batch.importReceiptCode]) {
+          receiptMap[batch.importReceiptCode] = {
+            receiptCode: batch.importReceiptCode,
+            supplier: 'Công ty A', // Mock data
+            createdDate: batch.importDate,
+            totalAmount: 0,
+            products: []
+          }
+        }
+        receiptMap[batch.importReceiptCode].products.push({
+          productName: item.productName,
+          unit: item.unit,
+          quantity: batch.quantity,
+          remainingQuantity: batch.remainingQuantity,
+          costPrice: item.costPrice
+        })
+        receiptMap[batch.importReceiptCode].totalAmount += batch.quantity * item.costPrice
+      })
+    })
+
+    return Object.values(receiptMap)
+  }, [inventory])
 
   // Tính toán thống kê
   const statistics = useMemo(() => {
@@ -179,7 +227,6 @@ const InventoryOverview = () => {
       sum + (item.currentStock * item.sellingPrice), 0
     )
 
-    // Đếm sản phẩm sắp hết hạn (trong vòng 30 ngày)
     const today = new Date()
     const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
     let expiringCount = 0
@@ -200,12 +247,12 @@ const InventoryOverview = () => {
       }
     })
 
-    return { 
-      totalProducts, 
-      lowStockCount, 
-      outOfStockCount, 
+    return {
+      totalProducts,
+      lowStockCount,
+      outOfStockCount,
       normalStockCount,
-      totalValue, 
+      totalValue,
       totalSellingValue,
       expiringCount,
       expiredCount
@@ -215,57 +262,54 @@ const InventoryOverview = () => {
   // Tạo danh sách cảnh báo
   const alerts: StockAlert[] = useMemo(() => {
     const alertList: StockAlert[] = []
-    const today = new Date()
     
     inventory.forEach(item => {
-      // Cảnh báo hết hàng
       if (item.currentStock === 0) {
         alertList.push({
-          id: `out-${item.id}`,
+          id: `alert-out-${item.id}`,
           productCode: item.productCode,
           productName: item.productName,
           alertType: 'out_of_stock',
-          message: `${item.productName} đã HẾT HÀNG! Cần nhập thêm ngay.`,
+          message: `Sản phẩm ${item.productName} hết hàng. Cần nhập khẩu ngay`,
           severity: 'critical',
           createdAt: new Date().toISOString()
         })
       } else if (item.currentStock <= item.minStockLevel) {
-        // Cảnh báo sắp hết hàng
         alertList.push({
-          id: `low-${item.id}`,
+          id: `alert-low-${item.id}`,
           productCode: item.productCode,
           productName: item.productName,
           alertType: 'low_stock',
-          message: `${item.productName} sắp hết hàng (còn ${item.currentStock} ${item.unit}).`,
+          message: `Kho ${item.productName} sắp hết. Số lượng hiện tại: ${item.currentStock}`,
           severity: 'warning',
           createdAt: new Date().toISOString()
         })
       }
-      
-      // Cảnh báo hết hạn sử dụng
+
       if (item.batches) {
         item.batches.forEach(batch => {
-          if (batch.expiryDate && batch.remainingQuantity > 0) {
+          if (batch.remainingQuantity > 0) {
             const expiryDate = new Date(batch.expiryDate)
-            const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (24 * 60 * 60 * 1000))
+            const today = new Date()
+            const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
             
-            if (daysUntilExpiry <= 0) {
+            if (expiryDate <= today) {
               alertList.push({
-                id: `expired-${batch.id}`,
+                id: `alert-exp-${batch.id}`,
                 productCode: item.productCode,
                 productName: item.productName,
                 alertType: 'expired',
-                message: `${item.productName} (Lô ${batch.batchNumber}) ĐÃ HẾT HẠN! Còn ${batch.remainingQuantity} ${item.unit} cần xử lý.`,
+                message: `Lô ${batch.batchNumber} của ${item.productName} đã hết hạn (${batch.expiryDate})`,
                 severity: 'critical',
                 createdAt: new Date().toISOString()
               })
-            } else if (daysUntilExpiry <= 30) {
+            } else if (expiryDate <= thirtyDaysLater) {
               alertList.push({
-                id: `expiring-${batch.id}`,
+                id: `alert-exp-soon-${batch.id}`,
                 productCode: item.productCode,
                 productName: item.productName,
                 alertType: 'expiring_soon',
-                message: `${item.productName} (Lô ${batch.batchNumber}) sắp hết hạn trong ${daysUntilExpiry} ngày.`,
+                message: `Lô ${batch.batchNumber} của ${item.productName} sắp hết hạn (${batch.expiryDate})`,
                 severity: 'warning',
                 createdAt: new Date().toISOString()
               })
@@ -274,407 +318,410 @@ const InventoryOverview = () => {
         })
       }
     })
-
-    // Sắp xếp: critical trước, sau đó là warning
-    return alertList.sort((a, b) => {
-      if (a.severity === 'critical' && b.severity !== 'critical') return -1
-      if (a.severity !== 'critical' && b.severity === 'critical') return 1
-      return 0
-    })
+    
+    return alertList
   }, [inventory])
 
-  // Lọc inventory
+  // Lọc dữ liệu
   const filteredInventory = useMemo(() => {
     return inventory.filter(item => {
-      const matchSearch = item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.productCode.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchSearch = item.productCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+      
+      const matchStatus = filterStatus === 'all' ||
+                         (filterStatus === 'low' && item.currentStock > 0 && item.currentStock <= item.minStockLevel) ||
+                         (filterStatus === 'out' && item.currentStock === 0) ||
+                         (filterStatus === 'normal' && item.currentStock > item.minStockLevel)
+      
+      const matchWarehouse = filterWarehouse === 'all' || item.warehouseType === filterWarehouse
 
-      let matchStatus = true
-      if (filterStatus === 'low') {
-        matchStatus = item.currentStock > 0 && item.currentStock <= item.minStockLevel
-      } else if (filterStatus === 'out') {
-        matchStatus = item.currentStock === 0
-      } else if (filterStatus === 'normal') {
-        matchStatus = item.currentStock > item.minStockLevel
-      }
-
-      return matchSearch && matchStatus
+      return matchSearch && matchStatus && matchWarehouse
     })
-  }, [inventory, searchTerm, filterStatus])
+  }, [inventory, searchTerm, filterStatus, filterWarehouse])
 
-  // Lấy hạn sử dụng gần nhất
-  const getNearestExpiry = (item: InventoryItem): { date: string | null, daysLeft: number | null } => {
-    if (!item.batches || item.batches.length === 0) {
-      return { date: null, daysLeft: null }
-    }
-    
-    const today = new Date()
-    let nearestDate: Date | null = null
-    
-    item.batches.forEach(batch => {
-      if (batch.expiryDate && batch.remainingQuantity > 0) {
-        const expiry = new Date(batch.expiryDate)
-        if (!nearestDate || expiry < nearestDate) {
-          nearestDate = expiry
-        }
-      }
-    })
-    
-    if (!nearestDate) return { date: null, daysLeft: null }
-    
-    const nearestDateValue = nearestDate as Date
-    const daysLeft = Math.ceil((nearestDateValue.getTime() - today.getTime()) / (24 * 60 * 60 * 1000))
-    return {
-      date: nearestDateValue.toLocaleDateString('vi-VN'),
-      daysLeft
-    }
+  // Hàm xác định màu trạng thái
+  const getStatusColor = (stock: number, minLevel: number) => {
+    if (stock === 0) return 'critical'
+    if (stock <= minLevel) return 'warning'
+    return 'normal'
   }
 
-  // Xác định trạng thái HSD
-  const getExpiryStatus = (daysLeft: number | null) => {
-    if (daysLeft === null) return { class: '', label: '-' }
-    if (daysLeft <= 0) return { class: 'expiry-expired', label: 'Hết hạn' }
-    if (daysLeft <= 30) return { class: 'expiry-warning', label: `${daysLeft} ngày` }
-    if (daysLeft <= 90) return { class: 'expiry-soon', label: `${daysLeft} ngày` }
-    return { class: 'expiry-normal', label: `${daysLeft} ngày` }
-  }
-
-  const getStockStatus = (item: InventoryItem) => {
-    if (item.currentStock === 0) {
-      return { label: 'Hết hàng', class: 'status-out', icon: <XCircle size={14} /> }
-    }
-    if (item.currentStock <= item.minStockLevel) {
-      return { label: 'Sắp hết', class: 'status-low', icon: <TrendingDown size={14} /> }
-    }
-    return { label: 'Còn hàng', class: 'status-normal', icon: <CheckCircle2 size={14} /> }
-  }
-
-  const handleViewDetail = (item: InventoryItem) => {
-    setSelectedProduct(item)
+  const openProductDetail = (product: InventoryItem) => {
+    setSelectedProduct(product)
     setShowDetailModal(true)
-  }
-
-  const handleCloseModal = () => {
-    setShowDetailModal(false)
-    setSelectedProduct(null)
   }
 
   return (
     <div className="inventory-overview-page">
-      {/* Header Section */}
+      {/* Header */}
       <div className="inventory-overview__header">
         <div className="inventory-overview__header-icon">
-          <Warehouse size={36} />
+          <Warehouse size={40} />
         </div>
         <div className="inventory-overview__header-text">
-          <h1 className="inventory-overview__title">Giám sát Kho hàng</h1>
-          <p className="inventory-overview__subtitle">
-            Tổng quan tình trạng tồn kho và cảnh báo.
-          </p>
+          <h1 className="inventory-overview__title">Giám sát kho hàng</h1>
+          <p className="inventory-overview__subtitle">Quản lý tồn kho và cảnh báo trang thái hàng hóa</p>
         </div>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Statistics Grid */}
       <div className="inventory-overview__stats-grid">
-        <div className="inventory-overview__stat-card stat-blue">
-          <div className="stat-icon-wrapper">
-            <Package size={28} />
+        <div className="inventory-overview__stat-card">
+          <div className="stat-icon-wrapper stat-icon--blue">
+            <Package size={24} />
           </div>
           <div className="stat-content">
             <div className="stat-label">Tổng sản phẩm</div>
             <div className="stat-value">{statistics.totalProducts}</div>
-            <div className="stat-detail">Trong kho</div>
           </div>
         </div>
 
-        <div className="inventory-overview__stat-card stat-green">
-          <div className="stat-icon-wrapper">
-            <DollarSign size={28} />
+        <div className="inventory-overview__stat-card">
+          <div className="stat-icon-wrapper stat-icon--green">
+            <CheckCircle2 size={24} />
           </div>
           <div className="stat-content">
-            <div className="stat-label">Giá trị kho (Giá vốn)</div>
-            <div className="stat-value">{(statistics.totalValue / 1000000).toFixed(1)}M</div>
-            <div className="stat-detail">VND</div>
+            <div className="stat-label">Bình thường</div>
+            <div className="stat-value">{statistics.normalStockCount}</div>
           </div>
         </div>
 
-        <div className="inventory-overview__stat-card stat-orange">
-          <div className="stat-icon-wrapper">
-            <TrendingDown size={28} />
+        <div className="inventory-overview__stat-card">
+          <div className="stat-icon-wrapper stat-icon--yellow">
+            <TrendingDown size={24} />
           </div>
           <div className="stat-content">
             <div className="stat-label">Sắp hết hàng</div>
             <div className="stat-value">{statistics.lowStockCount}</div>
-            <div className="stat-detail">Dưới mức tối thiểu</div>
           </div>
         </div>
 
-        <div className="inventory-overview__stat-card stat-red">
-          <div className="stat-icon-wrapper">
-            <XCircle size={28} />
+        <div className="inventory-overview__stat-card">
+          <div className="stat-icon-wrapper stat-icon--red">
+            <XCircle size={24} />
           </div>
           <div className="stat-content">
             <div className="stat-label">Hết hàng</div>
             <div className="stat-value">{statistics.outOfStockCount}</div>
-            <div className="stat-detail">Cần nhập thêm</div>
           </div>
         </div>
 
-        <div className="inventory-overview__stat-card stat-purple">
-          <div className="stat-icon-wrapper">
-            <Clock size={28} />
+        <div className="inventory-overview__stat-card">
+          <div className="stat-icon-wrapper stat-icon--purple">
+            <Clock size={24} />
           </div>
           <div className="stat-content">
             <div className="stat-label">Sắp hết hạn</div>
             <div className="stat-value">{statistics.expiringCount}</div>
-            <div className="stat-detail">Trong 30 ngày tới</div>
           </div>
         </div>
 
-        <div className="inventory-overview__stat-card stat-dark-red">
-          <div className="stat-icon-wrapper">
-            <AlertTriangle size={28} />
+        <div className="inventory-overview__stat-card">
+          <div className="stat-icon-wrapper stat-icon--orange">
+            <AlertTriangle size={24} />
           </div>
           <div className="stat-content">
             <div className="stat-label">Đã hết hạn</div>
             <div className="stat-value">{statistics.expiredCount}</div>
-            <div className="stat-detail">Cần xử lý</div>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="inventory-overview__tabs">
-        <button 
-          className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
-          onClick={() => setActiveTab('overview')}
-        >
-          <Package size={18} />
-          Tổng quan tồn kho
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'alerts' ? 'active' : ''}`}
-          onClick={() => setActiveTab('alerts')}
-        >
-          <AlertTriangle size={18} />
-          Cảnh báo ({alerts.length})
-        </button>
+        <div className="inventory-overview__tabs-left">
+          <button 
+            className={`tab-button ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            Tổng quan kho hàng
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'alerts' ? 'active' : ''}`}
+            onClick={() => setActiveTab('alerts')}
+          >
+            Cảnh báo ({alerts.length})
+          </button>
+        </div>
+        <div className="inventory-overview__tabs-actions">
+          <button className="btn-approve-global" onClick={() => setShowApproveCenter(true)}>
+            Duyệt nhập hàng
+          </button>
+        </div>
       </div>
 
-      {/* Tab Content */}
+      {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div className="inventory-overview__content">
           {/* Filters */}
           <div className="inventory-overview__filters">
-            <div className="search-box">
-              <Search size={18} />
+            <div className="filter-group search-group">
+              <Search size={18} className="search-icon" />
               <input
                 type="text"
-                placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..."
+                placeholder="Tìm kiếm mã hoặc tên sản phẩm..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
               />
             </div>
-            <div className="filter-buttons">
-              <button 
-                className={`filter-btn ${filterStatus === 'all' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('all')}
+
+            <div className="filter-group">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as any)}
+                className="filter-select"
               >
-                Tất cả ({statistics.totalProducts})
-              </button>
-              <button 
-                className={`filter-btn filter-normal ${filterStatus === 'normal' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('normal')}
+                <option value="all">Tất cả trạng thái</option>
+                <option value="normal">Bình thường</option>
+                <option value="low">Sắp hết hàng</option>
+                <option value="out">Hết hàng</option>
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <select
+                value={filterWarehouse}
+                onChange={(e) => setFilterWarehouse(e.target.value)}
+                className="filter-select"
               >
-                <CheckCircle2 size={14} />
-                Còn hàng ({statistics.normalStockCount})
-              </button>
-              <button 
-                className={`filter-btn filter-low ${filterStatus === 'low' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('low')}
-              >
-                <TrendingDown size={14} />
-                Sắp hết ({statistics.lowStockCount})
-              </button>
-              <button 
-                className={`filter-btn filter-out ${filterStatus === 'out' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('out')}
-              >
-                <XCircle size={14} />
-                Hết hàng ({statistics.outOfStockCount})
-              </button>
+                <option value="all">Tất cả kho</option>
+                <option value="Kho thường">Kho thường</option>
+                <option value="Kho mát">Kho mát</option>
+                <option value="Kho đông lạnh">Kho đông lạnh</option>
+              </select>
             </div>
           </div>
 
           {/* Inventory Table */}
           <div className="inventory-overview__table-wrapper">
-            <table className="inventory-overview__table">
+            <table className="inventory-table">
               <thead>
                 <tr>
-                  <th>MÃ SP</th>
-                  <th>TÊN SẢN PHẨM</th>
-                  <th>TỔNG TỒN</th>
-                  <th>ĐỊNH MỨC</th>
-                  <th>ĐƠN VỊ</th>
-                  <th>HSD GẦN NHẤT</th>
-                  <th>TRẠNG THÁI</th>
-                  <th>THAO TÁC</th>
+                  <th>Mã SP</th>
+                  <th>Sản phẩm</th>
+                  <th>Tổng tồn</th>
+                  <th>Định mức</th>
+                  <th>Đơn vị</th>
+                  <th>Loại kho</th>
+                  <th>HSD gần nhất</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredInventory.length > 0 ? (
-                  filteredInventory.map((item) => {
-                    const status = getStockStatus(item)
-                    const expiry = getNearestExpiry(item)
-                    const expiryStatus = getExpiryStatus(expiry.daysLeft)
-                    
-                    return (
-                      <tr key={item.id}>
-                        <td>
-                          <span className="product-code">{item.productCode}</span>
-                        </td>
-                        <td>
-                          <span className="product-name">{item.productName}</span>
-                        </td>
-                        <td>
-                          <span className={`stock-value ${item.currentStock <= item.minStockLevel ? 'stock-low' : ''} ${item.currentStock === 0 ? 'stock-out' : ''}`}>
-                            {item.currentStock.toLocaleString('vi-VN')}
+                {filteredInventory.map(item => {
+                  // Lấy ngày hết hạn gần nhất
+                  const nearestExpiry = item.batches.length > 0
+                    ? item.batches.reduce((nearest, batch) => {
+                        const batchDate = new Date(batch.expiryDate)
+                        const nearestDate = new Date(nearest.expiryDate)
+                        return batchDate < nearestDate ? batch : nearest
+                      }).expiryDate
+                    : 'N/A'
+
+                  return (
+                    <React.Fragment key={item.id}>
+                      <tr className="inventory-row">
+                        <td className="product-code">{item.productCode}</td>
+                        <td className="product-name">{item.productName}</td>
+                        <td className="total-stock">
+                          <span className={`quantity-badge ${getStatusColor(item.currentStock, item.minStockLevel)}`}>
+                            {item.currentStock}
                           </span>
                         </td>
-                        <td>{item.minStockLevel.toLocaleString('vi-VN')}</td>
-                        <td>{item.unit}</td>
-                        <td>
-                          {expiry.date ? (
-                            <div className={`expiry-info ${expiryStatus.class}`}>
-                              <Calendar size={14} />
-                              <span className="expiry-date">{expiry.date}</span>
-                              <span className="expiry-days">({expiryStatus.label})</span>
-                            </div>
-                          ) : (
-                            <span className="no-expiry">-</span>
+                        <td className="threshold-stock">{item.minStockLevel}</td>
+                        <td className="unit">{item.unit}</td>
+                        <td className="warehouse-type">{item.warehouseType}</td>
+                        <td className="expiry-date">{nearestExpiry}</td>
+                        <td className="status-cell">
+                          {item.currentStock === 0 && (
+                            <span className="status-badge status--critical">Hết hàng</span>
+                          )}
+                          {item.currentStock > 0 && item.currentStock <= item.minStockLevel && (
+                            <span className="status-badge status--warning">Sắp hết hàng</span>
+                          )}
+                          {item.currentStock > item.minStockLevel && (
+                            <span className="status-badge status--normal">Còn hàng</span>
                           )}
                         </td>
-                        <td>
-                          <span className={`status-badge ${status.class}`}>
-                            {status.icon}
-                            {status.label}
-                          </span>
-                        </td>
-                        <td>
+                        <td className="action-cell">
                           <button 
-                            className="btn-view-detail"
-                            onClick={() => handleViewDetail(item)}
-                            title="Xem chi tiết lô hàng"
+                            className="btn-view"
+                            onClick={() => openProductDetail(item)}
+                            title="Xem chi tiết"
                           >
                             <Eye size={18} />
                           </button>
                         </td>
                       </tr>
-                    )
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan={8} className="no-data">
-                      <Package size={48} />
-                      <p>Không tìm thấy sản phẩm nào</p>
-                    </td>
-                  </tr>
-                )}
+
+                      {/* Batch Details */}
+                      {expandedBatches[item.id] && (
+                        <tr className="batch-details-row">
+                          <td colSpan={9}>
+                            <div className="batch-details">
+                              <h4 className="batch-title">Chi tiết lô hàng:</h4>
+                              {item.batches.length > 0 ? (
+                                <div className="batch-list">
+                                  {item.batches.map(batch => (
+                                    <div key={batch.id} className="batch-item">
+                                      <div className="batch-row">
+                                        <span className="batch-label">Lô:</span>
+                                        <span className="batch-value">{batch.batchNumber}</span>
+                                      </div>
+                                      <div className="batch-row">
+                                        <span className="batch-label">Số lượng nhập:</span>
+                                        <span className="batch-value">{batch.quantity}</span>
+                                      </div>
+                                      <div className="batch-row">
+                                        <span className="batch-label">Còn lại:</span>
+                                        <span className="batch-value">{batch.remainingQuantity}</span>
+                                      </div>
+                                      <div className="batch-row">
+                                        <span className="batch-label">Hạn sử dụng:</span>
+                                        <span className="batch-value">{batch.expiryDate}</span>
+                                      </div>
+                                      <div className="batch-row">
+                                        <span className="batch-label">Ngày nhập:</span>
+                                        <span className="batch-value">{batch.importDate}</span>
+                                      </div>
+                                      <div className="batch-row">
+                                        <span className="batch-label">Phiếu nhập:</span>
+                                        <span className="batch-value">{batch.importReceiptCode}</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="no-batch">Không có lô hàng nào</div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  )
+                })}
               </tbody>
             </table>
           </div>
-        </div>
-      )}
 
-      {activeTab === 'alerts' && (
-        <div className="inventory-overview__alerts">
-          {alerts.length > 0 ? (
-            <div className="alerts-list">
-              {alerts.map((alert) => (
-                <div key={alert.id} className={`alert-item alert-${alert.severity}`}>
-                  <div className="alert-icon">
-                    {alert.alertType === 'out_of_stock' && <XCircle size={24} />}
-                    {alert.alertType === 'low_stock' && <TrendingDown size={24} />}
-                    {alert.alertType === 'expiring_soon' && <Clock size={24} />}
-                    {alert.alertType === 'expired' && <AlertTriangle size={24} />}
-                  </div>
-                  <div className="alert-content">
-                    <div className="alert-header">
-                      <span className="alert-product-code">{alert.productCode}</span>
-                      <span className={`alert-type-badge ${alert.alertType}`}>
-                        {alert.alertType === 'out_of_stock' && 'Hết hàng'}
-                        {alert.alertType === 'low_stock' && 'Sắp hết'}
-                        {alert.alertType === 'expiring_soon' && 'Sắp hết hạn'}
-                        {alert.alertType === 'expired' && 'Đã hết hạn'}
-                      </span>
-                    </div>
-                    <p className="alert-message">{alert.message}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="no-alerts">
-              <CheckCircle2 size={64} />
-              <h3>Không có cảnh báo</h3>
-              <p>Kho hàng đang hoạt động bình thường.</p>
+          {filteredInventory.length === 0 && (
+            <div className="empty-state">
+              <Package size={48} />
+              <h3>Không tìm thấy sản phẩm</h3>
+              <p>Vui lòng thử lại với tiêu chí tìm kiếm khác</p>
             </div>
           )}
         </div>
       )}
 
-      {/* Modal Chi tiết Lô hàng */}
+      {/* Alerts Tab */}
+      {activeTab === 'alerts' && (
+        <div className="inventory-overview__content">
+          <div className="alerts-container">
+            {alerts.length > 0 ? (
+              <div className="alerts-list">
+                {alerts.map(alert => (
+                  <div key={alert.id} className={`alert-item alert-${alert.severity}`}>
+                    <div className="alert-icon">
+                      {alert.severity === 'critical' ? (
+                        <AlertTriangle size={20} />
+                      ) : (
+                        <AlertTriangle size={20} />
+                      )}
+                    </div>
+                    <div className="alert-content">
+                      <div className="alert-title">{alert.productCode} - {alert.productName}</div>
+                      <div className="alert-message">{alert.message}</div>
+                      <div className="alert-time">
+                        <Clock size={14} />
+                        {new Date(alert.createdAt).toLocaleTimeString('vi-VN')}
+                      </div>
+                    </div>
+                    <div className={`alert-badge alert-badge-${alert.severity}`}>
+                      {alert.alertType === 'out_of_stock' && 'Hết hàng'}
+                      {alert.alertType === 'low_stock' && 'Sắp hết'}
+                      {alert.alertType === 'expired' && 'Hết hạn'}
+                      {alert.alertType === 'expiring_soon' && 'Sắp hết hạn'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <CheckCircle2 size={48} />
+                <h3>Không có cảnh báo nào</h3>
+                <p>Tất cả sản phẩm đều ở trạng thái bình thường</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Detail Modal */}
       {showDetailModal && selectedProduct && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content modal-batch-detail" onClick={e => e.stopPropagation()}>
-            <div className="modal-header-batch">
-              <h2>Chi tiết lô - {selectedProduct.productName}</h2>
-              <button className="modal-close-batch" onClick={handleCloseModal}>
-                <X size={20} />
+        <div className="inventory-overview__modal-overlay" onClick={() => setShowDetailModal(false)}>
+          <div className="inventory-overview__modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="inventory-overview__modal-header">
+              <h2 className="inventory-overview__modal-title">Chi tiết lô - {selectedProduct.productName}</h2>
+              <button 
+                className="inventory-overview__modal-close-btn"
+                onClick={() => setShowDetailModal(false)}
+              >
+                ×
               </button>
             </div>
-            
-            <div className="modal-body-batch">
-              {selectedProduct.batches && selectedProduct.batches.length > 0 ? (
-                <table className="batch-table">
+
+            <div className="inventory-overview__modal-body">
+              {selectedProduct.batches.length > 0 ? (
+                <table className="inventory-overview__modal-batch-table">
                   <thead>
                     <tr>
                       <th>MÃ LÔ</th>
                       <th>NGÀY SX</th>
                       <th>HSD</th>
                       <th>SL</th>
+                      <th>CÒN LẠI</th>
                       <th>TRẠNG THÁI</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedProduct.batches.map((batch) => {
-                      const today = new Date()
+                    {selectedProduct.batches.map(batch => {
                       const expiryDate = new Date(batch.expiryDate)
-                      const daysLeft = Math.ceil((expiryDate.getTime() - today.getTime()) / (24 * 60 * 60 * 1000))
+                      const today = new Date()
+                      const daysUntilExpiry = Math.floor((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+                      let batchStatus = 'Bình thường'
+                      let statusClass = 'normal'
                       
-                      let statusClass = 'status-normal'
-                      let statusLabel = 'Bình thường'
-                      if (daysLeft <= 0) {
-                        statusClass = 'status-expired'
-                        statusLabel = 'Hết hạn'
-                      } else if (daysLeft <= 30) {
-                        statusClass = 'status-warning'
-                        statusLabel = 'Sắp hết hạn'
+                      if (batch.remainingQuantity === 0) {
+                        batchStatus = 'Hết hàng'
+                        statusClass = 'out'
+                      } else if (daysUntilExpiry <= 0) {
+                        batchStatus = 'Đã hết hạn'
+                        statusClass = 'expired'
+                      } else if (daysUntilExpiry <= 30) {
+                        batchStatus = 'Sắp hết hạn'
+                        statusClass = 'expiring'
                       }
                       
                       return (
                         <tr key={batch.id}>
                           <td>
-                            <span className="batch-code">{batch.batchNumber}</span>
+                            <span className="inventory-overview__batch-code">{batch.batchNumber}</span>
                           </td>
-                          <td>{new Date(batch.importDate).toLocaleDateString('vi-VN')}</td>
-                          <td>{new Date(batch.expiryDate).toLocaleDateString('vi-VN')}</td>
+                          <td>{batch.importDate}</td>
+                          <td>{batch.expiryDate}</td>
                           <td>
-                            <span className="batch-qty">{batch.remainingQuantity.toLocaleString('vi-VN')}</span>
+                            <span className="inventory-overview__batch-quantity">{batch.quantity}</span>
                           </td>
                           <td>
-                            <span className={`batch-status ${statusClass}`}>
-                              {statusLabel}
+                            <span className="inventory-overview__batch-quantity">{batch.remainingQuantity}</span>
+                          </td>
+                          <td>
+                            <span className={`inventory-overview__batch-status inventory-overview__batch-status--${statusClass}`}>
+                              {batchStatus}
                             </span>
                           </td>
                         </tr>
@@ -683,15 +730,134 @@ const InventoryOverview = () => {
                   </tbody>
                 </table>
               ) : (
-                <div className="no-batches">
-                  <Package size={48} />
-                  <p>Chưa có lô hàng nào</p>
-                </div>
+                <div className="inventory-overview__no-batch-modal">Không có lô hàng nào</div>
               )}
             </div>
 
-            <div className="modal-footer-batch">
-              <button className="btn-close-modal" onClick={handleCloseModal}>
+            <div className="inventory-overview__modal-footer">
+              <button 
+                className="inventory-overview__modal-btn-close"
+                onClick={() => setShowDetailModal(false)}
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Approval Center Modal */}
+      {showApproveCenter && (
+        <div className="inventory-overview__modal-overlay" onClick={() => setShowApproveCenter(false)}>
+          <div className="inventory-overview__modal-content approval-modal-large" onClick={(e) => e.stopPropagation()}>
+            <div className="inventory-overview__modal-header">
+              <h2 className="inventory-overview__modal-title">Trung tâm duyệt nhập hàng</h2>
+              <button 
+                className="inventory-overview__modal-close-btn"
+                onClick={() => setShowApproveCenter(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="inventory-overview__modal-body">
+              {receiptGroups.length > 0 ? (
+                <table className="approval-center__table">
+                  <thead>
+                    <tr>
+                      <th style={{width: '50px'}}></th>
+                      <th>MÃ PHIẾU NHẬP</th>
+                      <th>NHÀ SX</th>
+                      <th>NGÀY LẬP PHIẾU</th>
+                      <th>GIÁ TỔNG</th>
+                      <th>THAO TÁC</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {receiptGroups.map(receipt => (
+                      <React.Fragment key={receipt.receiptCode}>
+                        <tr className="receipt-row">
+                          <td>
+                            <button 
+                              className="btn-expand-receipt"
+                              onClick={() => setExpandedReceipts(prev => ({...prev, [receipt.receiptCode]: !prev[receipt.receiptCode]}))}
+                            >
+                              {expandedReceipts[receipt.receiptCode] ? '▼' : '▶'}
+                            </button>
+                          </td>
+                          <td>
+                            <span className="receipt-code">{receipt.receiptCode}</span>
+                          </td>
+                          <td>{receipt.supplier}</td>
+                          <td>{receipt.createdDate}</td>
+                          <td>
+                            <span className="receipt-total">{receipt.totalAmount.toLocaleString('vi-VN')} đ</span>
+                          </td>
+                          <td className="receipt-actions">
+                            {receiptApprovalMap[receipt.receiptCode] ? (
+                              <span className={`approval-status approval-status--${receiptApprovalMap[receipt.receiptCode]}`}>
+                                {receiptApprovalMap[receipt.receiptCode] === 'approved' ? 'Đã duyệt' : 'Từ chối'}
+                              </span>
+                            ) : (
+                              <>
+                                <button 
+                                  className="inventory-overview__modal-btn-reject"
+                                  onClick={() => setReceiptApprovalMap(prev => ({...prev, [receipt.receiptCode]: 'rejected'}))}
+                                >
+                                  Từ chối
+                                </button>
+                                <button 
+                                  className="inventory-overview__modal-btn-approve"
+                                  onClick={() => setReceiptApprovalMap(prev => ({...prev, [receipt.receiptCode]: 'approved'}))}
+                                >
+                                  Duyệt nhập
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                        {expandedReceipts[receipt.receiptCode] && (
+                          <tr className="receipt-detail-row">
+                            <td colSpan={6}>
+                              <div className="receipt-detail-container">
+                                <table className="receipt-detail-table">
+                                  <thead>
+                                    <tr>
+                                      <th>SẢN PHẨM</th>
+                                      <th>ĐơN VỊ</th>
+                                      <th>SỐ LƯỢNG</th>
+                                      <th>ĐƠN GIÁ</th>
+                                      <th>THÀNH TIỀN</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {receipt.products.map((prod, idx) => (
+                                      <tr key={idx}>
+                                        <td>{prod.productName}</td>
+                                        <td>{prod.unit}</td>
+                                        <td><span className="product-quantity">{prod.quantity}</span></td>
+                                        <td>{prod.costPrice.toLocaleString('vi-VN')} VND</td>
+                                        <td><span className="product-total">{(prod.quantity * prod.costPrice).toLocaleString('vi-VN')} VND</span></td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="inventory-overview__no-batch-modal">Không có phiếu nhập nào để duyệt</div>
+              )}
+            </div>
+            <div className="inventory-overview__modal-footer">
+              <button 
+                className="inventory-overview__modal-btn-close"
+                onClick={() => setShowApproveCenter(false)}
+              >
                 Đóng
               </button>
             </div>

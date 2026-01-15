@@ -15,10 +15,10 @@ import AgencyManagement from "./pages/AgencyManagement/AgencyManagement.tsx";
 import AddAgency from "./pages/AgencyManagement/AddAgency.tsx";
 import ViewAgency from "./pages/AgencyManagement/ViewAgency.tsx";
 import EditAgency from "./pages/AgencyManagement/EditAgency.tsx";
-import ProductManagement from './pages/ProductManagement/ProductManagement.tsx'
-import AddProduct from './pages/ProductManagement/AddProduct.tsx'
-import ViewProduct from './pages/ProductManagement/ViewProduct.tsx'
-import EditProduct from './pages/ProductManagement/EditProduct.tsx'
+import ProductSupplierManagement from './pages/ProductSupplierManagement/ProductSupplierManagement.tsx'
+import AddSupplierForProduct from './pages/ProductSupplierManagement/AddSupplier.tsx'
+import ViewSupplierForProduct from './pages/ProductSupplierManagement/ViewSupplier.tsx'
+import EditSupplierForProduct from './pages/ProductSupplierManagement/EditSupplier.tsx'
 import Regulations from "./pages/Regulations/Regulations.tsx";
 import ViewRegulation from "./pages/Regulations/ViewRegulation.tsx";
 import EditRegulation from "./pages/Regulations/EditRegulation.tsx";
@@ -27,10 +27,6 @@ import AddDriver from './pages/DeliveryManagement/AddDriver.tsx';
 import ViewDriver from './pages/DeliveryManagement/ViewDriver.tsx';
 import EditDriver from './pages/DeliveryManagement/EditDriver.tsx';
 import InventoryOverview from './pages/InventoryOverview/InventoryOverview.tsx'
-import SupplierManagement from "./pages/SupplierManagement/SupplierManagement.tsx";
-import AddSupplier from "./pages/SupplierManagement/AddSupplier.tsx";
-import ViewSupplier from "./pages/SupplierManagement/ViewSupplier.tsx";
-import EditSupplier from "./pages/SupplierManagement/EditSupplier.tsx";
 import MainLayout from "./components/layout/MainLayout.tsx";
 import NotFound from "./routes/NotFound/NotFound.tsx";
 
@@ -148,10 +144,10 @@ function App() {
             </MainLayout>
           }
         />
-        <Route path="/product-management" element={<MainLayout><ProductManagement /></MainLayout>} />
-        <Route path="/add-product" element={<MainLayout><AddProduct /></MainLayout>} />
-        <Route path="/view-product/:id" element={<MainLayout><ViewProduct /></MainLayout>} />
-        <Route path="/edit-product/:id" element={<MainLayout><EditProduct /></MainLayout>} />
+        <Route path="/product-supplier-management" element={<MainLayout><ProductSupplierManagement /></MainLayout>} />
+        <Route path="/add-supplier-product" element={<MainLayout><AddSupplierForProduct /></MainLayout>} />
+        <Route path="/product-supplier/:id/view" element={<MainLayout><ViewSupplierForProduct /></MainLayout>} />
+        <Route path="/product-supplier/:id/edit" element={<MainLayout><EditSupplierForProduct /></MainLayout>} />
         <Route
           path="/regulations"
           element={
@@ -173,38 +169,6 @@ function App() {
           element={
             <MainLayout>
               <EditRegulation />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/supplier-management"
-          element={
-            <MainLayout>
-              <SupplierManagement />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/add-supplier"
-          element={
-            <MainLayout>
-              <AddSupplier />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/view-supplier/:id"
-          element={
-            <MainLayout>
-              <ViewSupplier />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/edit-supplier/:id"
-          element={
-            <MainLayout>
-              <EditSupplier />
             </MainLayout>
           }
         />

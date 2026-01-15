@@ -1,4 +1,4 @@
-import { Building2, Eye, Edit, Trash2, Search, TrendingUp, CreditCard, Filter, ArrowUpDown, ChevronDown, X } from 'lucide-react'
+import { Building2, Eye, Edit, Trash2, Search, TrendingUp, CreditCard, Filter, ArrowUpDown, ChevronDown, X, Users } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { toast } from 'react-toastify'
@@ -155,6 +155,8 @@ const AgencyManagement = () => {
 
   // Statistics calculations
   const totalAgencies = agencies.length
+  const level1Agencies = agencies.filter(a => a.level === 1).length
+  const level2Agencies = agencies.filter(a => a.level === 2).length
   const totalSales = agencies.reduce((sum, a) => sum + a.totalSales, 0)
   const totalDebt = agencies.reduce((sum, a) => sum + a.debt, 0)
 
@@ -293,9 +295,9 @@ const AgencyManagement = () => {
             <div className="stats-label">Đại lý cấp 1</div>
             <div className="stats-value">{level1Agencies}</div>
           </div>
-          <div className="stats-icon">
-            <Crown size={44} strokeWidth={2.5} />
-          </div>
+              <div className="stats-icon">
+              <TrendingUp size={44} strokeWidth={2.5} />
+              </div>
         </div>
 
         <div className="stats-card gradient-orange">
@@ -304,7 +306,7 @@ const AgencyManagement = () => {
             <div className="stats-value">{level2Agencies}</div>
           </div>
           <div className="stats-icon">
-            <Award size={44} strokeWidth={2.5} />
+            <Users size={44} strokeWidth={2.5} />
           </div>
         </div>
 
@@ -424,7 +426,6 @@ const AgencyManagement = () => {
               <tr>
                 <th>MÃ ĐẠI LÝ</th>
                 <th>TÊN ĐẠI LÝ</th>
-                <th>LOẠI</th>
                 <th>ĐỊA CHỈ</th>
                 <th>SỐ ĐIỆN THOẠI</th>
                 <th>CẤP ĐẠI LÝ</th>

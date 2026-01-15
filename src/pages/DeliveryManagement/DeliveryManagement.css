@@ -283,12 +283,12 @@
 
 .delivery-management-page .action-buttons {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .delivery-management-page .btn-icon {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -297,36 +297,43 @@
   justify-content: center;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  padding: 0;
+}
+
+.delivery-management-page .btn-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 .delivery-management-page .btn-icon.btn-view {
-  background: #eff6ff;
-  color: #3b82f6;
+  background: #f0f9ff;
+  color: #0369a1;
 }
 
 .delivery-management-page .btn-icon.btn-view:hover {
-  background: #3b82f6;
-  color: white;
+  background: #e0f2fe;
+  transform: scale(1.05);
 }
 
 .delivery-management-page .btn-icon.btn-edit {
   background: #fef3c7;
-  color: #d97706;
+  color: #92400e;
 }
 
 .delivery-management-page .btn-icon.btn-edit:hover {
-  background: #f59e0b;
-  color: white;
+  background: #fde68a;
+  transform: scale(1.05);
 }
 
 .delivery-management-page .btn-icon.btn-delete {
   background: #fee2e2;
-  color: #dc2626;
+  color: #991b1b;
 }
 
 .delivery-management-page .btn-icon.btn-delete:hover {
-  background: #dc2626;
-  color: white;
+  background: #fecaca;
+  transform: scale(1.05);
 }
 
 .delivery-management-page .modal-overlay {

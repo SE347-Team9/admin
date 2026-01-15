@@ -48,16 +48,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       path: '/agency-management'
     },
     {
-      id: 'product',
+      id: 'product-supplier',
       icon: Boxes,
-      label: 'Quản lý sản phẩm',
-      path: '/product-management'
-    },
-    {
-      id: 'supplier',
-      icon: Package,
-      label: 'Quản lý NCC',
-      path: '/supplier-management'
+      label: 'Quản lý SP & NCC',
+      path: '/product-supplier-management'
     },
     {
       id: 'inventory',
