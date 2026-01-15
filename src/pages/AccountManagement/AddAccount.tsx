@@ -1,4 +1,4 @@
-import { UserPlus, Save, X } from 'lucide-react'
+import { UserPlus, Save, X, Building2, MapPin, CreditCard } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
@@ -15,10 +15,16 @@ const AddAccount = () => {
     email: '',
     phone: '',
     role: 'staff',
-    status: 'active'
+    status: 'active',
+    // Agency specific fields
+    agencyType: '1',
+    agencyName: '',
+    agencyOwner: '',
+    agencyAddress: '',
+    debtLimit: ''
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -37,6 +43,22 @@ const AddAccount = () => {
     if (formData.password.length < 6) {
       toast.error('Mật khẩu phải có ít nhất 6 ký tự!')
       return
+    }
+
+    // Validation for agency role
+    if (formData.role === 'agency') {
+      if (!formData.agencyName.trim()) {
+        toast.error('Vui lòng nhập tên đại lý!')
+        return
+      }
+      if (!formData.agencyOwner.trim()) {
+        toast.error('Vui lòng nhập tên chủ đại lý!')
+        return
+      }
+      if (!formData.agencyAddress.trim()) {
+        toast.error('Vui lòng nhập địa chỉ đại lý!')
+        return
+      }
     }
 
     // TODO: Call API to create account
@@ -176,11 +198,93 @@ const AddAccount = () => {
                 >
                   <option value="active">Hoạt động</option>
                   <option value="inactive">Ngừng hoạt động</option>
-                  <option value="pending">Chờ duyệt</option>
                 </select>
               </div>
             </div>
           </div>
+
+          {/* Agency Information Section - Only show when role is agency */}
+          {formData.role === 'agency' && (
+            <div className="form-section form-section-agency">
+              <h3 className="section-title">
+                <Building2 size={20} />
+                Thông tin đại lý
+              </h3>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label htmlFor="agencyType">Loại đại lý <span className="required">*</span></label>
+                  <select
+                    id="agencyType"
+                    name="agencyType"
+                    value={formData.agencyType}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="1">Đại lý cấp 1</option>
+                    <option value="2">Đại lý cấp 2</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="agencyName">Tên đại lý <span className="required">*</span></label>
+                  <input
+                    type="text"
+                    id="agencyName"
+                    name="agencyName"
+                    value={formData.agencyName}
+                    onChange={handleChange}
+                    placeholder="Nhập tên đại lý"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="agencyOwner">Chủ đại lý <span className="required">*</span></label>
+                  <input
+                    type="text"
+                    id="agencyOwner"
+                    name="agencyOwner"
+                    value={formData.agencyOwner}
+                    onChange={handleChange}
+                    placeholder="Nhập tên chủ đại lý"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="debtLimit">
+                    <CreditCard size={16} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+                    Hạn mức nợ (VNĐ)
+                  </label>
+                  <input
+                    type="number"
+                    id="debtLimit"
+                    name="debtLimit"
+                    value={formData.debtLimit}
+                    onChange={handleChange}
+                    placeholder="VD: 10000000"
+                    min="0"
+                  />
+                </div>
+
+                <div className="form-group form-group-full">
+                  <label htmlFor="agencyAddress">
+                    <MapPin size={16} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+                    Địa chỉ <span className="required">*</span>
+                  </label>
+                  <textarea
+                    id="agencyAddress"
+                    name="agencyAddress"
+                    value={formData.agencyAddress}
+                    onChange={handleChange}
+                    placeholder="Nhập địa chỉ đại lý"
+                    rows={2}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="form-actions">
             <button type="button" className="btn-cancel" onClick={handleCancel}>

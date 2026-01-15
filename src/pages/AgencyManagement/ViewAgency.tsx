@@ -6,6 +6,14 @@ const ViewAgency = () => {
   const navigate = useNavigate()
   useParams()
 
+  // Helper function to format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(amount).replace('₫', 'đ')
+  }
+
   // Mock data - should fetch from API based on id
   const agency = {
     id: '1',
@@ -14,6 +22,11 @@ const ViewAgency = () => {
     address: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
     phone: '02232434242',
     email: 'nghiaagency@gmail.com',
+    level: 1,
+    levelLabel: 'Cấp 1',
+    totalSales: 150000000,
+    debt: 25000000,
+    debtLimit: 50000000,
     status: 'active',
     statusLabel: 'Hoạt động',
     createdAt: '01/01/2024',
@@ -72,6 +85,26 @@ const ViewAgency = () => {
               <div className="view-agency__info-item">
                 <span className="view-agency__info-label">Email:</span>
                 <span className="view-agency__info-value">{agency.email}</span>
+              </div>
+
+              <div className="view-agency__info-item">
+                <span className="view-agency__info-label">Cấp đại lý:</span>
+                <span className={`view-agency__level-badge level-${agency.level}`}>
+                  {agency.levelLabel}
+                </span>
+              </div>
+
+              <div className="view-agency__info-item">
+                <span className="view-agency__info-label">Doanh số nhập hàng:</span>
+                <span className="view-agency__info-value view-agency__sales">{formatCurrency(agency.totalSales)}</span>
+              </div>
+
+              <div className="view-agency__info-item">
+                <span className="view-agency__info-label">Công nợ:</span>
+                <div className="view-agency__debt-info">
+                  <span className="view-agency__debt-amount">{formatCurrency(agency.debt)}</span>
+                  <span className="view-agency__debt-limit">/ {formatCurrency(agency.debtLimit)}</span>
+                </div>
               </div>
 
               <div className="view-agency__info-item">

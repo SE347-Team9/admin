@@ -1,25 +1,90 @@
-import { Users, ArrowLeft, Edit } from 'lucide-react'
+import { Users, ArrowLeft, Edit, Building2, MapPin, CreditCard } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './ViewAccount.css'
+
+interface AccountData {
+  id: string
+  code: string
+  username: string
+  fullName: string
+  email: string
+  phone: string
+  role: 'admin' | 'staff' | 'agency'
+  roleLabel: string
+  status: 'active' | 'inactive'
+  statusLabel: string
+  createdAt: string
+  updatedAt: string
+  // Agency specific fields
+  agencyType?: string
+  agencyTypeLabel?: string
+  agencyName?: string
+  agencyOwner?: string
+  agencyAddress?: string
+  debtLimit?: number
+}
 
 const ViewAccount = () => {
   const navigate = useNavigate()
   const { id } = useParams()
 
   // Mock data - should fetch from API based on id
-  const account = {
-    id: id || '1',
-    code: 'ADM001',
-    username: 'admin01',
-    fullName: 'Nguyễn Văn A',
-    email: 'admin01@example.com',
-    phone: '0123456789',
-    role: 'admin',
-    roleLabel: 'Quản trị viên',
-    status: 'active',
-    statusLabel: 'Hoạt động',
-    createdAt: '01/01/2024',
-    updatedAt: '20/10/2025'
+  // Example data for different roles
+  const mockAccounts: Record<string, AccountData> = {
+    '1': {
+      id: '1',
+      code: 'ADM001',
+      username: 'admin01',
+      fullName: 'Nguyễn Văn A',
+      email: 'admin01@example.com',
+      phone: '0123456789',
+      role: 'admin',
+      roleLabel: 'Quản trị viên',
+      status: 'active',
+      statusLabel: 'Hoạt động',
+      createdAt: '01/01/2024',
+      updatedAt: '20/10/2025'
+    },
+    '2': {
+      id: '2',
+      code: 'DL001',
+      username: 'agency01',
+      fullName: 'Trần Thị B',
+      email: 'agency01@example.com',
+      phone: '0987654321',
+      role: 'agency',
+      roleLabel: 'Đại lý',
+      status: 'active',
+      statusLabel: 'Hoạt động',
+      createdAt: '15/02/2024',
+      updatedAt: '25/12/2025',
+      agencyType: '1',
+      agencyTypeLabel: 'Đại lý cấp 1',
+      agencyName: 'Đại lý Minh Phát',
+      agencyOwner: 'Trần Thị B',
+      agencyAddress: '123 Nguyễn Văn Linh, Quận 7, TP.HCM',
+      debtLimit: 50000000
+    },
+    '3': {
+      id: '3',
+      code: 'NV001',
+      username: 'staff01',
+      fullName: 'Lê Văn C',
+      email: 'staff01@example.com',
+      phone: '0369852147',
+      role: 'staff',
+      roleLabel: 'Nhân viên',
+      status: 'active',
+      statusLabel: 'Hoạt động',
+      createdAt: '20/03/2024',
+      updatedAt: '10/11/2025'
+    }
+  }
+
+  const account = mockAccounts[id || '1'] || mockAccounts['1']
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
   }
 
   const handleBack = () => {
@@ -84,6 +149,13 @@ const ViewAccount = () => {
               </div>
 
               <div className="view-account__info-item">
+                <span className="view-account__info-label">Trạng thái:</span>
+                <span className={`view-account__status ${account.status}`}>
+                  {account.statusLabel}
+                </span>
+              </div>
+
+              <div className="view-account__info-item">
                 <span className="view-account__info-label">Ngày tạo:</span>
                 <span className="view-account__info-value">{account.createdAt}</span>
               </div>
@@ -92,16 +164,57 @@ const ViewAccount = () => {
                 <span className="view-account__info-label">Cập nhật lần cuối:</span>
                 <span className="view-account__info-value">{account.updatedAt}</span>
               </div>
+            </div>
+          </div>
 
-              <div className="view-account__info-item">
-                <span className="view-account__info-label">Trạng thái:</span>
-                <span className={`view-account__status ${account.status}`}>
-                  {account.statusLabel}
-                </span>
+          {/* Agency Information Section - Only show for agency role */}
+          {account.role === 'agency' && (
+            <div className="view-account__card view-account__card--agency">
+              <h2 className="view-account__card-title view-account__card-title--agency">
+                <Building2 size={22} />
+                Thông tin đại lý
+              </h2>
+              <div className="view-account__info-grid">
+                <div className="view-account__info-item">
+                  <span className="view-account__info-label">Loại đại lý:</span>
+                  <span className="view-account__info-value view-account__agency-type">
+                    {account.agencyTypeLabel}
+                  </span>
+                </div>
+
+                <div className="view-account__info-item">
+                  <span className="view-account__info-label">Tên đại lý:</span>
+                  <span className="view-account__info-value">{account.agencyName}</span>
+                </div>
+
+                <div className="view-account__info-item">
+                  <span className="view-account__info-label">Chủ đại lý:</span>
+                  <span className="view-account__info-value">{account.agencyOwner}</span>
+                </div>
+
+                <div className="view-account__info-item">
+                  <span className="view-account__info-label">
+                    <CreditCard size={16} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+                    Hạn mức nợ:
+                  </span>
+                  <span className="view-account__info-value view-account__debt-limit">
+                    {account.debtLimit ? formatCurrency(account.debtLimit) : 'Chưa thiết lập'}
+                  </span>
+                </div>
+
+                <div className="view-account__info-item view-account__info-item--full">
+                  <span className="view-account__info-label">
+                    <MapPin size={16} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+                    Địa chỉ:
+                  </span>
+                  <span className="view-account__info-value">{account.agencyAddress}</span>
+                </div>
               </div>
             </div>
+          )}
 
-            {/* Footer Actions - Inside Card */}
+          {/* Footer Actions */}
+          <div className="view-account__card">
             <div className="view-account__footer">
               <button className="view-account__btn view-account__btn--secondary" onClick={handleBack}>
                 <ArrowLeft size={20} />

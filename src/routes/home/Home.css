@@ -92,8 +92,20 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+}
+
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stat-card {
@@ -136,6 +148,14 @@
 
 .stat-card.gradient-purple {
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.stat-card.gradient-cyan {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+}
+
+.stat-card.gradient-red {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .stat-content {
@@ -573,5 +593,139 @@
 
   .section-title p {
     font-size: 13px;
+  }
+}
+
+/* ============================================
+   CHARTS SECTION
+   ============================================ */
+.charts-section {
+  margin-bottom: 32px;
+  animation: fadeInUp 0.5s ease-out 0.15s backwards;
+}
+
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.charts-row:last-child {
+  margin-bottom: 0;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card.chart-small {
+  max-width: 100%;
+}
+
+.chart-card.chart-full-width {
+  grid-column: 1 / -1;
+  margin-bottom: 24px;
+}
+
+.chart-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 4px 0;
+}
+
+.chart-subtitle {
+  font-size: 13px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.chart-content {
+  width: 100%;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.custom-tooltip .tooltip-label {
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+  font-size: 13px;
+}
+
+.custom-tooltip p {
+  margin: 4px 0;
+  font-size: 12px;
+}
+
+/* Stat card description */
+.stat-description {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Stat change negative */
+.stat-change.negative {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Gradient Red for debt */
+.stat-card.gradient-red {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* Recharts customization */
+.recharts-legend-item-text {
+  font-size: 12px !important;
+  color: #4a5568 !important;
+}
+
+.recharts-cartesian-axis-tick-value {
+  font-size: 11px;
+  fill: #718096;
+}
+
+/* Responsive Charts */
+@media (max-width: 1200px) {
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .chart-card {
+    padding: 16px;
+  }
+
+  .chart-title {
+    font-size: 16px;
+  }
+
+  .chart-subtitle {
+    font-size: 12px;
   }
 }

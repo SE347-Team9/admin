@@ -43,10 +43,17 @@ const Regulations = () => {
     },
     {
       id: '4',
-      code: 'min_order_value',
-      value: 5000000,
-      description: 'Giá trị đơn hàng tối thiểu',
+      code: 'max_order_value',
+      value: 50000000,
+      description: 'Giá trị đơn hàng tối đa',
       lastUpdated: '15:45 28 thg 10, 2025'
+    },
+    {
+      id: '5',
+      code: 'single_supplier_per_import',
+      value: 1,
+      description: 'Một phiếu nhập chỉ chọn được 1 nhà sản xuất',
+      lastUpdated: '09:00 08 thg 1, 2026'
     }
   ])
 
@@ -119,7 +126,7 @@ const Regulations = () => {
           <thead>
             <tr>
               <th className="regulations__col-code">MÃ QUY ĐỊNH</th>
-              <th className="regulations__col-value">GIÁ TRỊ</th>
+              <th className="regulations__col-value">GIÁ TRỊ / GIỚI HẠN</th>
               <th className="regulations__col-description">MÔ TẢ</th>
               <th className="regulations__col-updated">CẬP NHẬT LẦN CUỐI</th>
               <th className="regulations__col-actions">THAO TÁC</th>

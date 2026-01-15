@@ -6,6 +6,9 @@ import {
   Building2,
   Users,
   Truck,
+  Boxes,
+  Package,
+  Warehouse,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -41,14 +44,26 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
     {
       id: "agency",
       icon: Building2,
-      label: "Quản lý đại lý",
-      path: "/agency-management",
+      label: 'Quản lý đại lý',
+      path: '/agency-management'
     },
     {
-      id: "supplier",
+      id: 'product-supplier',
+      icon: Boxes,
+      label: 'Quản lý SP & NCC',
+      path: '/product-supplier-management'
+    },
+    {
+      id: 'inventory',
+      icon: Warehouse,
+      label: 'Giám sát kho',
+      path: '/inventory-overview'
+    },
+    {
+      id: 'delivery',
       icon: Truck,
-      label: "Quản lý NCC",
-      path: "/supplier-management",
+      label: 'Quản lý giao hàng',
+      path: '/delivery-management'
     },
     {
       id: "account",

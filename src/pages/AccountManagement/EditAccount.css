@@ -282,3 +282,39 @@
     justify-content: center;
   }
 }
+
+/* Agency Section */
+.edit-account__section-agency {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #059669;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid #a7f3d0;
+  border-bottom: none;
+  margin-bottom: 24px;
+}
+
+.edit-account__section-agency svg {
+  flex-shrink: 0;
+}
+
+/* Textarea Style */
+.edit-account__textarea {
+  min-height: 80px;
+  resize: vertical;
+  padding-top: 14px;
+  line-height: 1.5;
+}
+
+/* Icon for textarea should align to top */
+.edit-account__form-group--full .edit-account__input-wrapper {
+  align-items: flex-start;
+}
+
+.edit-account__form-group--full .edit-account__input-icon {
+  top: 16px;
+  transform: none;
+}

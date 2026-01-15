@@ -23,7 +23,7 @@ const AddReport = () => {
   })
 
   const reportTypes = [
-    { value: 'revenue', label: 'Báo cáo doanh số' },
+    { value: 'revenue', label: 'Báo cáo phân phối' },
     { value: 'debt', label: 'Báo cáo công nợ' }
   ]
 

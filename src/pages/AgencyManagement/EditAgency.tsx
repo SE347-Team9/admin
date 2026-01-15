@@ -8,6 +8,11 @@ const EditAgency = () => {
   const navigate = useNavigate()
   useParams()
 
+  // Helper function to format currency for display
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN').format(amount)
+  }
+
   // Mock data - should fetch from API based on id
   const initialData = {
     code: 'DL001',
@@ -15,7 +20,13 @@ const EditAgency = () => {
     address: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
     phone: '02232434242',
     email: 'nghiaagency@gmail.com',
-    status: 'active'
+    level: '1',
+    totalSales: 150000000,
+    debt: 25000000,
+    debtLimit: 50000000,
+    status: 'active',
+    createdAt: '01/01/2024',
+    updatedAt: '20/10/2025'
   }
 
   const [formData, setFormData] = useState(initialData)
@@ -181,7 +192,88 @@ const EditAgency = () => {
             </div>
           </div>
 
-          {/* Section 2: Status */}
+          {/* Section 2: Agency Level & Finance */}
+          <div className="edit-agency__form-section">
+            <h3 className="edit-agency__section-title">Cấp đại lý & Tài chính</h3>
+
+            <div className="edit-agency__form-row">
+              <div className="edit-agency__form-group">
+                <label htmlFor="level">
+                  Cấp đại lý: <span className="edit-agency__required">*</span>
+                </label>
+                <select
+                  id="level"
+                  name="level"
+                  value={formData.level}
+                  onChange={handleInputChange}
+                  className="edit-agency__form-select"
+                >
+                  <option value="1">Cấp 1</option>
+                  <option value="2">Cấp 2</option>
+                </select>
+              </div>
+
+              <div className="edit-agency__form-group">
+                <label htmlFor="debtLimit">
+                  Hạn mức công nợ: <span className="edit-agency__required">*</span>
+                </label>
+                <input
+                  id="debtLimit"
+                  type="text"
+                  name="debtLimit"
+                  value={formatCurrency(formData.debtLimit)}
+                  className="edit-agency__form-input"
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '')
+                    setFormData(prev => ({ ...prev, debtLimit: Number(value) }))
+                  }}
+                  placeholder="Nhập hạn mức công nợ"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="edit-agency__form-row">
+              <div className="edit-agency__form-group">
+                <label>Doanh số nhập hàng:</label>
+                <div className="edit-agency__info-display edit-agency__info-display--sales">
+                  {formatCurrency(formData.totalSales)}đ
+                </div>
+                <small className="edit-agency__form-hint">Thông tin chỉ đọc</small>
+              </div>
+
+              <div className="edit-agency__form-group">
+                <label>Công nợ hiện tại:</label>
+                <div className="edit-agency__info-display edit-agency__info-display--debt">
+                  {formatCurrency(formData.debt)}đ / {formatCurrency(formData.debtLimit)}đ
+                </div>
+                <small className="edit-agency__form-hint">Thông tin chỉ đọc</small>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Dates */}
+          <div className="edit-agency__form-section">
+            <h3 className="edit-agency__section-title">Thời gian</h3>
+
+            <div className="edit-agency__form-row">
+              <div className="edit-agency__form-group">
+                <label>Ngày tạo:</label>
+                <div className="edit-agency__info-display">
+                  {formData.createdAt}
+                </div>
+              </div>
+
+              <div className="edit-agency__form-group">
+                <label>Cập nhật lần cuối:</label>
+                <div className="edit-agency__info-display">
+                  {formData.updatedAt}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 4: Status */}
           <div className="edit-agency__form-section">
             <h3 className="edit-agency__section-title">Trạng thái</h3>
 
@@ -197,8 +289,7 @@ const EditAgency = () => {
                 className="edit-agency__form-select"
               >
                 <option value="active">Hoạt động</option>
-                <option value="inactive">Không hoạt động</option>
-                <option value="pending">Chờ duyệt</option>
+                <option value="inactive">Ngừng hoạt động</option>
               </select>
             </div>
           </div>

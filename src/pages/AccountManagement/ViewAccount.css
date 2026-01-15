@@ -3,13 +3,14 @@
    ============================================ */
 .view-account-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 60px 20px;
+  background: #f8fafc;
+  padding: 0;
 }
 
 .view-account-container {
-  max-width: 1100px;
+  max-width: 900px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
 /* ============================================
@@ -18,13 +19,12 @@
 .view-account__header {
   background: white;
   border-radius: 16px;
-  padding: 32px 40px;
-  margin-bottom: 40px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
-  gap: 24px;
-  border: 1px solid #e0f0ff;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .view-account__header-icon {
@@ -68,24 +68,26 @@
    CONTENT CARD
    ============================================ */
 .view-account__content {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .view-account__card {
   background: white;
   border-radius: 16px;
-  padding: 40px;
-  border: 1px solid #e0f0ff;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+  padding: 28px 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .view-account__card-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #1a202c;
-  margin: 0 0 28px 0;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #e0f0ff;
+  margin: 0 0 24px 0;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #e2e8f0;
   letter-spacing: -0.3px;
 }
 
@@ -95,7 +97,7 @@
 .view-account__info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 28px 32px;
+  gap: 20px 40px;
 }
 
 .view-account__info-item {
@@ -161,6 +163,12 @@
   border: 1px solid #93c5fd;
 }
 
+.view-account__role.agency {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
 .view-account__status {
   display: inline-flex;
   align-items: center;
@@ -187,6 +195,39 @@
 }
 
 /* ============================================
+   AGENCY CARD SECTION
+   ============================================ */
+.view-account__card--agency {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1px solid #d1fae5;
+}
+
+.view-account__card-title--agency {
+  color: #059669;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom-color: #a7f3d0;
+}
+
+.view-account__agency-type {
+  display: inline-block;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  width: fit-content;
+}
+
+.view-account__debt-limit {
+  font-weight: 700;
+  color: #059669;
+  font-size: 18px;
+}
+
+/* ============================================
    FOOTER ACTIONS
    ============================================ */
 .view-account__footer {
@@ -194,9 +235,8 @@
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  padding: 28px 0 0 0;
-  margin-top: 28px;
-  border-top: 2px solid #f1f5f9;
+  padding: 0;
+  margin: 0;
 }
 
 .view-account__btn {

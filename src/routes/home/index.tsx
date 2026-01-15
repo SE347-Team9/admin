@@ -1,42 +1,135 @@
-import { Users, Building2, BookOpen, FileText, LayoutDashboard, TrendingUp, Activity, BarChart3 } from 'lucide-react'
+import { Users, Building2, BookOpen, FileText, LayoutDashboard, TrendingUp, AlertTriangle, Warehouse, Package } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  ComposedChart
+} from 'recharts'
 import './Home.css'
 
 const Home = () => {
   const navigate = useNavigate()
 
+  // Mock data cho biểu đồ - Giá trị phân phối vs Giá trị nhập kho (6 tháng gần nhất)
+  const revenueVsCostData = [
+    { month: 'T1', giaTriPhanPhoi: 850000000, giaTriNhapKho: 680000000 },
+    { month: 'T2', giaTriPhanPhoi: 920000000, giaTriNhapKho: 720000000 },
+    { month: 'T3', giaTriPhanPhoi: 780000000, giaTriNhapKho: 650000000 },
+    { month: 'T4', giaTriPhanPhoi: 1050000000, giaTriNhapKho: 820000000 },
+    { month: 'T5', giaTriPhanPhoi: 980000000, giaTriNhapKho: 780000000 },
+    { month: 'T6', giaTriPhanPhoi: 1150000000, giaTriNhapKho: 890000000 },
+  ]
+
+  // Mock data cho biểu đồ lợi nhuận theo tháng
+  const profitTrendData = [
+    { month: 'T1', loiNhuan: 170000000 },
+    { month: 'T2', loiNhuan: 200000000 },
+    { month: 'T3', loiNhuan: 130000000 },
+    { month: 'T4', loiNhuan: 230000000 },
+    { month: 'T5', loiNhuan: 200000000 },
+    { month: 'T6', loiNhuan: 260000000 },
+  ]
+
+  // Mock data cho biểu đồ tổng công nợ đại lý theo tháng
+  const debtByMonthData = [
+    { month: 'T1', congNo: 280000000 },
+    { month: 'T2', congNo: 320000000 },
+    { month: 'T3', congNo: 295000000 },
+    { month: 'T4', congNo: 350000000 },
+    { month: 'T5', congNo: 340000000 },
+    { month: 'T6', congNo: 325000000 },
+  ]
+
+  // Format số tiền VND
+  const formatCurrency = (value: number) => {
+    if (value >= 1000000000) {
+      return `${(value / 1000000000).toFixed(1)} tỷ`
+    }
+    if (value >= 1000000) {
+      return `${(value / 1000000).toFixed(0)} tr`
+    }
+    return value.toLocaleString('vi-VN')
+  }
+
+  // Custom tooltip cho biểu đồ
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p className="tooltip-label">{`Tháng ${label}`}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }}>
+              {`${entry.name}: ${entry.value.toLocaleString('vi-VN')} VNĐ`}
+            </p>
+          ))}
+        </div>
+      )
+    }
+    return null
+  }
+
   const statistics = [
     {
-      id: 'accounts',
-      label: 'Tổng tài khoản',
-      value: '248',
-      icon: Users,
-      gradient: 'blue',
-      change: '+12.5%'
-    },
-    {
       id: 'agencies',
-      label: 'Đại lý hoạt động',
+      label: 'Tổng đại lý',
       value: '156',
       icon: Building2,
+      gradient: 'blue',
+      change: '+8.2%',
+      description: 'đại lý đang hoạt động'
+    },
+    {
+      id: 'revenue',
+      label: 'Giá trị phân phối tháng',
+      value: '1.15 tỷ',
+      icon: TrendingUp,
       gradient: 'green',
-      change: '+8.2%'
+      change: '+17.3%',
+      description: 'so với tháng trước'
     },
     {
-      id: 'reports',
-      label: 'Báo cáo hôm nay',
-      value: '42',
-      icon: BarChart3,
-      gradient: 'orange',
-      change: '+5.4%'
+      id: 'inventory',
+      label: 'Giá trị tồn kho',
+      value: '2.8 tỷ',
+      icon: Warehouse,
+      gradient: 'cyan',
+      change: '+5.1%',
+      description: 'tổng giá trị hàng trong kho'
     },
     {
-      id: 'activity',
-      label: 'Hoạt động',
-      value: '98%',
-      icon: Activity,
+      id: 'lowstock',
+      label: 'Sản phẩm cần nhập',
+      value: '12',
+      icon: Package,
+      gradient: 'red',
+      change: '+3',
+      description: 'SP sắp hết/hết hàng'
+    },
+    {
+      id: 'profit',
+      label: 'Lợi nhuận tháng',
+      value: '260 tr',
+      icon: TrendingUp,
       gradient: 'purple',
-      change: '+2.1%'
+      change: '+30%',
+      description: 'so với tháng trước'
+    },
+    {
+      id: 'debt',
+      label: 'Tổng công nợ',
+      value: '325 tr',
+      icon: AlertTriangle,
+      gradient: 'orange',
+      change: '-3.2%',
+      description: 'giảm so với tháng trước'
     }
   ]
 
@@ -85,7 +178,7 @@ const Home = () => {
           </div>
           <div className="header-text">
             <h1 className="page-title">Bảng điều khiển quản trị</h1>
-            <p className="page-subtitle">Quản lý toàn bộ hệ thống từ một nơi</p>
+            <p className="page-subtitle">Tổng quan hoạt động kinh doanh hệ thống đại lý</p>
           </div>
         </div>
 
@@ -102,12 +195,13 @@ const Home = () => {
                   <div className="stat-content">
                     <div className="stat-header">
                       <span className="stat-label">{stat.label}</span>
-                      <span className="stat-change">
+                      <span className={`stat-change ${stat.change.startsWith('-') ? 'negative' : ''}`}>
                         <TrendingUp size={14} />
                         {stat.change}
                       </span>
                     </div>
                     <div className="stat-value">{stat.value}</div>
+                    <div className="stat-description">{stat.description}</div>
                   </div>
                   <div className="stat-icon">
                     <Icon size={48} />
@@ -115,6 +209,89 @@ const Home = () => {
                 </div>
               )
             })}
+          </div>
+        </div>
+
+        {/* Charts Section */}
+        <div className="charts-section">
+          {/* Row 1: Combined Chart - Giá trị phân phối vs Giá trị nhập kho */}
+          <div className="chart-card chart-full-width">
+            <div className="chart-header">
+              <h3 className="chart-title">Giá trị phân phối vs Giá trị nhập kho</h3>
+              <span className="chart-subtitle">6 tháng gần nhất - So sánh giá trị hàng xuất/nhập kho</span>
+            </div>
+            <div className="chart-content">
+              <ResponsiveContainer width="100%" height={350}>
+                <ComposedChart data={revenueVsCostData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                  <YAxis tickFormatter={formatCurrency} tick={{ fontSize: 11 }} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Bar dataKey="giaTriNhapKho" name="Giá trị nhập kho" fill="#f97316" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="giaTriPhanPhoi" name="Giá trị phân phối" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Row 2: Line Charts - Lợi nhuận và Công nợ */}
+          <div className="charts-row">
+            {/* Biểu đồ xu hướng lợi nhuận */}
+            <div className="chart-card">
+              <div className="chart-header">
+                <h3 className="chart-title">Xu hướng lợi nhuận</h3>
+                <span className="chart-subtitle">6 tháng gần nhất - Lợi nhuận theo tháng</span>
+              </div>
+              <div className="chart-content">
+                <ResponsiveContainer width="100%" height={280}>
+                  <LineChart data={profitTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                    <YAxis tickFormatter={formatCurrency} tick={{ fontSize: 11 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="loiNhuan" 
+                      name="Lợi nhuận" 
+                      stroke="#22c55e" 
+                      strokeWidth={3}
+                      dot={{ fill: '#22c55e', strokeWidth: 2, r: 5 }}
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Biểu đồ tổng công nợ đại lý theo tháng */}
+            <div className="chart-card">
+              <div className="chart-header">
+                <h3 className="chart-title">Tổng công nợ đại lý theo tháng</h3>
+                <span className="chart-subtitle">6 tháng gần nhất - Theo dõi công nợ cần thu hồi</span>
+              </div>
+              <div className="chart-content">
+                <ResponsiveContainer width="100%" height={280}>
+                  <LineChart data={debtByMonthData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                    <YAxis tickFormatter={formatCurrency} tick={{ fontSize: 11 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="congNo" 
+                      name="Công nợ" 
+                      stroke="#ef4444" 
+                      strokeWidth={3}
+                      dot={{ fill: '#ef4444', strokeWidth: 2, r: 5 }}
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
         </div>
 
