@@ -137,7 +137,7 @@
   gap: 4px;
 }
 
-.stat-label {
+.inventory-overview-page .stat-label {
   font-size: 12px;
   color: #718096;
   font-weight: 500;
@@ -145,7 +145,7 @@
   letter-spacing: 0.5px;
 }
 
-.stat-value {
+.inventory-overview-page .stat-value {
   font-size: 28px;
   font-weight: 800;
   color: #1a202c;
