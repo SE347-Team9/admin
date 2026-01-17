@@ -1,8 +1,14 @@
-import { Store, Save, X, MapPin, User, CreditCard } from 'lucide-react'
+import { Store, Save, X, MapPin, User, CreditCard, Info } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import './AddAgency.css'
+
+// Quy định hệ thống - sẽ lấy từ API trong thực tế
+const REGULATIONS = {
+  max_debt_level_3: 20000000, // Hạn mức nợ mặc định cho đại lý mới (Cấp 3)
+  discount_level_3: 2, // Chiết khấu cho đại lý cấp 3
+}
 
 const AddAgency = () => {
   const navigate = useNavigate()
@@ -16,8 +22,8 @@ const AddAgency = () => {
     address: '',
     district: '',
     city: '',
-    agencyType: 'level_1',
-    debtLimit: '',
+    agencyType: 'level_3', // Mặc định là Cấp 3
+    debtLimit: REGULATIONS.max_debt_level_3.toString(),
     status: 'active'
   })
 
@@ -110,17 +116,24 @@ const AddAgency = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="agencyType">Loại đại lý <span className="required">*</span></label>
-                <select
-                  id="agencyType"
-                  name="agencyType"
-                  value={formData.agencyType}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="level_1">Đại lý cấp 1</option>
-                  <option value="level_2">Đại lý cấp 2</option>
-                </select>
+                <label htmlFor="agencyType">Loại đại lý</label>
+                <div className="agency-type-info">
+                  <select
+                    id="agencyType"
+                    name="agencyType"
+                    value={formData.agencyType}
+                    disabled
+                    className="select-disabled"
+                  >
+                    <option value="level_3">Đại lý cấp 3</option>
+                  </select>
+                  <div className="info-tooltip">
+                    <Info size={16} />
+                    <span className="tooltip-text">
+                      Đại lý mới mặc định là Cấp 3. Sau 3 tháng hoạt động với doanh số ≥50 triệu/tháng, nâng lên Cấp 2. Sau 6 tháng với doanh số ≥100 triệu/tháng và thanh toán ≥90%, nâng lên Cấp 1.
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <div className="form-group">
@@ -243,15 +256,24 @@ const AddAgency = () => {
             <div className="form-grid">
               <div className="form-group">
                 <label htmlFor="debtLimit">Hạn mức nợ (VNĐ)</label>
-                <input
-                  type="number"
-                  id="debtLimit"
-                  name="debtLimit"
-                  value={formData.debtLimit}
-                  onChange={handleChange}
-                  placeholder="Nhập hạn mức nợ"
-                  min="0"
-                />
+                <div className="debt-limit-display">
+                  <input
+                    type="text"
+                    id="debtLimit"
+                    name="debtLimit"
+                    value={new Intl.NumberFormat('vi-VN').format(REGULATIONS.max_debt_level_2)}
+                    disabled
+                    className="input-disabled"
+                  />
+                  <small className="form-hint">Hạn mức nợ được tự động áp dụng theo cấp đại lý</small>
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Chiết khấu</label>
+                <div className="discount-display">
+                  <span className="discount-value">{REGULATIONS.discount_level_2}%</span>
+                  <small className="form-hint">Chiết khấu theo quy định Cấp 2</small>
+                </div>
               </div>
             </div>
           </div>

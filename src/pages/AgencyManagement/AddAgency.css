@@ -193,3 +193,97 @@
     justify-content: center;
   }
 }
+
+/* Agency Type Info Styles */
+.agency-type-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.agency-type-info select {
+  flex: 1;
+}
+
+.select-disabled,
+.input-disabled {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+  cursor: not-allowed;
+}
+
+.info-tooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: #3b82f6;
+  cursor: help;
+}
+
+.info-tooltip .tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  background: #1e293b;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  z-index: 100;
+  opacity: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.info-tooltip .tooltip-text::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #1e293b transparent transparent transparent;
+}
+
+.info-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Debt Limit Display */
+.debt-limit-display {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Discount Display */
+.discount-display {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.discount-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  width: fit-content;
+}
