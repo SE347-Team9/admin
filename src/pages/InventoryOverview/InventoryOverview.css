@@ -199,6 +199,9 @@
 }
 
 .btn-approve-global {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 16px;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
@@ -208,10 +211,13 @@
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  transition: all 0.2s ease;
 }
 
 .btn-approve-global:hover {
-  background: #2563eb;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
 }
 
 /* ===== CONTENT ===== */
