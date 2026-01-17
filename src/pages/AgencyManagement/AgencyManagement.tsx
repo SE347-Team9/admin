@@ -564,7 +564,7 @@ const AgencyManagement = () => {
                         value={staff.id}
                         disabled={isAssignedToOther}
                       >
-                        {staff.name} ({staff.agenciesCount}/2 đại lý)
+                        {staff.name} (Số đại lý quản lý: {staff.agenciesCount})
                         {isAssignedToOther && ' - Đã đủ'}
                       </option>
                     )
@@ -578,7 +578,7 @@ const AgencyManagement = () => {
                     <>
                       <p><strong>Email:</strong> {staffList.find(s => s.id === selectedStaffId)?.email}</p>
                       <p><strong>Số điện thoại:</strong> {staffList.find(s => s.id === selectedStaffId)?.phone}</p>
-                      <p><strong>Đang quản lý:</strong> {staffList.find(s => s.id === selectedStaffId)?.agenciesCount}/2 đại lý</p>
+                      <p><strong>Số đại lý quản lý:</strong> {staffList.find(s => s.id === selectedStaffId)?.agenciesCount}</p>
                     </>
                   )}
                 </div>
