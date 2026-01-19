@@ -8,7 +8,8 @@ import {
   CheckCircle2,
   XCircle,
   Search,
-  Eye
+  Eye,
+  ClipboardCheck
 } from 'lucide-react'
 import './InventoryOverview.css'
 
@@ -445,6 +446,7 @@ const InventoryOverview = () => {
         </div>
         <div className="inventory-overview__tabs-actions">
           <button className="btn-approve-global" onClick={() => setShowApproveCenter(true)}>
+            <ClipboardCheck size={18} />
             Duyệt nhập hàng
           </button>
         </div>

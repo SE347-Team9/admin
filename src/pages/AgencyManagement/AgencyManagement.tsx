@@ -1,4 +1,4 @@
-import { Building2, Eye, Edit, Trash2, Search, TrendingUp, CreditCard, Filter, ArrowUpDown, ChevronDown, X, Users } from 'lucide-react'
+import { Building2, Eye, Edit, Trash2, Search, TrendingUp, CreditCard, Filter, ArrowUpDown, ChevronDown, X, Users, Award, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { toast } from 'react-toastify'
@@ -18,7 +18,7 @@ interface Agency {
   name: string
   address: string
   phone: string
-  level: 1 | 2
+  level: 1 | 2 | 3
   levelLabel: string
   totalSales: number
   debt: number
@@ -58,7 +58,8 @@ const AgencyManagement = () => {
   const levelOptions = [
     { value: 'all', label: 'Tất cả cấp đại lý' },
     { value: '1', label: 'Cấp 1' },
-    { value: '2', label: 'Cấp 2' }
+    { value: '2', label: 'Cấp 2' },
+    { value: '3', label: 'Cấp 3' }
   ]
   
   // Sort options
@@ -150,6 +151,30 @@ const AgencyManagement = () => {
       totalSales: 300000000,
       debt: 45000000,
       debtLimit: 50000000
+    },
+    {
+      id: '6',
+      code: 'DL006',
+      name: 'Đại lý Sài Gòn Mới',
+      address: 'Số 6, Phố Nguyễn Huệ, Quận 1, TP. HCM',
+      phone: '02838245678',
+      level: 3,
+      levelLabel: 'Cấp 3',
+      totalSales: 25000000,
+      debt: 5000000,
+      debtLimit: 20000000
+    },
+    {
+      id: '7',
+      code: 'DL007',
+      name: 'Đại lý Hà Nội Phát Triển',
+      address: 'Số 7, Phố Phạm Văn Đồng, Từ Liêm, Hà Nội',
+      phone: '0243567890',
+      level: 3,
+      levelLabel: 'Cấp 3',
+      totalSales: 15000000,
+      debt: 2000000,
+      debtLimit: 20000000
     }
   ])
 
@@ -157,6 +182,7 @@ const AgencyManagement = () => {
   const totalAgencies = agencies.length
   const level1Agencies = agencies.filter(a => a.level === 1).length
   const level2Agencies = agencies.filter(a => a.level === 2).length
+  const level3Agencies = agencies.filter(a => a.level === 3).length
   const totalSales = agencies.reduce((sum, a) => sum + a.totalSales, 0)
   const totalDebt = agencies.reduce((sum, a) => sum + a.debt, 0)
 
@@ -310,6 +336,16 @@ const AgencyManagement = () => {
           </div>
         </div>
 
+        <div className="stats-card gradient-cyan">
+          <div className="stats-card-content">
+            <div className="stats-label">Đại lý cấp 3</div>
+            <div className="stats-value">{level3Agencies}</div>
+          </div>
+          <div className="stats-icon">
+            <Award size={44} strokeWidth={2.5} />
+          </div>
+        </div>
+
         <div className="stats-card gradient-green">
           <div className="stats-card-content">
             <div className="stats-label">Tổng doanh số nhập hàng</div>
@@ -417,6 +453,22 @@ const AgencyManagement = () => {
           <div className="header-left">
             <Building2 size={24} />
             <h2>Danh sách đại lý ({filteredAgencies.length})</h2>
+          </div>
+          <div className="header-actions">
+            <button 
+              className="btn-evaluation"
+              onClick={() => navigate('/agency-evaluation')}
+            >
+              <Award size={18} />
+              Đánh giá & Nâng cấp
+            </button>
+            <button 
+              className="btn-add-agency"
+              onClick={() => navigate('/add-agency')}
+            >
+              <Plus size={18} />
+              Thêm đại lý
+            </button>
           </div>
         </div>
 
