@@ -15,6 +15,7 @@ import AgencyManagement from "./pages/AgencyManagement/AgencyManagement.tsx";
 import AddAgency from "./pages/AgencyManagement/AddAgency.tsx";
 import ViewAgency from "./pages/AgencyManagement/ViewAgency.tsx";
 import EditAgency from "./pages/AgencyManagement/EditAgency.tsx";
+import AgencyEvaluation from "./pages/AgencyManagement/AgencyEvaluation.tsx";
 import ProductSupplierManagement from './pages/ProductSupplierManagement/ProductSupplierManagement.tsx'
 import AddSupplierForProduct from './pages/ProductSupplierManagement/AddSupplier.tsx'
 import ViewSupplierForProduct from './pages/ProductSupplierManagement/ViewSupplier.tsx'
@@ -141,6 +142,14 @@ function App() {
           element={
             <MainLayout>
               <EditAgency />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/agency-evaluation"
+          element={
+            <MainLayout>
+              <AgencyEvaluation />
             </MainLayout>
           }
         />

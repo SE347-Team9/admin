@@ -54,6 +54,69 @@ const Regulations = () => {
       value: 1,
       description: 'Một phiếu nhập chỉ chọn được 1 nhà sản xuất',
       lastUpdated: '09:00 08 thg 1, 2026'
+    },
+    {
+      id: '6',
+      code: 'min_sales_level_1',
+      value: 100000000,
+      description: 'Doanh số tối thiểu để lên Cấp 1 (VNĐ/tháng)',
+      lastUpdated: '09:00 16 thg 1, 2026'
+    },
+    {
+      id: '7',
+      code: 'min_months_level_1',
+      value: 6,
+      description: 'Số tháng hoạt động tối thiểu để lên Cấp 1',
+      lastUpdated: '09:00 16 thg 1, 2026'
+    },
+    {
+      id: '8',
+      code: 'min_payment_rate_level_1',
+      value: 90,
+      description: 'Tỷ lệ thanh toán đúng hạn tối thiểu để lên Cấp 1 (%)',
+      lastUpdated: '09:00 16 thg 1, 2026'
+    },
+    {
+      id: '9',
+      code: 'discount_level_1',
+      value: 5,
+      description: 'Chiết khấu cho đại lý cấp 1 (%)',
+      lastUpdated: '09:00 16 thg 1, 2026'
+    },
+    {
+      id: '10',
+      code: 'discount_level_2',
+      value: 3,
+      description: 'Chiết khấu cho đại lý cấp 2 (%)',
+      lastUpdated: '09:00 16 thg 1, 2026'
+    },
+    {
+      id: '11',
+      code: 'max_debt_level_3',
+      value: 20000000,
+      description: 'Trần nợ đại lý cấp 3',
+      lastUpdated: '09:00 17 thg 1, 2026'
+    },
+    {
+      id: '12',
+      code: 'min_sales_level_2',
+      value: 50000000,
+      description: 'Doanh số tối thiểu để lên Cấp 2 (VNĐ/tháng)',
+      lastUpdated: '09:00 17 thg 1, 2026'
+    },
+    {
+      id: '13',
+      code: 'min_months_level_2',
+      value: 3,
+      description: 'Số tháng hoạt động tối thiểu để lên Cấp 2',
+      lastUpdated: '09:00 17 thg 1, 2026'
+    },
+    {
+      id: '14',
+      code: 'discount_level_3',
+      value: 2,
+      description: 'Chiết khấu cho đại lý cấp 3 (%)',
+      lastUpdated: '09:00 17 thg 1, 2026'
     }
   ])
 

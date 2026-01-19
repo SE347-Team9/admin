@@ -119,13 +119,17 @@
 }
 
 .stat-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
   pointer-events: none;
 }
 
@@ -135,27 +139,33 @@
 }
 
 .stat-card.gradient-blue {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: white;
+  border: 2px solid #3b82f6;
 }
 
 .stat-card.gradient-green {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: white;
+  border: 2px solid #10b981;
 }
 
 .stat-card.gradient-orange {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  background: white;
+  border: 2px solid #800000;
 }
 
 .stat-card.gradient-purple {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: white;
+  border: 2px solid #8b5cf6;
 }
 
 .stat-card.gradient-cyan {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  background: white;
+  border: 2px solid #f9c6cf;
 }
 
 .stat-card.gradient-red {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: white;
+  border: 2px solid #ef4444;
 }
 
 .stat-content {
@@ -169,11 +179,10 @@
   align-items: center;
   margin-bottom: 16px;
 }
-
 .stat-label {
   font-size: 14px;
-  font-weight: 600;
-  color: white;
+  font-weight: 700;
+  color: #4a5568;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -185,31 +194,110 @@
   font-size: 12px;
   font-weight: 600;
   color: white;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(59, 130, 246, 0.35);
   padding: 4px 10px;
   border-radius: 20px;
   backdrop-filter: blur(10px);
 }
 
+.stat-card.gradient-blue .stat-change {
+  background: rgba(59, 130, 246, 1);
+  color: white;
+}
+
+.stat-card.gradient-green .stat-change {
+  background: rgba(16, 185, 129, 1);
+  color: white;
+}
+
+.stat-card.gradient-orange .stat-change {
+  background: rgba(128, 0, 0, 1);
+  color: white;
+}
+
+.stat-card.gradient-purple .stat-change {
+  background: rgba(139, 92, 246, 1);
+  color: white;
+}
+
+.stat-card.gradient-cyan .stat-change {
+  background: rgb(255, 106, 131);
+  color: white;
+}
+
+.stat-card.gradient-red .stat-change {
+  background: rgba(239, 68, 68, 1);
+  color: white;
+}
+
 .stat-value {
   font-size: 36px;
-  font-weight: 700;
-  color: white;
+  font-weight: 800;
+  color: #0f172a;
   line-height: 1.2;
+  text-shadow: none;
 }
 
 .stat-icon {
   position: absolute;
   right: 20px;
   bottom: 20px;
-  color: rgba(255, 255, 255, 0.2);
+  color: #d1d5db;
   z-index: 1;
   transition: all 0.3s ease;
 }
 
 .stat-card:hover .stat-icon {
-  color: rgba(255, 255, 255, 0.3);
+  color: #9ca3af;
   transform: scale(1.1) rotate(5deg);
+}
+
+.stat-card.gradient-blue .stat-icon {
+  color: #3b82f6;
+}
+
+.stat-card.gradient-blue:hover .stat-icon {
+  color: #3b82f6;
+}
+
+.stat-card.gradient-green .stat-icon {
+  color: #10b981;
+}
+
+.stat-card.gradient-green:hover .stat-icon {
+  color: #10b981;
+}
+
+.stat-card.gradient-orange .stat-icon {
+  color: #a21212;
+}
+
+.stat-card.gradient-orange:hover .stat-icon {
+  color: #a21212;
+}
+
+.stat-card.gradient-purple .stat-icon {
+  color: #8b5cf6;
+}
+
+.stat-card.gradient-purple:hover .stat-icon {
+  color: #8b5cf6;
+}
+
+.stat-card.gradient-cyan .stat-icon {
+  color: #ff6a83;
+}
+
+.stat-card.gradient-cyan:hover .stat-icon {
+  color: #ff6a83;
+}
+
+.stat-card.gradient-red .stat-icon {
+  color: #ef4444;
+}
+
+.stat-card.gradient-red:hover .stat-icon {
+  color: #ef4444;
 }
 
 /* ============================================
@@ -261,7 +349,7 @@
 }
 
 .module-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: 16px;
@@ -276,7 +364,7 @@
 }
 
 .module-card::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, currentColor 0%, transparent 100%);
@@ -336,11 +424,15 @@
 }
 
 .module-icon::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: 16px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -682,7 +774,7 @@
 /* Stat card description */
 .stat-description {
   font-size: 12px;
-  color: white;
+  color: #4a5568;
   margin-top: 8px;
   font-weight: 500;
   opacity: 0.9;
@@ -695,7 +787,8 @@
 
 /* Gradient Red for debt */
 .stat-card.gradient-red {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: white;
+  border: 2px solid #ef4444;
 }
 
 /* Recharts customization */
