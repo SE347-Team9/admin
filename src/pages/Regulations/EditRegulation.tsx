@@ -28,7 +28,7 @@ const EditRegulation = () => {
   }
 
   const handleCancel = () => {
-    navigate('/regulations')
+    navigate('/admin/regulations')
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,7 +55,7 @@ const EditRegulation = () => {
       toast.success('Cập nhật quy định thành công!')
 
       setTimeout(() => {
-        navigate('/regulations')
+        navigate('/admin/regulations')
       }, 1500)
     } catch (error) {
       toast.error('Cập nhật quy định thất bại')

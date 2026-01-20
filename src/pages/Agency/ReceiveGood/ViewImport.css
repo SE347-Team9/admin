@@ -1,0 +1,338 @@
+.view-import-back-btn--redesign {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 18px 7px 12px;
+  border-radius: 999px;
+  background: #fff;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s;
+  z-index: 2;
+}
+.view-import-back-btn--redesign svg {
+  margin-right: 2px;
+}
+.view-import-back-btn--redesign:hover {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.16);
+}
+/* ========== ViewImport - Chuẩn giao diện giống ảnh demo ========== */
+/* Thêm padding ngang để các card không sát lề ngoài */
+.view-import-page--redesign {
+  max-width: 1400px;
+  margin: 24px auto;
+  padding: 24px 32px 24px 32px;
+  background: #f8fafc;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(37,99,235,0.07);
+}
+.view-import-header--redesign {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+  background: transparent;
+  position: relative;
+}
+.view-import-header-iconbox {
+  background: #2563eb;
+  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+}
+.view-import-header-icon {
+  color: #fff;
+  width: 32px;
+  height: 32px;
+}
+.view-import-header-texts {
+  flex: 1;
+}
+.view-import-title--redesign {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #2563eb;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+.view-import-subtitle--redesign {
+  color: #64748b;
+  font-size: 1.08rem;
+  font-weight: 500;
+}
+/* Main layout: left = info + products, right = summary + time */
+/* Thêm khoảng cách giữa 2 cột và tránh sát lề */
+/* Sử dụng flex cho main để cột phải cao bằng cột trái */
+.view-import-main--redesign {
+  display: flex;
+  flex-direction: row;
+  gap: 36px;
+  align-items: stretch;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+/* Thêm margin cho card bên trái */
+.view-import-main-left--redesign {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-left: 4px;
+  margin-right: 4px;
+  flex: 1.7;
+}
+/* Thêm margin cho card bên phải */
+.view-import-main-right--redesign {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 320px;
+  margin-bottom: 0;
+  margin-right: 4px;
+  flex: 1;
+  height: 100%;
+}
+.view-import-back-btn--redesign:hover {
+  background: #e0e7ff;
+  color: #1d4ed8;
+}
+
+.view-import-main--redesign {
+  display: grid;
+  grid-template-columns: 2.2fr 1.1fr;
+  gap: 32px;
+  align-items: flex-start;
+}
+.view-import-main-left--redesign {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.view-import-info-card--redesign {
+  background: linear-gradient(135deg, #e0f2ff 60%, #f8fdff 100%);
+  border-radius: 16px;
+  padding: 24px 28px 18px 28px;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+  border: 1.5px solid #e0e7ff;
+}
+.view-import-info-title--redesign {
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.13rem;
+}
+.view-import-info-fields--redesign {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 32px;
+}
+.view-import-info-field label {
+  font-size: 1rem;
+  color: #334155;
+  font-weight: 500;
+  margin-bottom: 2px;
+  display: block;
+}
+.view-import-info-value {
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 1.08rem;
+  color: #1e293b;
+  font-weight: 700;
+  margin-top: 2px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(37,99,235,0.03);
+}
+.view-import-products-card--redesign {
+  background: #e6fff2;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.09);
+  padding: 22px 24px 12px 24px;
+  border: 1.5px solid #bbf7d0;
+}
+.view-import-products-title--redesign {
+  font-weight: 800;
+  color: #16a34a;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.13rem;
+}
+.view-import-products-table--redesign {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #d1fae5;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0;
+  font-size: 1.04rem;
+}
+/* Căn thẳng hàng th và td, text-align center cho tất cả trừ cột tên sản phẩm */
+.view-import-products-table--redesign th, .view-import-products-table--redesign td {
+  padding: 10px 16px;
+  text-align: center;
+  vertical-align: middle;
+}
+.view-import-products-table--redesign th {
+  background: #bbf7d0;
+  color: #047857;
+  font-weight: 800;
+  font-size: 1.04rem;
+  border-bottom: 2px solid #a7f3d0;
+}
+.view-import-products-table--redesign td {
+  background: #e6fff2;
+  color: #222;
+  font-weight: 600;
+  border-bottom: 1px solid #bbf7d0;
+}
+.view-import-products-table--redesign tr:last-child td {
+  border-bottom: none;
+}
+.view-import-products-table--redesign tr:nth-child(even) td {
+  background: #f0fdf4;
+}
+.view-import-products-table--redesign th:first-child,
+.view-import-products-table--redesign td:first-child {
+  text-align: left;
+}
+.view-import-products-table--redesign td:nth-child(3),
+.view-import-products-table--redesign td:nth-child(4) {
+  text-align: right;
+}
+.view-import-product-total--redesign {
+  color: #16a34a;
+  font-weight: 900;
+  font-size: 1.13rem;
+  background: #e6fff2 !important;
+}
+.view-import-products-table--redesign tfoot td {
+  background: #e6fff2;
+  font-weight: 800;
+  color: #16a34a;
+  font-size: 1.13rem;
+  border-top: 2px solid #bbf7d0;
+}
+
+.view-import-summary-group--redesign {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 0;
+  margin-bottom: 0;
+  flex: 1 1 0;
+}
+.view-import-summary-card--redesign {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 18px 22px 12px 22px;
+  min-width: 220px;
+  flex: 1 1 0;
+  margin-bottom: 0;
+  border: 1.5px solid #e0e7ff;
+}
+.view-import-main-right--redesign .view-import-summary-card--redesign {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.view-import-summary-title--redesign {
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 1.08rem;
+}
+.view-import-summary-row--redesign {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  font-size: 1.04rem;
+}
+.view-import-status--redesign {
+  font-weight: 700;
+  color: #16a34a;
+  background: #d1fae5;
+  border-radius: 8px;
+  padding: 2px 14px;
+  font-size: 1.01rem;
+  border: none;
+  display: inline-block;
+}
+.view-import-summary-total--redesign {
+  color: #2563eb;
+  font-weight: 900;
+  font-size: 1.13rem;
+  letter-spacing: 0.5px;
+}
+.view-import-main-right--redesign {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 340px;
+  margin-bottom: 0;
+}
+
+@media (max-width: 1100px) {
+  .view-import-page--redesign {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .view-import-main--redesign {
+    flex-direction: column;
+    gap: 24px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .view-import-main-right--redesign {
+    min-width: unset;
+    margin-top: 18px;
+    margin-right: 0;
+    height: unset;
+  }
+  .view-import-main-left--redesign {
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .view-import-main-right--redesign .view-import-summary-card--redesign {
+    flex: unset;
+  }
+}
+@media (max-width: 700px) {
+  .view-import-header--redesign {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 10px;
+  }
+  .view-import-main--redesign {
+    gap: 12px;
+  }
+  .view-import-info-card--redesign, .view-import-products-card--redesign {
+    padding: 14px 8px;
+  }
+}

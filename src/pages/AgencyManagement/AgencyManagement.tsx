@@ -2,6 +2,7 @@ import { Building2, Eye, Edit, Trash2, Search, TrendingUp, CreditCard, Filter, A
 import { useNavigate } from 'react-router-dom'
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import { agencyService } from '../../api/endpoints/agencyService'
 import './AgencyManagement.css'
 
 interface Staff {
@@ -86,97 +87,43 @@ const AgencyManagement = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Mock data
-  const [agencies, setAgencies] = useState<Agency[]>([
-    {
-      id: '1',
-      code: 'DL001',
-      name: 'Đại lý Nghĩa',
-      address: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
-      phone: '02232434242',
-      level: 1,
-      levelLabel: 'Cấp 1',
-      totalSales: 150000000,
-      debt: 25000000,
-      debtLimit: 50000000,
-      assignedStaffId: 's1',
-      assignedStaffName: 'Nguyễn Văn A'
-    },
-    {
-      id: '2',
-      code: 'DL002',
-      name: 'Đại lý Đại',
-      address: 'Số 2, Phố Đông Đa, Đông Đa, Hà Nội',
-      phone: '02232434242',
-      level: 1,
-      levelLabel: 'Cấp 1',
-      totalSales: 200000000,
-      debt: 30000000,
-      debtLimit: 50000000,
-      assignedStaffId: 's2',
-      assignedStaffName: 'Trần Thị B'
-    },
-    {
-      id: '3',
-      code: 'DL003',
-      name: 'Đại lý An Khang',
-      address: 'Số 3, Phố Hai Bà Trưng, Hoàn Kiếm, Hà Nội',
-      phone: '0369852147',
-      level: 2,
-      levelLabel: 'Cấp 2',
-      totalSales: 80000000,
-      debt: 10000000,
-      debtLimit: 30000000
-    },
-    {
-      id: '4',
-      code: 'DL004',
-      name: 'Đại lý Minh Phát',
-      address: 'Số 4, Phố Lê Thanh Tông, Hoan Kiếm, Hà Nội',
-      phone: '0912345678',
-      level: 2,
-      levelLabel: 'Cấp 2',
-      totalSales: 120000000,
-      debt: 20000000,
-      debtLimit: 30000000
-    },
-    {
-      id: '5',
-      code: 'DL005',
-      name: 'Đại lý Thái Hà',
-      address: 'Số 5, Phố Thái Hà, Đống Đa, Hà Nội',
-      phone: '0901234567',
-      level: 1,
-      levelLabel: 'Cấp 1',
-      totalSales: 300000000,
-      debt: 45000000,
-      debtLimit: 50000000
-    },
-    {
-      id: '6',
-      code: 'DL006',
-      name: 'Đại lý Sài Gòn Mới',
-      address: 'Số 6, Phố Nguyễn Huệ, Quận 1, TP. HCM',
-      phone: '02838245678',
-      level: 3,
-      levelLabel: 'Cấp 3',
-      totalSales: 25000000,
-      debt: 5000000,
-      debtLimit: 20000000
-    },
-    {
-      id: '7',
-      code: 'DL007',
-      name: 'Đại lý Hà Nội Phát Triển',
-      address: 'Số 7, Phố Phạm Văn Đồng, Từ Liêm, Hà Nội',
-      phone: '0243567890',
-      level: 3,
-      levelLabel: 'Cấp 3',
-      totalSales: 15000000,
-      debt: 2000000,
-      debtLimit: 20000000
+  const [agencies, setAgencies] = useState<Agency[]>([])
+  // Removed unused loading state
+
+  // Fetch agencies from API
+  useEffect(() => {
+    fetchAgencies()
+  }, [])
+
+  const fetchAgencies = async () => {
+    try {
+      // setLoading(true)
+      const response = await agencyService.getAll()
+      if (response.success) {
+        // Transform API data to match frontend interface
+        const transformedData = response.data.map((agency: any) => ({
+          id: agency.id,
+          code: agency.code,
+          name: agency.name,
+          address: agency.address,
+          phone: agency.phone || '',
+          level: 1 as 1 | 2 | 3,
+          levelLabel: 'Cấp 1',
+          totalSales: 0,
+          debt: 0,
+          debtLimit: 50000000,
+          assignedStaffId: agency.managerId,
+          assignedStaffName: ''
+        }))
+        setAgencies(transformedData)
+      }
+    } catch (error: any) {
+      console.error('Error fetching agencies:', error)
+      toast.error('Không thể tải danh sách đại lý')
+    } finally {
+      // setLoading(false)
     }
-  ])
+  }
 
   // Statistics calculations
   const totalAgencies = agencies.length
@@ -238,10 +185,19 @@ const AgencyManagement = () => {
     setShowDeleteModal(true)
   }
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteAgency) {
-      setAgencies(prev => prev.filter(agency => agency.id !== deleteAgency.id))
-      toast.success(`Đã xóa đại lý ${deleteAgency.name}`)
+      try {
+        const response = await agencyService.delete(deleteAgency.id)
+        if (response.success) {
+          toast.success(`Đã xóa đại lý ${deleteAgency.name}`)
+          fetchAgencies() // Refresh list
+        }
+      } catch (error: any) {
+        console.error('Error deleting agency:', error)
+        const errorMsg = error.response?.data?.message || 'Không thể xóa đại lý'
+        toast.error(errorMsg)
+      }
     }
     setShowDeleteModal(false)
     setDeleteAgency(null)
@@ -253,11 +209,11 @@ const AgencyManagement = () => {
   }
 
   const handleViewAgency = (agencyId: string) => {
-    navigate(`/view-agency/${agencyId}`)
+    navigate(`/admin/view-agency/${agencyId}`)
   }
 
   const handleEditAgency = (agencyId: string) => {
-    navigate(`/edit-agency/${agencyId}`)
+    navigate(`/admin/edit-agency/${agencyId}`)
   }
 
   const handleAssignStaff = () => {
@@ -457,17 +413,10 @@ const AgencyManagement = () => {
           <div className="header-actions">
             <button 
               className="btn-evaluation"
-              onClick={() => navigate('/agency-evaluation')}
+              onClick={() => navigate('/admin/agency-evaluation')}
             >
               <Award size={18} />
               Đánh giá & Nâng cấp
-            </button>
-            <button 
-              className="btn-add-agency"
-              onClick={() => navigate('/add-agency')}
-            >
-              <Plus size={18} />
-              Thêm đại lý
             </button>
           </div>
         </div>

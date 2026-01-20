@@ -1,0 +1,417 @@
+/* Agency Dashboard Page - BEM Naming */
+.agency-dashboard-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+/* Header Section */
+.agency-dashboard__header {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.agency-dashboard__header-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.agency-dashboard__header-text {
+  flex: 1;
+}
+
+.agency-dashboard__title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+}
+
+.agency-dashboard__subtitle {
+  font-size: 15px;
+  color: #718096;
+  margin: 0;
+}
+
+/* Statistics Grid */
+.agency-dashboard__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1200px) {
+  .agency-dashboard__stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .agency-dashboard__stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Stat Card */
+.agency-dashboard__stat-card {
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.agency-dashboard__stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.agency-dashboard__stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+
+.agency-dashboard__stat-card--blue {
+  border-color: #3b82f6;
+}
+.agency-dashboard__stat-card--green {
+  border-color: #10b981;
+}
+.agency-dashboard__stat-card--orange {
+  border-color: #f97316;
+}
+.agency-dashboard__stat-card--purple {
+  border-color: #8b5cf6;
+}
+.agency-dashboard__stat-card .agency-dashboard__stat-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.agency-dashboard__stat-card .agency-dashboard__stat-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  text-shadow: none;
+}
+.agency-dashboard__stat-card .agency-dashboard__stat-description {
+  font-size: 12px;
+  color: #4a5568;
+  margin-top: 8px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.agency-dashboard__stat-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.agency-dashboard__stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.agency-dashboard__stat-description {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 8px;
+}
+
+.agency-dashboard__stat-icon {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  color: rgba(255, 255, 255, 0.2);
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.agency-dashboard__stat-card:hover .agency-dashboard__stat-icon {
+  color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Charts Section */
+.agency-dashboard__charts-section {
+  margin-bottom: 32px;
+}
+
+.agency-dashboard__charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.agency-dashboard__chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.agency-dashboard__chart-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.agency-dashboard__chart-card--full {
+  margin-bottom: 24px;
+}
+
+.agency-dashboard__chart-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.agency-dashboard__chart-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 4px 0;
+}
+
+.agency-dashboard__chart-subtitle {
+  font-size: 13px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.agency-dashboard__chart-content {
+  width: 100%;
+}
+
+/* Custom Tooltip */
+.agency-dashboard__tooltip {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.agency-dashboard__tooltip-label {
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+  font-size: 13px;
+}
+
+.agency-dashboard__tooltip p {
+  margin: 4px 0;
+  font-size: 12px;
+}
+
+/* Quick Links Section */
+.agency-dashboard__quick-links {
+  margin-top: 32px;
+}
+
+.agency-dashboard__section-title {
+  margin-bottom: 24px;
+}
+
+.agency-dashboard__section-title h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.agency-dashboard__section-title p {
+  font-size: 14px;
+  color: #718096;
+  margin: 0;
+  font-weight: 500;
+}
+
+.agency-dashboard__links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .agency-dashboard__links-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.agency-dashboard__link-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: white;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.agency-dashboard__link-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--link-color);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.agency-dashboard__link-card:hover::before {
+  opacity: 1;
+}
+
+.agency-dashboard__link-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.agency-dashboard__link-card--blue {
+  --link-color: #3b82f6;
+  --link-bg: #eff6ff;
+}
+
+.agency-dashboard__link-card--green {
+  --link-color: #059669;
+  --link-bg: #ecfdf5;
+}
+
+.agency-dashboard__link-card--orange {
+  --link-color: #ea580c;
+  --link-bg: #fff7ed;
+}
+
+.agency-dashboard__link-card--purple {
+  --link-color: #7c3aed;
+  --link-bg: #f5f3ff;
+}
+
+.agency-dashboard__stat-icon {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  color: #d1d5db;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+.agency-dashboard__stat-card--blue .agency-dashboard__stat-icon {
+  color: #3b82f6;
+}
+.agency-dashboard__stat-card--green .agency-dashboard__stat-icon {
+  color: #10b981;
+}
+.agency-dashboard__stat-card--orange .agency-dashboard__stat-icon {
+  color: #f97316;
+}
+.agency-dashboard__stat-card--purple .agency-dashboard__stat-icon {
+  color: #8b5cf6;
+}
+.agency-dashboard__stat-card:hover .agency-dashboard__stat-icon {
+  color: #9ca3af;
+  transform: scale(1.1) rotate(5deg);
+}
+.agency-dashboard__link-icon svg {
+  color: var(--link-color);
+}
+
+.agency-dashboard__link-content {
+  flex: 1;
+}
+
+.agency-dashboard__link-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 4px 0;
+}
+
+.agency-dashboard__link-description {
+  font-size: 13px;
+  color: #718096;
+  margin: 0;
+}
+
+.agency-dashboard__link-arrow {
+  color: #94a3b8;
+  transition: all 0.3s ease;
+}
+
+.agency-dashboard__link-card:hover .agency-dashboard__link-arrow {
+  color: currentColor;
+  transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .agency-dashboard__stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .agency-dashboard__header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .agency-dashboard__stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .agency-dashboard__charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .agency-dashboard__links-grid {
+    grid-template-columns: 1fr;
+  }
+}

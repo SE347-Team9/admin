@@ -1,5 +1,8 @@
 import { Users, ArrowLeft, Edit, Building2, MapPin, CreditCard } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
+import { accountService } from '../../api/endpoints/accountService'
 import './ViewAccount.css'
 
 interface AccountData {
@@ -27,111 +30,99 @@ interface AccountData {
 const ViewAccount = () => {
   const navigate = useNavigate()
   const { id } = useParams()
+  const [account, setAccount] = useState<AccountData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Mock data - should fetch from API based on id
-  // Example data for different roles
-  const mockAccounts: Record<string, AccountData> = {
-    '1': {
-      id: '1',
-      code: 'ADM001',
-      username: 'admin01',
-      fullName: 'Nguyễn Văn A',
-      email: 'admin01@example.com',
-      phone: '0123456789',
-      role: 'admin',
-      roleLabel: 'Quản trị viên',
-      status: 'active',
-      statusLabel: 'Hoạt động',
-      createdAt: '01/01/2024',
-      updatedAt: '20/10/2025'
-    },
-    '2': {
-      id: '2',
-      code: 'DL001',
-      username: 'agency01',
-      fullName: 'Trần Thị B',
-      email: 'agency01@example.com',
-      phone: '0987654321',
-      role: 'agency',
-      roleLabel: 'Đại lý',
-      status: 'active',
-      statusLabel: 'Hoạt động',
-      createdAt: '15/02/2024',
-      updatedAt: '25/12/2025',
-      agencyType: '1',
-      agencyTypeLabel: 'Đại lý cấp 1',
-      agencyName: 'Đại lý Minh Phát',
-      agencyOwner: 'Trần Thị B',
-      agencyAddress: '123 Nguyễn Văn Linh, Quận 7, TP.HCM',
-      debtLimit: 50000000
-    },
-    '3': {
-      id: '3',
-      code: 'NV001',
-      username: 'staff01',
-      fullName: 'Lê Văn C',
-      email: 'staff01@example.com',
-      phone: '0369852147',
-      role: 'staff',
-      roleLabel: 'Nhân viên',
-      status: 'active',
-      statusLabel: 'Hoạt động',
-      createdAt: '20/03/2024',
-      updatedAt: '10/11/2025'
+  useEffect(() => {
+    const fetchAccount = async () => {
+      if (!id) return
+
+      try {
+        setLoading(true)
+        const response = await accountService.getById(id)
+        if (response.success) {
+          const acc = response.data
+          setAccount({
+            id: acc.id,
+            code: acc.code,
+            username: acc.username,
+            fullName: acc.fullName,
+            email: acc.email,
+            phone: acc.phone,
+            role: acc.role as 'admin' | 'agency' | 'staff',
+            roleLabel: acc.role === 'admin' ? 'Quản trị viên' : acc.role === 'agency' ? 'Đại lý' : 'Nhân viên',
+            status: acc.status as 'active' | 'inactive',
+            statusLabel: acc.status === 'active' ? 'Hoạt động' : 'Không hoạt động',
+            createdAt: new Date(acc.createdAt).toLocaleDateString('vi-VN'),
+            updatedAt: new Date(acc.updatedAt).toLocaleDateString('vi-VN')
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching account:', error)
+        toast.error('Không thể tải thông tin tài khoản')
+        navigate('/admin/account-management')
+      } finally {
+        setLoading(false)
+      }
     }
-  }
 
-  const account = mockAccounts[id || '1'] || mockAccounts['1']
+    fetchAccount()
+  }, [id, navigate])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
   }
 
   const handleBack = () => {
-    navigate('/account-management')
+    navigate('/admin/account-management')
   }
 
   const handleEdit = () => {
-    navigate(`/edit-account/${id}`)
+    navigate(`/admin/edit-account/${id}`)
   }
 
   return (
     <div className="view-account-page">
-      <div className="view-account-container">
-        {/* Header */}
-        <div className="view-account__header">
-          <div className="view-account__header-icon">
-            <Users size={36} />
+      {loading ? (
+        <div style={{ padding: '40px', textAlign: 'center' }}>Đang tải dữ liệu...</div>
+      ) : !account ? (
+        <div style={{ padding: '40px', textAlign: 'center' }}>Không tìm thấy tài khoản</div>
+      ) : (
+        <div className="view-account-container">
+          {/* Header */}
+          <div className="view-account__header">
+            <div className="view-account__header-icon">
+              <Users size={36} />
+            </div>
+            <div className="view-account__header-content">
+              <h1 className="view-account__title">Chi tiết tài khoản</h1>
+              <p className="view-account__subtitle">
+                Xem thông tin chi tiết của tài khoản trong hệ thống
+              </p>
+            </div>
           </div>
-          <div className="view-account__header-content">
-            <h1 className="view-account__title">Chi tiết tài khoản</h1>
-            <p className="view-account__subtitle">
-              Xem thông tin chi tiết của tài khoản trong hệ thống
-            </p>
-          </div>
-        </div>
 
-        {/* Content and Footer Combined */}
-        <div className="view-account__content">
-          <div className="view-account__card">
-            <h2 className="view-account__card-title">Thông tin tài khoản</h2>
-            <div className="view-account__info-grid">
-              <div className="view-account__info-item">
-                <span className="view-account__info-label">Mã tài khoản:</span>
-                <span className="view-account__info-value view-account__code">{account.code}</span>
-              </div>
+          {/* Content and Footer Combined */}
+          <div className="view-account__content">
+            <div className="view-account__card">
+              <h2 className="view-account__card-title">Thông tin tài khoản</h2>
+              <div className="view-account__info-grid">
+                <div className="view-account__info-item">
+                  <span className="view-account__info-label">Mã tài khoản:</span>
+                  <span className="view-account__info-value view-account__code">{account.code}</span>
+                </div>
 
-              <div className="view-account__info-item">
-                <span className="view-account__info-label">Tên đăng nhập:</span>
-                <span className="view-account__info-value">{account.username}</span>
-              </div>
+                <div className="view-account__info-item">
+                  <span className="view-account__info-label">Tên đăng nhập:</span>
+                  <span className="view-account__info-value">{account.username}</span>
+                </div>
 
-              <div className="view-account__info-item">
-                <span className="view-account__info-label">Họ và tên:</span>
-                <span className="view-account__info-value">{account.fullName}</span>
-              </div>
+                <div className="view-account__info-item">
+                  <span className="view-account__info-label">Họ và tên:</span>
+                  <span className="view-account__info-value">{account.fullName}</span>
+                </div>
 
-              <div className="view-account__info-item">
+                <div className="view-account__info-item">
                 <span className="view-account__info-label">Email:</span>
                 <span className="view-account__info-value">{account.email}</span>
               </div>
@@ -227,7 +218,8 @@ const ViewAccount = () => {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   )
 }

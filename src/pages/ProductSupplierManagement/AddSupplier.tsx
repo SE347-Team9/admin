@@ -83,13 +83,13 @@ const AddSupplier = () => {
     console.log('Sản phẩm:', products)
 
     toast.success('Thêm nhà cung cấp thành công!')
-    navigate('/product-supplier-management')
+    navigate('/admin/product-supplier-management')
   }
 
   return (
     <div className="add-supplier-page">
       <div className="as-header">
-        <button className="as-back-btn" onClick={() => navigate('/product-supplier-management')}>
+        <button className="as-back-btn" onClick={() => navigate('/admin/product-supplier-management')}>
           <ArrowLeft size={20} />
           <span>Quay lại</span>
         </button>
@@ -313,7 +313,7 @@ const AddSupplier = () => {
             <button
               type="button"
               className="as-btn-cancel"
-              onClick={() => navigate('/product-supplier-management')}
+              onClick={() => navigate('/admin/product-supplier-management')}
             >
               Hủy
             </button>

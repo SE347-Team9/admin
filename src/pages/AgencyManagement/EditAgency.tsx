@@ -1,36 +1,63 @@
 import { Edit, ArrowLeft, Check } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { agencyService } from '../../api/endpoints/agencyService'
 import './EditAgency.css'
 
 const EditAgency = () => {
   const navigate = useNavigate()
-  useParams()
+  const { id } = useParams()
 
   // Helper function to format currency for display
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN').format(amount)
   }
 
-  // Mock data - should fetch from API based on id
   const initialData = {
-    code: 'DL001',
-    name: 'Đại lý Nghĩa',
-    address: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
-    phone: '02232434242',
-    email: 'nghiaagency@gmail.com',
-    level: '1',
-    totalSales: 150000000,
-    debt: 25000000,
-    debtLimit: 50000000,
-    status: 'active',
-    createdAt: '01/01/2024',
-    updatedAt: '20/10/2025'
+    code: '',
+    name: '',
+    address: '',
+    phone: '',
+    email: '',
+    location: '',
+    status: 'active'
   }
 
   const [formData, setFormData] = useState(initialData)
   const [isLoading, setIsLoading] = useState(false)
+  const [fetchLoading, setFetchLoading] = useState(true)
+
+  // Fetch agency data on mount
+  useEffect(() => {
+    if (id) {
+      fetchAgency()
+    }
+  }, [id])
+
+  const fetchAgency = async () => {
+    try {
+      setFetchLoading(true)
+      const response = await agencyService.getById(id!)
+      if (response.success) {
+        setFormData({
+          code: response.data.code,
+          name: response.data.name,
+          address: response.data.address,
+          phone: response.data.phone || '',
+          email: response.data.email || '',
+          location: response.data.location || '',
+          status: response.data.status
+        })
+      }
+    } catch (error: any) {
+      console.error('Error fetching agency:', error)
+      toast.error('Không thể tải thông tin đại lý')
+      navigate('/admin/agency-management')
+    } finally {
+      setFetchLoading(false)
+    }
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -41,7 +68,7 @@ const EditAgency = () => {
   }
 
   const handleCancel = () => {
-    navigate('/agency-management')
+    navigate('/admin/agency-management')
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -63,31 +90,29 @@ const EditAgency = () => {
       return
     }
 
-    if (!formData.email.trim()) {
-      toast.error('Vui lòng nhập email')
-      return
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(formData.email)) {
-      toast.error('Email không hợp lệ')
-      return
+    if (formData.email && formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        toast.error('Email không hợp lệ')
+        return
+      }
     }
 
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await agencyService.update(id!, formData)
 
-      // Here would be the API call to update agency
-      toast.success('Cập nhật thông tin đại lý thành công!')
-
-      setTimeout(() => {
-        navigate('/agency-management')
-      }, 1500)
-    } catch (error) {
-      toast.error('Cập nhật thông tin thất bại')
+      if (response.success) {
+        toast.success('Cập nhật thông tin đại lý thành công!')
+        setTimeout(() => {
+          navigate('/admin/agency-management')
+        }, 1500)
+      }
+    } catch (error: any) {
+      console.error('Error updating agency:', error)
+      const errorMsg = error.response?.data?.message || 'Cập nhật thông tin thất bại'
+      toast.error(errorMsg)
       setIsLoading(false)
     }
   }

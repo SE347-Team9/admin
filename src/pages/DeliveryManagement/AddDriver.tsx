@@ -11,6 +11,7 @@ import {
   MapPin
 } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { driverService } from '../../api/endpoints/driverService'
 import './AddDriver.css'
 
 const AddDriver = () => {
@@ -90,21 +91,41 @@ const AddDriver = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (validateForm()) {
-      // TODO: Call API to create driver
-      console.log('Form data:', formData)
-      toast.success('Thêm tài xế thành công!')
-      navigate('/delivery-management')
+      try {
+        setLoading(true)
+        const response = await driverService.create({
+          code: `TX${Date.now().toString().slice(-4)}`,
+          fullName: formData.fullName,
+          phone: formData.phone,
+          idCard: formData.idCard,
+          licensePlate: formData.licensePlate,
+          status: 'active'
+        })
+        
+        if (response.success) {
+          toast.success('Thêm tài xế thành công!')
+          navigate('/admin/delivery-management')
+        }
+      } catch (error: any) {
+        console.error('Error creating driver:', error)
+        const errorMsg = error.response?.data?.message || 'Không thể tạo tài xế'
+        toast.error(errorMsg)
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
   return (
     <div className="add-driver-page">
       <div className="add-driver-header">
-        <button className="btn-back" onClick={() => navigate('/delivery-management')}>
+        <button className="btn-back" onClick={() => navigate('/admin/delivery-management')}>
           <ArrowLeft size={20} />
           Quay lại
         </button>
@@ -243,7 +264,7 @@ const AddDriver = () => {
         </div>
 
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={() => navigate('/delivery-management')}>
+          <button type="button" className="btn-cancel" onClick={() => navigate('/admin/delivery-management')}>
             Hủy
           </button>
           <button type="submit" className="btn-submit">

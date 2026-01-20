@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, Eye, Search, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'react-toastify'
+import regulationService from '../../api/endpoints/regulationService'
 import './Regulations.css'
 
 interface Regulation {
@@ -17,108 +18,34 @@ const Regulations = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteRegulation, setDeleteRegulation] = useState<Regulation | null>(null)
+  const [regulations, setRegulations] = useState<Regulation[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Mock data
-  const [regulations, setRegulations] = useState<Regulation[]>([
-    {
-      id: '1',
-      code: 'max_debt_level_1',
-      value: 100000000,
-      description: 'Trần nợ đại lý cấp 1',
-      lastUpdated: '21:35 11 thg 7, 2025'
-    },
-    {
-      id: '2',
-      code: 'max_debt_level_2',
-      value: 50000000,
-      description: 'Trần nợ đại lý cấp 2',
-      lastUpdated: '21:35 11 thg 7, 2025'
-    },
-    {
-      id: '3',
-      code: 'max_delivery_order',
-      value: 10,
-      description: 'Số lượng đơn hàng tối đa trên ngày',
-      lastUpdated: '10:20 05 thg 10, 2025'
-    },
-    {
-      id: '4',
-      code: 'max_order_value',
-      value: 50000000,
-      description: 'Giá trị đơn hàng tối đa',
-      lastUpdated: '15:45 28 thg 10, 2025'
-    },
-    {
-      id: '5',
-      code: 'single_supplier_per_import',
-      value: 1,
-      description: 'Một phiếu nhập chỉ chọn được 1 nhà sản xuất',
-      lastUpdated: '09:00 08 thg 1, 2026'
-    },
-    {
-      id: '6',
-      code: 'min_sales_level_1',
-      value: 100000000,
-      description: 'Doanh số tối thiểu để lên Cấp 1 (VNĐ/tháng)',
-      lastUpdated: '09:00 16 thg 1, 2026'
-    },
-    {
-      id: '7',
-      code: 'min_months_level_1',
-      value: 6,
-      description: 'Số tháng hoạt động tối thiểu để lên Cấp 1',
-      lastUpdated: '09:00 16 thg 1, 2026'
-    },
-    {
-      id: '8',
-      code: 'min_payment_rate_level_1',
-      value: 90,
-      description: 'Tỷ lệ thanh toán đúng hạn tối thiểu để lên Cấp 1 (%)',
-      lastUpdated: '09:00 16 thg 1, 2026'
-    },
-    {
-      id: '9',
-      code: 'discount_level_1',
-      value: 5,
-      description: 'Chiết khấu cho đại lý cấp 1 (%)',
-      lastUpdated: '09:00 16 thg 1, 2026'
-    },
-    {
-      id: '10',
-      code: 'discount_level_2',
-      value: 3,
-      description: 'Chiết khấu cho đại lý cấp 2 (%)',
-      lastUpdated: '09:00 16 thg 1, 2026'
-    },
-    {
-      id: '11',
-      code: 'max_debt_level_3',
-      value: 20000000,
-      description: 'Trần nợ đại lý cấp 3',
-      lastUpdated: '09:00 17 thg 1, 2026'
-    },
-    {
-      id: '12',
-      code: 'min_sales_level_2',
-      value: 50000000,
-      description: 'Doanh số tối thiểu để lên Cấp 2 (VNĐ/tháng)',
-      lastUpdated: '09:00 17 thg 1, 2026'
-    },
-    {
-      id: '13',
-      code: 'min_months_level_2',
-      value: 3,
-      description: 'Số tháng hoạt động tối thiểu để lên Cấp 2',
-      lastUpdated: '09:00 17 thg 1, 2026'
-    },
-    {
-      id: '14',
-      code: 'discount_level_3',
-      value: 2,
-      description: 'Chiết khấu cho đại lý cấp 3 (%)',
-      lastUpdated: '09:00 17 thg 1, 2026'
+  useEffect(() => {
+    loadRegulations()
+  }, [])
+
+  const loadRegulations = async () => {
+    try {
+      setLoading(true)
+      const response = await regulationService.getAll()
+      if (response.success && response.data) {
+        const regulationData = response.data.map((reg: any) => ({
+          id: reg.id?.toString() || reg.code,
+          code: reg.code,
+          value: reg.value,
+          description: reg.description,
+          lastUpdated: new Date(reg.updated_at || reg.created_at).toLocaleString('vi-VN')
+        }))
+        setRegulations(regulationData)
+      }
+    } catch (error) {
+      console.error('Error loading regulations:', error)
+      toast.error('Không thể tải danh sách quy định')
+    } finally {
+      setLoading(false)
     }
-  ])
+  }
 
   const filteredRegulations = regulations.filter(regulation =>
     regulation.code.toLowerCase().includes(searchTerm.toLowerCase()) ||

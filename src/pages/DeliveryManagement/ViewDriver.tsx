@@ -11,30 +11,60 @@ import {
   CheckCircle2,
   Package
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
+import driverService from '../../api/endpoints/driverService'
 import './ViewDriver.css'
 
 const ViewDriver = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [driver, setDriver] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Mock data - In real app, fetch from API based on id
-  const driver = {
-    id: id,
-    code: 'TX001',
-    fullName: 'Nguyễn Văn Hùng',
-    phone: '0901234567',
-    idCard: '079201012345',
-    vehicleType: 'truck_medium',
-    vehicleTypeLabel: 'Xe tải 2.5T',
-    licensePlate: '51C-12345',
-    areas: ['Quận 1', 'Quận 3', 'Quận 5'],
-    status: 'available',
-    statusLabel: 'Sẵn sàng',
-    totalDeliveries: 156,
-    createdAt: '15/03/2024',
-    address: '123 Nguyễn Văn Linh, Quận 7, TP.HCM',
-    birthDate: '15/08/1990',
-    licenseType: 'B2'
+  useEffect(() => {
+    loadDriver()
+  }, [id])
+
+  const loadDriver = async () => {
+    try {
+      setLoading(true)
+      const response = await driverService.getById(id!)
+      if (response.success && response.data) {
+        const d = response.data
+        setDriver({
+          id: d.id,
+          code: d.code,
+          fullName: d.fullName,
+          phone: d.phone,
+          idCard: d.idCard || 'N/A',
+          vehicleType: d.vehicleType,
+          vehicleTypeLabel: d.vehicleType === 'truck_medium' ? 'Xe tải 2.5T' : 'Xe tải',
+          licensePlate: d.licensePlate,
+          areas: d.areas || [],
+          status: d.status,
+          statusLabel: d.status === 'available' ? 'Sẵn sàng' : 'Bận',
+          totalDeliveries: 0,
+          createdAt: new Date(d.createdAt).toLocaleDateString('vi-VN'),
+          address: 'N/A',
+          birthDate: 'N/A',
+          licenseType: 'B2'
+        })
+      }
+    } catch (error) {
+      console.error('Error loading driver:', error)
+      toast.error('Không thể tải thông tin tài xế')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="view-driver-page"><p>Đang tải...</p></div>
+  }
+
+  if (!driver) {
+    return <div className="view-driver-page"><p>Không tìm thấy tài xế</p></div>
   }
 
   const recentDeliveries = [
@@ -46,7 +76,7 @@ const ViewDriver = () => {
   return (
     <div className="view-driver-page">
       <div className="view-driver-header">
-        <button className="btn-back" onClick={() => navigate('/delivery-management')}>
+        <button className="btn-back" onClick={() => navigate('/admin/delivery-management')}>
           <ArrowLeft size={20} />
           Quay lại
         </button>

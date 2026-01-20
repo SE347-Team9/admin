@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { 
   Warehouse, 
   Package, 
@@ -11,6 +11,7 @@ import {
   Eye,
   ClipboardCheck
 } from 'lucide-react'
+import { inventoryService } from '../../api/endpoints/inventoryService'
 import './InventoryOverview.css'
 
 interface Batch {
@@ -62,116 +63,43 @@ const InventoryOverview = () => {
   const [showApproveCenter, setShowApproveCenter] = useState(false)
   const [receiptApprovalMap, setReceiptApprovalMap] = useState<Record<string, 'approved' | 'rejected'>>({})
   const [expandedReceipts, setExpandedReceipts] = useState<Record<string, boolean>>({})
+  const [inventory, setInventory] = useState<InventoryItem[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const [inventory] = useState<InventoryItem[]>([
-    {
-      id: '1',
-      productId: 'SP001',
-      productCode: 'SP001',
-      productName: 'Bia Hà Nội',
-      category: 'Đồ uống có cồn',
-      unit: 'Thùng',
-      warehouseType: 'Kho thường',
-      currentStock: 150,
-      minStockLevel: 50,
-      maxStockLevel: 500,
-      costPrice: 200000,
-      sellingPrice: 250000,
-      lastUpdated: '2026-01-14 10:30',
-      batches: [
-        { id: 'B001', batchNumber: 'LOT2025001', productId: 'SP001', quantity: 100, expiryDate: '2026-06-15', importDate: '2025-12-01', importReceiptCode: 'PN001', remainingQuantity: 80 },
-        { id: 'B002', batchNumber: 'LOT2025002', productId: 'SP001', quantity: 100, expiryDate: '2026-08-20', importDate: '2026-01-05', importReceiptCode: 'PN002', remainingQuantity: 70 }
-      ]
-    },
-    {
-      id: '2',
-      productId: 'SP002',
-      productCode: 'SP002',
-      productName: 'Nước ngọt Pepsi',
-      category: 'Nước giải khát',
-      unit: 'Thùng',
-      warehouseType: 'Kho mát',
-      currentStock: 25,
-      minStockLevel: 30,
-      maxStockLevel: 300,
-      costPrice: 150000,
-      sellingPrice: 180000,
-      lastUpdated: '2026-01-14 09:15',
-      batches: [
-        { id: 'B003', batchNumber: 'LOT2025003', productId: 'SP002', quantity: 50, expiryDate: '2026-02-10', importDate: '2025-11-10', importReceiptCode: 'PN001', remainingQuantity: 25 }
-      ]
-    },
-    {
-      id: '3',
-      productId: 'SP003',
-      productCode: 'SP003',
-      productName: 'Sữa Vinamilk',
-      category: 'Sữa & Sản phẩm từ sữa',
-      unit: 'Lốc',
-      warehouseType: 'Kho đông lạnh',
-      currentStock: 0,
-      minStockLevel: 100,
-      maxStockLevel: 1000,
-      costPrice: 45000,
-      sellingPrice: 60000,
-      lastUpdated: '2026-01-13 16:45',
-      batches: []
-    },
-    {
-      id: '4',
-      productId: 'SP004',
-      productCode: 'SP004',
-      productName: 'Bánh quy Oreo',
-      category: 'Bánh kẹo',
-      unit: 'Hộp',
-      warehouseType: 'Kho thường',
-      currentStock: 200,
-      minStockLevel: 80,
-      maxStockLevel: 400,
-      costPrice: 25000,
-      sellingPrice: 35000,
-      lastUpdated: '2026-01-14 08:00',
-      batches: [
-        { id: 'B004', batchNumber: 'LOT2026001', productId: 'SP004', quantity: 200, expiryDate: '2026-12-31', importDate: '2026-01-02', importReceiptCode: 'PN003', remainingQuantity: 200 }
-      ]
-    },
-    {
-      id: '5',
-      productId: 'SP005',
-      productCode: 'SP005',
-      productName: 'Gạo ST25',
-      category: 'Lương thực',
-      unit: 'Kg',
-      warehouseType: 'Kho mát',
-      currentStock: 500,
-      minStockLevel: 200,
-      maxStockLevel: 2000,
-      costPrice: 22000,
-      sellingPrice: 28000,
-      lastUpdated: '2026-01-14 11:00',
-      batches: [
-        { id: 'B005', batchNumber: 'LOT2025004', productId: 'SP005', quantity: 500, expiryDate: '2027-01-01', importDate: '2025-10-15', importReceiptCode: 'PN002', remainingQuantity: 500 }
-      ]
-    },
-    {
-      id: '6',
-      productId: 'SP006',
-      productCode: 'SP006',
-      productName: 'Snack Oishi',
-      category: 'Bánh kẹo',
-      unit: 'Gói',
-      warehouseType: 'Kho thường',
-      currentStock: 15,
-      minStockLevel: 50,
-      maxStockLevel: 300,
-      costPrice: 8000,
-      sellingPrice: 12000,
-      lastUpdated: '2026-01-14 07:30',
-      batches: [
-        { id: 'B006', batchNumber: 'LOT2025005', productId: 'SP006', quantity: 100, expiryDate: '2026-01-20', importDate: '2025-09-01', importReceiptCode: 'PN001', remainingQuantity: 15 }
-      ]
+  useEffect(() => {
+    fetchInventory()
+  }, [])
+
+  const fetchInventory = async () => {
+    try {
+      setLoading(true)
+      const response = await inventoryService.getOverview()
+      if (response.success && response.data) {
+        // Transform API data to match frontend interface
+        const transformedData: InventoryItem[] = response.data.products?.map((item: any) => ({
+          id: item.id,
+          productId: item.productId || item.id,
+          productCode: item.code,
+          productName: item.name,
+          category: item.category || 'Khác',
+          unit: item.unit,
+          warehouseType: 'Kho thường',
+          currentStock: item.quantity || 0,
+          minStockLevel: 50,
+          maxStockLevel: 500,
+          costPrice: parseFloat(item.costPrice) || 0,
+          sellingPrice: parseFloat(item.sellingPrice) || 0,
+          lastUpdated: new Date(item.updatedAt).toLocaleString('vi-VN'),
+          batches: []
+        })) || []
+        setInventory(transformedData)
+      }
+    } catch (error: any) {
+      console.error('Error fetching inventory:', error)
+    } finally {
+      setLoading(false)
     }
-  ])
+  }
 
   const receiptGroups = useMemo(() => {
     const receiptMap: Record<string, {
@@ -193,7 +121,7 @@ const InventoryOverview = () => {
         if (!receiptMap[batch.importReceiptCode]) {
           receiptMap[batch.importReceiptCode] = {
             receiptCode: batch.importReceiptCode,
-            supplier: 'Công ty A', // Mock data
+            supplier: '', // Get from imports API when available
             createdDate: batch.importDate,
             totalAmount: 0,
             products: []

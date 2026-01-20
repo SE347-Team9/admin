@@ -1,0 +1,491 @@
+/* Create Export Page - Modern Design */
+.create-export-page {
+  min-height: calc(100vh - 80px);
+  background: #f8fafc;
+  padding: 24px;
+}
+
+.create-export-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+/* Header */
+.create-export-header {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  padding: 20px 32px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.create-export-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+/* Form */
+.create-export-form {
+  padding: 24px 32px;
+}
+
+.create-export-page .form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.create-export-page .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.create-export-page .form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.create-export-page .required {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.create-export-page .form-input,
+.create-export-page .form-select {
+  padding: 10px 14px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  background: white;
+  color: #1e293b;
+}
+
+.create-export-page .form-input:hover,
+.create-export-page .form-select:hover {
+  border-color: #94a3b8;
+}
+
+.create-export-page .form-input:focus,
+.create-export-page .form-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.create-export-page .form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233b82f6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+  padding-right: 40px;
+}
+
+/* Items Section */
+.create-export-page .items-section {
+  margin-bottom: 20px;
+}
+
+.create-export-page .items-header {
+  margin-bottom: 12px;
+}
+
+.create-export-page .items-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.create-export-page .btn-add-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+  margin-top: 12px;
+  width: auto;
+}
+
+.create-export-page .btn-add-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.35);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+/* Items Table */
+.create-export-page .items-table-wrapper {
+  overflow-x: auto;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  background: white;
+}
+
+.create-export-page .items-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.create-export-page .items-table thead {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-bottom: 2px solid #bfdbfe;
+}
+
+.create-export-page .items-table th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.create-export-page .items-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background 0.15s ease;
+}
+
+.create-export-page .items-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.create-export-page .items-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.create-export-page .items-table td {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.create-export-page .col-stt {
+  width: 45px;
+  text-align: center;
+  font-weight: 700;
+  color: #3b82f6;
+  font-size: 13px;
+}
+
+.create-export-page .col-product {
+  min-width: 180px;
+}
+
+.create-export-page .col-unit {
+  width: 120px;
+}
+
+.create-export-page .col-quantity,
+.create-export-page .col-batch,
+.create-export-page .col-price {
+  width: 110px;
+}
+
+.create-export-page .col-total {
+  width: 140px;
+  font-weight: 600;
+}
+
+.create-export-page .col-action {
+  width: 80px;
+  text-align: center;
+}
+
+.create-export-page .table-input,
+.create-export-page .table-select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.create-export-page .table-input:hover,
+.create-export-page .table-select:hover {
+  border-color: #94a3b8;
+}
+
+.create-export-page .table-input:focus,
+.create-export-page .table-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: #f8fafc;
+}
+
+.create-export-page .table-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233b82f6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.create-export-page .total-value {
+  font-weight: 700;
+  color: #3b82f6;
+  font-size: 14px;
+}
+
+.create-export-page .btn-remove {
+  padding: 6px;
+  background: #fee2e2;
+  color: #ef4444;
+  border: 1.5px solid #fecaca;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.create-export-page .btn-remove:hover:not(:disabled) {
+  background: #fecaca;
+  border-color: #fca5a5;
+  transform: scale(1.05);
+}
+
+.create-export-page .btn-remove:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Summary Section */
+.create-export-page .summary-section {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 2px solid #93c5fd;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.08);
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #bfdbfe;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row.remaining {
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 2px solid #3b82f6;
+}
+
+.summary-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.summary-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.summary-value.total {
+  font-size: 22px;
+  color: #3b82f6;
+}
+
+.summary-value.remaining-value {
+  font-size: 22px;
+  color: #ef4444;
+}
+
+.summary-input {
+  padding: 8px 14px;
+  border: 2px solid #60a5fa;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: right;
+  width: 180px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.summary-input:hover {
+  border-color: #3b82f6;
+}
+
+.summary-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Action Buttons */
+.create-export-page .form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.create-export-page .btn-cancel,
+.create-export-page .btn-submit {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.create-export-page .btn-cancel {
+  background: white;
+  color: #64748b;
+  border: 2px solid #cbd5e1;
+}
+
+.create-export-page .btn-cancel:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #475569;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.create-export-page .btn-submit {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+  border: 2px solid transparent;
+}
+
+.create-export-page .btn-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.create-export-page .btn-submit:active,
+.create-export-page .btn-cancel:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .create-export-page .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .create-export-page .items-table-wrapper {
+    overflow-x: scroll;
+  }
+
+  .create-export-page .items-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .create-export-page {
+    padding: 20px 12px;
+  }
+
+  .create-export-header {
+    padding: 24px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .create-export-title {
+    font-size: 24px;
+  }
+
+  .create-export-form {
+    padding: 24px 16px;
+  }
+
+  .create-export-page .items-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .create-export-page .btn-add-item {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .create-export-page .summary-input {
+    width: 150px;
+  }
+
+  .create-export-page .form-actions {
+    flex-direction: column;
+  }
+
+  .create-export-page .btn-cancel,
+  .create-export-page .btn-submit {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .create-export-title {
+    font-size: 20px;
+  }
+
+  .summary-value.total,
+  .summary-value.remaining-value {
+    font-size: 18px;
+  }
+
+  .summary-input {
+    width: 120px;
+    font-size: 14px;
+  }
+}

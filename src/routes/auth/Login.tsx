@@ -1,12 +1,17 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authService } from '../../api/endpoints/authService';
+import socketService from '../../services/socketService';
 import './Login.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!username || !password) {
@@ -14,7 +19,42 @@ const Login = () => {
       return;
     }
 
-    console.log('Login:', { username, password });
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await authService.login(username, password);
+      
+      if (response.success) {
+        // Initialize socket connection
+        const user = authService.getCurrentUser();
+        if (user) {
+          socketService.connect(user.id, user.role);
+          
+          // Redirect based on role
+          switch (user.role) {
+            case 'admin':
+              navigate('/admin/home');
+              break;
+            case 'staff':
+              navigate('/staff/home');
+              break;
+            case 'agency':
+              navigate('/agency/dashboard');
+              break;
+            default:
+              navigate('/');
+          }
+        }
+      } else {
+        setError(response.message || 'Đăng nhập thất bại');
+      }
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || 'Tên đăng nhập hoặc mật khẩu không đúng';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -73,8 +113,8 @@ const Login = () => {
 
           {error && <div className="error-message">{error}</div>}
 
-          <button type="submit" className="login-button">
-            Đăng nhập
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
 
           <div className="login-footer">

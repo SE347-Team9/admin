@@ -1,91 +1,47 @@
 import { FileText, Eye, FileSpreadsheet, Download, Package, Truck, CreditCard } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import * as XLSX from 'xlsx'
 import html2pdf from 'html2pdf.js'
 import { toast } from 'react-toastify'
+import reportService, { Report } from '../../api/endpoints/reportService'
 import './Reports.css'
-
-interface Report {
-  id: string
-  code: string
-  type: 'import' | 'distribution' | 'debt'
-  typeLabel: string
-  period: string
-  value: number
-  employee: string
-  createdDate: string
-}
-
-interface AgencyImport {
-  code: string
-  name: string
-  importValue: number
-}
-
-interface AgencyDebt {
-  code: string
-  name: string
-  debt: number
-}
 
 const Reports = () => {
   const navigate = useNavigate()
   const [typeFilter, setTypeFilter] = useState<string>('all')
+  const [reports, setReports] = useState<Report[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Statistics data
-  const totalImportValue = 125000000
-  const totalDistributionValue = 98500000
-  const totalDebt = 36460000
+  useEffect(() => {
+    loadReports()
+  }, [])
 
-  // Mock data
-  const reports: Report[] = [
-    {
-      id: '1',
-      code: 'BC1',
-      type: 'import',
-      typeLabel: 'Nhập kho',
-      period: '10/2025',
-      value: 45000000,
-      employee: 'Nguyễn Văn A',
-      createdDate: '15/01/2025'
-    },
-    {
-      id: '2',
-      code: 'BC2',
-      type: 'distribution',
-      typeLabel: 'Phân phối',
-      period: '10/2025',
-      value: 32000000,
-      employee: 'Trần Thị B',
-      createdDate: '14/01/2025'
-    },
-    {
-      id: '3',
-      code: 'BC3',
-      type: 'debt',
-      typeLabel: 'Công nợ',
-      period: '09/2025',
-      value: 24060000,
-      employee: 'Lê Văn C',
-      createdDate: '13/01/2025'
-    },
-    {
-      id: '4',
-      code: 'BC4',
-      type: 'import',
-      typeLabel: 'Nhập kho',
-      period: '06/2024',
-      value: 38000000,
-      employee: 'Phạm Thị D',
-      createdDate: '12/01/2025'
+  const loadReports = async () => {
+    try {
+      setLoading(true)
+      const response = await reportService.getAll()
+      if (response.success && response.data) {
+        setReports(response.data)
+      }
+    } catch (error) {
+      console.error('Error loading reports:', error)
+      toast.error('Không thể tải danh sách báo cáo')
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
 
   // Count reports by type
   const importReports = reports.filter(r => r.type === 'import')
   const distributionReports = reports.filter(r => r.type === 'distribution')
   const debtReports = reports.filter(r => r.type === 'debt')
+  const paymentReports = reports.filter(r => r.type === 'payment')
+
+  // Statistics
+  const totalImportValue = importReports.reduce((sum, r) => sum + (r.value || 0), 0)
+  const totalDistributionValue = distributionReports.reduce((sum, r) => sum + (r.value || 0), 0)
+  const totalDebt = debtReports.reduce((sum, r) => sum + (r.value || 0), 0)
 
   // Filter reports
   const filteredReports = useMemo(() => {
@@ -93,8 +49,21 @@ const Reports = () => {
     return reports.filter(r => r.type === typeFilter)
   }, [reports, typeFilter])
 
+  // Mock agency statistics - TODO: fetch from API
+  const topImportAgencies = [
+    { code: 'DL001', name: 'Đại lý Miền Bắc', importValue: 150000000 },
+    { code: 'DL002', name: 'Đại lý Miền Nam', importValue: 120000000 },
+    { code: 'DL003', name: 'Đại lý Miền Trung', importValue: 98000000 },
+  ]
+
+  const topDebtAgencies = [
+    { code: 'DL005', name: 'Đại lý Đông Nam Á', debt: 45000000 },
+    { code: 'DL001', name: 'Đại lý Miền Bắc', debt: 32000000 },
+    { code: 'DL007', name: 'Đại lý Tây Nguyên', debt: 28000000 },
+  ]
+
   // Tabs definition
-  type TabType = 'all' | 'import' | 'distribution' | 'debt'
+  type TabType = 'all' | 'import' | 'distribution' | 'debt' | 'payment'
   const tabs = [
     { key: 'all' as TabType, label: 'Tất cả', icon: FileText, count: reports.length, color: '#3b82f6' },
     { key: 'import' as TabType, label: 'Nhập kho', icon: Package, count: importReports.length, color: '#10b981' },
@@ -102,15 +71,20 @@ const Reports = () => {
     { key: 'debt' as TabType, label: 'Công nợ', icon: CreditCard, count: debtReports.length, color: '#ef4444' },
   ]
 
-  const topImportAgencies: AgencyImport[] = [
-    { code: 'DL1', name: 'Đại lý Nghĩa', importValue: 45000000 },
-    { code: 'DL2', name: 'Đại lý Đại', importValue: 32000000 }
-  ]
-
-  const topDebtAgencies: AgencyDebt[] = [
-    { code: 'DL1', name: 'Đại lý Nghĩa', debt: 24060000 },
-    { code: 'DL2', name: 'Đại lý Đại', debt: 12400000 }
-  ]
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'import':
+        return 'Nhập kho'
+      case 'distribution':
+        return 'Phân phối'
+      case 'debt':
+        return 'Công nợ'
+      case 'payment':
+        return 'Thanh toán'
+      default:
+        return type
+    }
+  }
 
   const getTypeClass = (type: string) => {
     switch (type) {
@@ -120,9 +94,19 @@ const Reports = () => {
         return 'type-distribution'
       case 'debt':
         return 'type-debt'
+      case 'payment':
+        return 'type-payment'
       default:
         return ''
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="reports-page">
+        <p>Đang tải báo cáo...</p>
+      </div>
+    )
   }
 
   const getTypeIcon = (type: string) => {
@@ -145,11 +129,11 @@ const Reports = () => {
     // Report details
     const reportDetails = [
       { 'Thông tin': 'Mã báo cáo', 'Giá trị': report.code },
-      { 'Thông tin': 'Loại báo cáo', 'Giá trị': report.typeLabel },
-      { 'Thông tin': 'Kỳ báo cáo', 'Giá trị': report.period },
-      { 'Thông tin': 'Giá trị', 'Giá trị': report.value.toLocaleString('vi-VN') + ' đ' },
-      { 'Thông tin': 'Nhân viên', 'Giá trị': report.employee },
-      { 'Thông tin': 'Ngày tạo', 'Giá trị': report.createdDate }
+      { 'Thông tin': 'Loại báo cáo', 'Giá trị': getTypeLabel(report.type) },
+      { 'Thông tin': 'Kỳ báo cáo', 'Giá trị': report.period || 'N/A' },
+      { 'Thông tin': 'Giá trị', 'Giá trị': (report.value || 0).toLocaleString('vi-VN') + ' đ' },
+      { 'Thông tin': 'Nhân viên', 'Giá trị': report.created_by_name || 'N/A' },
+      { 'Thông tin': 'Ngày tạo', 'Giá trị': new Date(report.created_at).toLocaleDateString('vi-VN') }
     ]
     
     const ws = XLSX.utils.json_to_sheet(reportDetails)
@@ -202,23 +186,23 @@ const Reports = () => {
           </tr>
           <tr>
             <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Loại báo cáo:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.typeLabel}</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${getTypeLabel(report.type)}</td>
           </tr>
           <tr style="background-color: #f5f5f5;">
             <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Kỳ báo cáo:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.period}</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.period || 'N/A'}</td>
           </tr>
           <tr>
             <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Giá trị:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.value.toLocaleString('vi-VN')} đ</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${(report.value || 0).toLocaleString('vi-VN')} đ</td>
           </tr>
           <tr style="background-color: #f5f5f5;">
             <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Nhân viên:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.employee}</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.created_by_name || 'N/A'}</td>
           </tr>
           <tr>
             <td style="padding: 10px 15px; border: 1px solid #ddd; font-weight: bold; width: 40%;">Ngày tạo:</td>
-            <td style="padding: 10px 15px; border: 1px solid #ddd;">${report.createdDate}</td>
+            <td style="padding: 10px 15px; border: 1px solid #ddd;">${new Date(report.created_at).toLocaleDateString('vi-VN')}</td>
           </tr>
         </table>
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #888;">
@@ -339,16 +323,15 @@ const Reports = () => {
                   </td>
                   <td>
                     <span className={`type-badge ${getTypeClass(report.type)}`}>
-                      {getTypeIcon(report.type)}
-                      {report.typeLabel}
+                      {getTypeLabel(report.type)}
                     </span>
                   </td>
-                  <td className="text-muted">{report.period}</td>
+                  <td className="text-muted">{report.period || 'N/A'}</td>
                   <td>
-                    <span className="report-value">{report.value.toLocaleString('vi-VN')} đ</span>
+                    <span className="report-value">{(report.value || 0).toLocaleString('vi-VN')} đ</span>
                   </td>
-                  <td className="text-muted">{report.employee}</td>
-                  <td className="text-muted">{report.createdDate}</td>
+                  <td className="text-muted">{report.created_by_name || 'N/A'}</td>
+                  <td className="text-muted">{new Date(report.created_at).toLocaleDateString('vi-VN')}</td>
                   <td>
                     <div className="action-buttons">
                       <button 

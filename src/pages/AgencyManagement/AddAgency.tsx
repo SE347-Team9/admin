@@ -2,6 +2,7 @@ import { Store, Save, X, MapPin, User, CreditCard, Info } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { agencyService } from '../../api/endpoints/agencyService'
 import './AddAgency.css'
 
 // Quy định hệ thống - sẽ lấy từ API trong thực tế
@@ -34,7 +35,9 @@ const AddAgency = () => {
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     // Validation
@@ -57,13 +60,34 @@ const AddAgency = () => {
       }
     }
 
-    // TODO: Call API to create agency
-    toast.success('Thêm đại lý thành công!')
-    navigate('/agency-management')
+    try {
+      setLoading(true)
+      const fullAddress = `${formData.address}, ${formData.district}, ${formData.city}`
+      const response = await agencyService.create({
+        code: formData.code,
+        name: formData.name,
+        location: formData.city,
+        address: fullAddress,
+        phone: formData.phone,
+        email: formData.email,
+        status: formData.status
+      })
+
+      if (response.success) {
+        toast.success('Thêm đại lý thành công!')
+        navigate('/admin/agency-management')
+      }
+    } catch (error: any) {
+      console.error('Error creating agency:', error)
+      const errorMsg = error.response?.data?.message || 'Không thể tạo đại lý'
+      toast.error(errorMsg)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleCancel = () => {
-    navigate('/agency-management')
+    navigate('/admin/agency-management')
   }
 
   return (

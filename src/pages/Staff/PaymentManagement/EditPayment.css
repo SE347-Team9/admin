@@ -1,0 +1,322 @@
+/* --- Input with icon (date) --- */
+.ep-input-icon-group {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1.5px solid #dbeafe;
+  border-radius: 8px;
+  padding: 0 10px;
+}
+.ep-input-icon-group input[type="date"] {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  padding: 10px 0;
+  outline: none;
+  width: 100%;
+}
+
+/* --- Layout & Background --- */
+.ep-root {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9f0fb 100%);
+  padding: 32px 0 32px 0;
+}
+.ep-header-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 auto 32px auto;
+  max-width: 1200px;
+}
+.ep-header-icon {
+  background: #2196f3;
+  color: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+.ep-header-title-group {
+  flex: 1;
+}
+.ep-header-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1e40af;
+  margin-bottom: 2px;
+}
+.ep-header-desc {
+  color: #64748b;
+  font-size: 1.08rem;
+}
+.ep-back-btn {
+  background: #fff;
+  color: #2563eb;
+  border: 1.5px solid #2563eb;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ep-back-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+.ep-back-arrow {
+  font-size: 1.2rem;
+}
+.ep-main {
+  display: flex;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.ep-left {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.ep-right {
+  width: 400px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* --- Card & Section --- */
+.ep-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(59,130,246,0.10);
+  border: 1.5px solid #e2e8f0;
+  padding: 28px 28px 18px 28px;
+}
+.ep-section-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ep-section-icon {
+  font-size: 1.3rem;
+}
+
+/* --- Agency Info --- */
+.ep-agency-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ep-agency-row {
+  display: flex;
+  gap: 18px;
+}
+.ep-agency-info {
+  background: #f1f8ff;
+  border-radius: 12px;
+  padding: 12px 18px;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1.2px solid #e3eafc;
+}
+.ep-agency-label {
+  color: #2563eb;
+  font-size: 0.98rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ep-agency-value {
+  color: #222e3a;
+  font-weight: 500;
+  font-size: 1.08rem;
+}
+
+/* --- Form --- */
+.ep-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.ep-form-row {
+  display: flex;
+  gap: 18px;
+}
+.ep-form-group {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ep-form-group label {
+  font-weight: 600;
+  color: #222e3a;
+  margin-bottom: 2px;
+}
+.ep-required {
+  color: #e11d48;
+  font-weight: 700;
+}
+.ep-form-group input[type="date"],
+.ep-form-group input[type="number"] {
+  border: 1.5px solid #dbeafe;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  outline: none;
+}
+.ep-input-money {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1.5px solid #dbeafe;
+  border-radius: 8px;
+  padding: 0 10px;
+}
+.ep-money-icon {
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-right: 4px;
+}
+.ep-input-money input[type="number"] {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  padding: 10px 0;
+  outline: none;
+  width: 100%;
+}
+.ep-form-group textarea {
+  width: 100%;
+  min-height: 60px;
+  border: 1.5px solid #dbeafe;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 1rem;
+  background: #f8fafc;
+  resize: vertical;
+}
+
+/* --- Summary Card --- */
+.ep-summary-card {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(59,130,246,0.13);
+  padding: 28px 28px 18px 28px;
+  margin-bottom: 18px;
+}
+.ep-summary-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.ep-summary-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+.ep-summary-label {
+  font-size: 1rem;
+  color: #dbeafe;
+  font-weight: 500;
+}
+.ep-summary-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 2px;
+}
+.ep-summary-vnd {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-left: 2px;
+}
+.ep-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 1.08rem;
+}
+.ep-summary-row {
+  display: flex;
+  justify-content: space-between;
+}
+.ep-summary-highlight {
+  color: #4ade80;
+  font-weight: 800;
+}
+
+/* --- Actions --- */
+.ep-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+.ep-update-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ep-update-btn:hover {
+  background: #1746a2;
+}
+.ep-cancel-btn {
+  background: #f1f5f9;
+  color: #64748b;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.08rem;
+  font-weight: 700;
+  padding: 14px 0;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.04);
+}
+.ep-cancel-btn:hover {
+  background: #e2e8f0;
+  color: #2563eb;
+}
+
+@media (max-width: 1000px) {
+  .ep-main {
+    flex-direction: column;
+  }
+  .ep-right {
+    width: 100%;
+    min-width: unset;
+  }
+}

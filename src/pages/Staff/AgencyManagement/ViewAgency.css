@@ -1,0 +1,142 @@
+.view-agency-info-label {
+  color: #2563eb;
+  font-size: 1.08rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.view-agency-status-active {
+  color: #22c55e;
+  font-weight: 700;
+}
+/* Nút quay lại đầu trang */
+.view-agency-back-btn {
+  background: #fff;
+  color: #2563eb;
+  border: 1.5px solid #2563eb;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  margin-left: 0;
+  margin-right: auto;
+}
+.view-agency-back-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+/* ViewAgency.css - Xem chi tiết đại lý */
+
+.view-agency-root {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9f0fb 100%);
+  padding: 48px 0 48px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.view-agency-header-new {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 36px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(59,130,246,0.10);
+  padding: 24px 38px 24px 38px;
+  max-width: 700px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: flex-start;
+  position: relative;
+}
+.view-agency-header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+.view-agency-header-icon-big {
+  background: #2196f3;
+  color: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.view-agency-header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.view-agency-title {
+  font-size: 2.3rem;
+  font-weight: 900;
+  color: #1e40af;
+  margin: 0;
+}
+.view-agency-desc {
+  color: #64748b;
+  font-size: 1.13rem;
+}
+.view-agency-card-new {
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 6px 32px rgba(59,130,246,0.13);
+  border: 1.5px solid #e2e8f0;
+  padding: 38px 38px 28px 38px;
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+}
+.view-agency-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 32px;
+}
+.view-agency-back-btn {
+  background: #fff;
+  color: #2563eb;
+  border: 1.5px solid #2563eb;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  right: 38px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+.view-agency-back-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .view-agency-card-new {
+    max-width: 98vw;
+    padding: 18px 6vw 18px 6vw;
+  }
+  .view-agency-info-grid {
+    grid-template-columns: 1fr;
+    gap: 18px 0;
+  }
+}

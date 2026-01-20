@@ -1,7 +1,8 @@
 import { Users, Eye, Edit, Trash2, UserPlus, CheckCircle2, XCircle, ShieldCheck, Building2, UserCog } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import { accountService } from '../../api/endpoints/accountService'
 import './AccountManagement.css'
 
 interface Account {
@@ -25,14 +26,51 @@ const AccountManagement = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteAccount, setDeleteAccount] = useState<Account | null>(null)
   const [activeTab, setActiveTab] = useState<TabType>('all')
+  const [accounts, setAccounts] = useState<Account[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch accounts from API
+  useEffect(() => {
+    fetchAccounts()
+  }, [])
+
+  const fetchAccounts = async () => {
+    try {
+      setLoading(true)
+      const response = await accountService.getAll()
+      if (response.success) {
+        // Transform data to match interface
+        const transformedData = response.data.map((acc: any) => ({
+          id: acc.id,
+          code: acc.code,
+          username: acc.username,
+          fullName: acc.fullName,
+          email: acc.email,
+          phone: acc.phone,
+          role: acc.role,
+          roleLabel: acc.role === 'admin' ? 'Quản trị viên' : acc.role === 'agency' ? 'Đại lý' : 'Nhân viên',
+          status: acc.status,
+          statusLabel: acc.status === 'active' ? 'Hoạt động' : 'Không hoạt động',
+          createdAt: new Date(acc.createdAt).toLocaleDateString('vi-VN')
+        }))
+        setAccounts(transformedData)
+      }
+    } catch (error) {
+      console.error('Error fetching accounts:', error)
+      toast.error('Không thể tải danh sách tài khoản')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Statistics data
-  const totalAccounts = 14
-  const activeAccounts = 12
-  const inactiveAccounts = 2
+  const totalAccounts = accounts.length
+  const activeAccounts = accounts.filter(acc => acc.status === 'active').length
+  const inactiveAccounts = accounts.filter(acc => acc.status === 'inactive').length
 
-  // Mock data
-  const [accounts, setAccounts] = useState<Account[]>([
+  // Remove mock data - commented out unused variable
+  /*
+  const [oldAccounts] = useState<Account[]>([
     {
       id: '1',
       code: 'ADM001',
@@ -99,7 +137,10 @@ const AccountManagement = () => {
       createdAt: '25/10/2025'
     }
   ])
+  */
 
+  // Removed unused getRoleClass function
+  /*
   const getRoleClass = (role: string) => {
     switch (role) {
       case 'admin':
@@ -112,6 +153,7 @@ const AccountManagement = () => {
         return ''
     }
   }
+  */
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -148,10 +190,18 @@ const AccountManagement = () => {
     setShowDeleteModal(true)
   }
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteAccount) {
-      setAccounts(prev => prev.filter(acc => acc.id !== deleteAccount.id))
-      toast.success(`Đã xóa tài khoản ${deleteAccount.username}`)
+      try {
+        const response = await accountService.delete(deleteAccount.id)
+        if (response.success) {
+          toast.success(`Đã xóa tài khoản ${deleteAccount.username}`)
+          fetchAccounts() // Refresh list
+        }
+      } catch (error) {
+        console.error('Error deleting account:', error)
+        toast.error('Không thể xóa tài khoản')
+      }
     }
     setShowDeleteModal(false)
     setDeleteAccount(null)
@@ -246,7 +296,7 @@ const AccountManagement = () => {
           </div>
           <button 
             className="btn-create-account"
-            onClick={() => navigate('/add-account')}
+            onClick={() => navigate('/admin/add-account')}
           >
             <UserPlus size={20} />
             Thêm tài khoản
@@ -284,7 +334,13 @@ const AccountManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {getFilteredAccounts().length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="empty-message">
+                    Đang tải dữ liệu...
+                  </td>
+                </tr>
+              ) : getFilteredAccounts().length === 0 ? (
                 <tr>
                   <td colSpan={8} className="empty-message">
                     Không có tài khoản nào trong danh mục này.

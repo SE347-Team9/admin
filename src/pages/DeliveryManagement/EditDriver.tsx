@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { 
   Truck, 
@@ -11,23 +11,55 @@ import {
   MapPin
 } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { driverService } from '../../api/endpoints/driverService'
 import './EditDriver.css'
 
 const EditDriver = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   
-  // Mock data - In real app, fetch from API based on id
   const [formData, setFormData] = useState({
-    fullName: 'Nguyễn Văn Hùng',
-    phone: '0901234567',
-    idCard: '079201012345',
+    fullName: '',
+    phone: '',
+    idCard: '',
     vehicleType: 'truck_medium',
-    licensePlate: '51C-12345',
-    areas: ['Quận 1', 'Quận 3', 'Quận 5'],
+    licensePlate: '',
+    areas: [] as string[],
     status: 'available'
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [loading, setLoading] = useState(false)
+  const [fetchLoading, setFetchLoading] = useState(true)
+
+  useEffect(() => {
+    if (id) {
+      fetchDriver()
+    }
+  }, [id])
+
+  const fetchDriver = async () => {
+    try {
+      setFetchLoading(true)
+      const response = await driverService.getById(id!)
+      if (response.success) {
+        setFormData({
+          fullName: response.data.fullName,
+          phone: response.data.phone || '',
+          idCard: response.data.idCard || '',
+          vehicleType: 'truck_medium',
+          licensePlate: response.data.licensePlate || '',
+          areas: [],
+          status: response.data.status
+        })
+      }
+    } catch (error: any) {
+      console.error('Error fetching driver:', error)
+      toast.error('Không thể tải thông tin tài xế')
+      navigate('/delivery-management')
+    } finally {
+      setFetchLoading(false)
+    }
+  }
 
   const vehicleTypes = [
     { value: 'motorcycle', label: 'Xe máy' },
@@ -100,21 +132,38 @@ const EditDriver = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (validateForm()) {
-      // TODO: Call API to update driver
-      console.log('Updated data:', formData)
-      toast.success('Cập nhật tài xế thành công!')
-      navigate('/delivery-management')
+      try {
+        setLoading(true)
+        const response = await driverService.update(id!, {
+          fullName: formData.fullName,
+          phone: formData.phone,
+          idCard: formData.idCard,
+          licensePlate: formData.licensePlate,
+          status: formData.status
+        })
+        
+        if (response.success) {
+          toast.success('Cập nhật thông tin tài xế thành công!')
+          navigate('/admin/delivery-management')
+        }
+      } catch (error: any) {
+        console.error('Error updating driver:', error)
+        const errorMsg = error.response?.data?.message || 'Không thể cập nhật thông tin'
+        toast.error(errorMsg)
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
   return (
     <div className="edit-driver-page">
       <div className="edit-driver-header">
-        <button className="btn-back" onClick={() => navigate('/delivery-management')}>
+        <button className="btn-back" onClick={() => navigate('/admin/delivery-management')}>
           <ArrowLeft size={20} />
           Quay lại
         </button>
@@ -269,7 +318,7 @@ const EditDriver = () => {
         </div>
 
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={() => navigate('/delivery-management')}>
+          <button type="button" className="btn-cancel" onClick={() => navigate('/admin/delivery-management')}>
             Hủy
           </button>
           <button type="submit" className="btn-submit">

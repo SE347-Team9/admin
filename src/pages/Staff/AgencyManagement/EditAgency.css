@@ -1,0 +1,173 @@
+.edit-agency-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eaf6ff 0%, #dbeafe 100%);
+  padding: 36px 0;
+}
+
+.edit-agency-header {
+  max-width: 900px;
+  margin: 0 auto 32px auto;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 4px 24px rgba(59,130,246,0.10);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 38px 48px 38px 38px;
+  position: relative;
+}
+.edit-agency-header-icon {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 36px;
+}
+.edit-agency-header-content {
+  flex: 1;
+}
+.edit-agency-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #2563eb;
+  margin: 0 0 8px 0;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+}
+.edit-agency-desc {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin: 0;
+}
+.edit-agency-back-btn {
+  position: absolute;
+  right: 38px;
+  top: 38px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #f3f6fa;
+  border: 2px solid #e0e7ef;
+  border-radius: 12px;
+  color: #2563eb;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.edit-agency-back-btn:hover {
+  background: #e0f0ff;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.edit-agency-card {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 4px 24px rgba(59,130,246,0.10);
+  padding: 40px 48px 32px 48px;
+}
+.edit-agency-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.edit-agency-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.edit-agency-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.edit-agency-group--full {
+  grid-column: 1 / -1;
+}
+.edit-agency-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+.edit-agency-input {
+  padding: 16px 18px;
+  border: 2px solid #e0e7ef;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  background: #f8fbff;
+  color: #22223b;
+  transition: border 0.2s, background 0.2s;
+}
+.edit-agency-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: #fff;
+}
+.edit-agency-note {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+.edit-agency-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 8px;
+}
+.edit-agency-btn {
+  padding: 14px 36px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.edit-agency-btn--secondary {
+  background: #f0f8ff;
+  color: #2563eb;
+  border: 2px solid #e0e7ef;
+}
+.edit-agency-btn--secondary:hover {
+  background: #e0f0ff;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+.edit-agency-btn--primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+}
+.edit-agency-btn--primary:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+@media (max-width: 1100px) {
+  .edit-agency-header, .edit-agency-card {
+    padding: 18px 8px 18px 8px;
+  }
+  .edit-agency-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .edit-agency-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .edit-agency-back-btn {
+    position: static;
+    margin-top: 12px;
+    align-self: flex-end;
+  }
+}

@@ -271,7 +271,7 @@
   border-left-color: #3b82f6;
 }
 
-.card-header {
+.eval-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -280,10 +280,17 @@
   border-bottom: 1px solid #e2e8f0;
 }
 
-.agency-info {
+.eval-card-title {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.eval-card-title h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
 }
 
 .agency-code {
@@ -403,6 +410,52 @@
   color: #94a3b8;
 }
 
+/* Card Body */
+.eval-card-body {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.metric-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.text-success {
+  color: #10b981;
+}
+
+.text-warning {
+  color: #f59e0b;
+}
+
+.text-danger {
+  color: #ef4444;
+}
+
+/* Card Footer */
+.eval-card-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
 /* Card Actions */
 .card-actions {
   display: flex;
@@ -412,13 +465,12 @@
   border-top: 1px solid #e2e8f0;
 }
 
-.btn-view,
-.btn-upgrade,
-.btn-downgrade {
+.agency-evaluation-page .btn-view,
+.agency-evaluation-page .btn-upgrade,
+.agency-evaluation-page .btn-downgrade {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -427,41 +479,40 @@
   transition: all 0.2s ease;
 }
 
-.btn-view {
+.agency-evaluation-page .btn-view {
   background: #f1f5f9;
   color: #64748b;
-  padding: 10px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
+  padding: 10px 20px;
 }
 
-.btn-view:hover {
+.agency-evaluation-page .btn-view:hover {
   background: #3b82f6;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.btn-upgrade {
+.agency-evaluation-page .btn-upgrade,
+.agency-evaluation-page .btn-downgrade {
+  padding: 10px 20px;
+}
+
+.agency-evaluation-page .btn-upgrade {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
 }
 
-.btn-upgrade:hover {
+.agency-evaluation-page .btn-upgrade:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-.btn-downgrade {
+.agency-evaluation-page .btn-downgrade {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
 }
 
-.btn-downgrade:hover {
+.agency-evaluation-page .btn-downgrade:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
@@ -676,7 +727,7 @@
     flex-direction: column;
   }
 
-  .card-header {
+  .eval-card-header {
     flex-direction: column;
     gap: 12px;
   }

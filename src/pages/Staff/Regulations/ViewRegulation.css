@@ -1,0 +1,266 @@
+/* Back button giống ViewReport */
+.view-regulation__back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #d1e9f9;
+  border-radius: 12px;
+  color: #0f4c81;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 24px;
+}
+.view-regulation__back-button:hover {
+  background: white;
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateX(-2px);
+}
+/* --- Biến màu & Font (Giữ nguyên) --- */
+:root {
+  --primary: #2563eb;
+  --primary-light: #eff6ff;
+  --primary-border: #dbeafe;
+  
+  --text-dark: #1e293b;
+  --text-medium: #475569;
+  --text-light: #64748b;
+  
+  --bg-page: #f8faff;
+  --bg-card: #ffffff;
+  
+  --border-color: #e2e8f0;
+  
+  --warning-bg: #fffbeb;
+  --warning-text: #b45309;
+  --warning-border: #fef08a;
+  --warning-icon: #f59e0b;
+  --shadow-card: 0 8px 32px rgba(59,130,246,0.10);
+  --shadow-hover: 0 4px 16px rgba(59,130,246,0.13);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Wrapper & Nút Quay Lại (GiK --- */
+.view-regulation-wrapper {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px;
+}
+.view-regulation-back {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+.view-regulation-back:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+/* --- Thẻ chính (Card) --- */
+.view-regulation-card {
+  width: 100%;
+  max-width: 900px;
+  background: var(--bg-card);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  border: 1.5px solid var(--border-color);
+  animation: fadeIn 0.4s ease;
+  overflow: hidden;
+  padding-bottom: 8px;
+}
+
+/* --- Header --- */
+.view-regulation-header {
+  padding: 38px 44px 28px 44px;
+  border-bottom: 1.5px solid var(--border-color);
+  background: #fcfdff;
+}
+.view-regulation-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.view-regulation-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+  letter-spacing: -1px;
+  text-align: left;
+}
+.view-regulation-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-medium);
+  margin: 4px 0 0;
+  font-weight: 400;
+  text-align: left;
+}
+.view-regulation-header--with-back .view-regulation__back-button {
+  margin-bottom: 0;
+}
+
+/* --- MỚI: Thẻ ngày cập nhật (trong header) --- */
+.view-regulation-updated {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  color: var(--primary);
+  font-weight: 600;
+  justify-content: center;
+}
+.view-regulation-updated svg {
+  color: var(--primary);
+  flex-shrink: 0;
+  font-size: 1.2em;
+}
+
+
+/* --- Bố cục nội dung (đơn giản hoá) --- */
+.view-regulation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 38px 44px 32px 44px;
+  background-color: var(--bg-card);
+}
+
+/* --- MỚI: Bố cục các trường thông tin (dùng Grid) --- */
+.view-regulation-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.field-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 18px 14px 18px;
+  background-color: var(--bg-page);
+  border-radius: 14px;
+  border: 1.5px solid var(--border-color);
+  transition: box-shadow 0.2s, border 0.2s;
+  box-shadow: 0 1px 4px rgba(59,130,246,0.04);
+}
+.field-item:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
+}
+.field-item.is-full-width {
+  grid-column: 1 / -1;
+}
+.field-item label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.field-value {
+  font-size: 1.13rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.6;
+  word-break: break-all;
+}
+.field-value.is-numeric {
+  font-size: 1.25rem;
+  color: var(--primary);
+  font-weight: 800;
+}
+.field-value.is-description {
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+
+
+/* --- Thẻ lưu ý (thiết kế lại) --- */
+.view-regulation-note {
+  background: var(--warning-bg);
+  border: 1.5px solid var(--warning-border);
+  border-radius: 14px;
+  padding: 20px 18px 20px 22px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(255,193,7,0.06);
+}
+.view-regulation-note-icon {
+  color: var(--warning-icon);
+  flex-shrink: 0;
+  font-size: 2.1rem;
+}
+.view-regulation-note b {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--warning-text);
+}
+.view-regulation-note p {
+  margin: 4px 0 0;
+  font-size: 0.97rem;
+  color: var(--warning-text);
+  line-height: 1.6;
+}
+
+/* --- Animation (Giữ nguyên) --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .view-regulation-header,
+  .view-regulation-content {
+    padding: 18px 8vw 18px 8vw;
+  }
+  .view-regulation-title {
+    font-size: 1.3rem;
+  }
+  .view-regulation-card {
+    border-radius: 14px;
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .view-regulation-fields {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .view-regulation-header,
+  .view-regulation-content {
+    padding: 12px 2vw 12px 2vw;
+  }
+  .view-regulation-back {
+    align-self: center;
+    font-size: 0.93rem;
+    padding: 7px 8px;
+  }
+}

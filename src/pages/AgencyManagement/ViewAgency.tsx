@@ -1,5 +1,7 @@
 import { Building2, ArrowLeft, Edit, TrendingUp, Clock, CreditCard, AlertTriangle, CheckCircle2, XCircle, BarChart3 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { agencyService } from '../../api/endpoints/agencyService'
 import './ViewAgency.css'
 
 // Quy định hệ thống
@@ -17,7 +19,53 @@ const REGULATIONS = {
 
 const ViewAgency = () => {
   const navigate = useNavigate()
-  useParams()
+  const { id } = useParams()
+
+  const [agency, setAgency] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  // Fetch agency data on mount
+  useEffect(() => {
+    if (id) {
+      fetchAgency()
+    }
+  }, [id])
+
+  const fetchAgency = async () => {
+    try {
+      setLoading(true)
+      const response = await agencyService.getById(id!)
+      if (response.success) {
+        setAgency({
+          id: response.data.id,
+          code: response.data.code,
+          name: response.data.name,
+          address: response.data.address,
+          phone: response.data.phone || '',
+          email: response.data.email || '',
+          location: response.data.location || '',
+          level: 1,
+          levelLabel: 'Cấp 1',
+          totalSales: 0,
+          debt: 0,
+          debtLimit: 50000000,
+          status: response.data.status,
+          statusLabel: response.data.status === 'active' ? 'Hoạt động' : 'Ngưng hoạt động',
+          createdAt: new Date(response.data.createdAt).toLocaleDateString('vi-VN'),
+          updatedAt: new Date(response.data.updatedAt).toLocaleDateString('vi-VN'),
+          avgMonthlySales: 0,
+          monthsActive: 0,
+          paymentRate: 0,
+          violationCount: 0,
+          discount: 2
+        })
+      }
+    } catch (error: any) {
+      console.error('Error fetching agency:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Helper function to format currency
   const formatCurrency = (amount: number) => {
@@ -34,29 +82,12 @@ const ViewAgency = () => {
     return amount.toLocaleString('vi-VN') + 'đ'
   }
 
-  // Mock data - should fetch from API based on id
-  const agency = {
-    id: '1',
-    code: 'DL001',
-    name: 'Đại lý Nghĩa',
-    address: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
-    phone: '02232434242',
-    email: 'nghiaagency@gmail.com',
-    level: 1,
-    levelLabel: 'Cấp 1',
-    totalSales: 150000000,
-    debt: 25000000,
-    debtLimit: 100000000,
-    status: 'active',
-    statusLabel: 'Hoạt động',
-    createdAt: '01/01/2024',
-    updatedAt: '20/10/2025',
-    // Thông tin đánh giá
-    avgMonthlySales: 150000000,
-    monthsActive: 18,
-    paymentRate: 95,
-    violationCount: 0,
-    discount: 5
+  if (loading) {
+    return <div className="view-agency-page"><div style={{padding: '2rem', textAlign: 'center'}}>Đang tải...</div></div>
+  }
+
+  if (!agency) {
+    return <div className="view-agency-page"><div style={{padding: '2rem', textAlign: 'center'}}>Không tìm thấy đại lý</div></div>
   }
 
   // Tính toán điều kiện
@@ -67,7 +98,7 @@ const ViewAgency = () => {
   const totalMet = [salesMet, monthsMet, paymentMet, violationMet].filter(Boolean).length
 
   const handleBack = () => {
-    navigate('/agency-management')
+    navigate('/admin/agency-management')
   }
 
   const handleEdit = () => {

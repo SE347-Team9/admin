@@ -114,7 +114,7 @@ const ViewReport = () => {
   }
 
   const handleBack = () => {
-    navigate('/reports')
+    navigate('/admin/reports')
   }
 
   return (

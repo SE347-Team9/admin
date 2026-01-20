@@ -1,0 +1,136 @@
+.view-export-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eaf6ff 0%, #dbeafe 100%);
+  padding: 36px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.view-export-card {
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 4px 24px rgba(59,130,246,0.10);
+  padding: 38px 38px 32px 38px;
+  max-width: 700px;
+  width: 100%;
+  margin: 24px 0;
+  position: relative;
+}
+.view-export-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #1746a2;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+}
+.view-export-back-btn {
+  position: absolute;
+  right: 38px;
+  top: 38px;
+  background: #f3f6fa;
+  border: 2px solid #e0e7ef;
+  border-radius: 12px;
+  color: #2563eb;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.view-export-back-btn:hover {
+  background: #e0f0ff;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+.view-export-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 24px;
+  margin-bottom: 32px;
+}
+.view-export-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 6px;
+  display: block;
+}
+.view-export-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 2px solid #e0e7ef;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  background: #f8fbff;
+  color: #22223b;
+  font-weight: 600;
+}
+.view-export-table-section {
+  margin-bottom: 32px;
+}
+.view-export-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.06);
+}
+.view-export-table th, .view-export-table td {
+  padding: 14px 12px;
+  font-size: 1rem;
+  border-bottom: 1.5px solid #e5e7eb;
+  text-align: left;
+}
+.view-export-table th {
+  background: #eaf4ff;
+  color: #1746a2;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.view-export-table tr:last-child td {
+  border-bottom: none;
+}
+.view-export-table td {
+  color: #22223b;
+  font-weight: 500;
+}
+.view-export-money {
+  color: #2563eb;
+  font-weight: 700;
+}
+.view-export-total-box {
+  margin: 32px auto 0 auto;
+  background: #f3f6fa;
+  border-radius: 18px;
+  padding: 28px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 32px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1746a2;
+  max-width: 420px;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.06);
+}
+.view-export-total {
+  color: #1976d2;
+  font-size: 2rem;
+  font-weight: 900;
+}
+@media (max-width: 900px) {
+  .view-export-card {
+    padding: 18px 4px 18px 4px;
+  }
+  .view-export-info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .view-export-back-btn {
+    right: 12px;
+    top: 12px;
+  }
+}

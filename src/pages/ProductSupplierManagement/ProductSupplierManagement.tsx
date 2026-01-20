@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   Package, 
@@ -13,6 +13,8 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { productService } from '../../api/endpoints/productService'
+import { supplierService } from '../../api/endpoints/supplierService'
 import './ProductSupplierManagement.css'
 
 interface Product {
@@ -51,157 +53,62 @@ const ProductSupplierManagement = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteItem, setDeleteItem] = useState<Product | Supplier | null>(null)
   const [expandedSupplier, setExpandedSupplier] = useState<string | null>(null)
+  const [products, setProducts] = useState<Product[]>([])
+  const [suppliers, setSuppliers] = useState<Supplier[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Mock Products Data
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: '1',
-      code: 'SP001',
-      name: 'Bia Hà Nội',
-      category: 'Đồ uống có cồn',
-      unit: 'Thùng',
-      costPrice: 200000,
-      sellingPrice: 250000,
-      supplierId: '1',
-      status: 'active',
-      statusLabel: 'Đang kinh doanh',
-      createdAt: '01/01/2024'
-    },
-    {
-      id: '2',
-      code: 'SP002',
-      name: 'Nước ngọt Coca',
-      category: 'Đồ uống',
-      unit: 'Chai',
-      costPrice: 8000,
-      sellingPrice: 10000,
-      supplierId: '2',
-      status: 'active',
-      statusLabel: 'Đang kinh doanh',
-      createdAt: '02/01/2024'
-    },
-    {
-      id: '3',
-      code: 'SP003',
-      name: 'Snack Oishi',
-      category: 'Thực phẩm khô',
-      unit: 'Gói',
-      costPrice: 10000,
-      sellingPrice: 12000,
-      supplierId: '1',
-      status: 'active',
-      statusLabel: 'Đang kinh doanh',
-      createdAt: '03/01/2024'
-    },
-    {
-      id: '4',
-      code: 'SP004',
-      name: 'Gạo ST25',
-      category: 'Lương thực',
-      unit: 'Kg',
-      costPrice: 20000,
-      sellingPrice: 25000,
-      supplierId: '3',
-      status: 'inactive',
-      statusLabel: 'Ngừng kinh doanh',
-      createdAt: '04/01/2024'
-    },
-    {
-      id: '5',
-      code: 'SP005',
-      name: 'Sữa Vinamilk',
-      category: 'Sữa & sản phẩm từ sữa',
-      unit: 'Lốc',
-      costPrice: 55000,
-      sellingPrice: 60000,
-      supplierId: '2',
-      status: 'active',
-      statusLabel: 'Đang kinh doanh',
-      createdAt: '05/01/2024'
-    },
-    {
-      id: '6',
-      code: 'SP006',
-      name: 'Nước ngọt Pepsi',
-      category: 'Đồ uống',
-      unit: 'Lon',
-      costPrice: 7500,
-      sellingPrice: 9000,
-      supplierId: '2',
-      status: 'active',
-      statusLabel: 'Đang kinh doanh',
-      createdAt: '06/01/2024'
-    }
-  ])
+  useEffect(() => {
+    fetchData()
+  }, [])
 
-  // Mock Suppliers Data
-  const [suppliers, setSuppliers] = useState<Supplier[]>([
-    {
-      id: '1',
-      code: 'NCC001',
-      name: 'Cty TNHH Masan',
-      contactPerson: 'Nguyễn Văn A',
-      phone: '0901234567',
-      email: 'contact@masan.com.vn',
-      address: 'Hà Nội',
-      taxCode: '0123456789',
-      status: 'active',
-      statusLabel: 'Hoạt động',
-      createdAt: '01/01/2024'
-    },
-    {
-      id: '2',
-      code: 'NCC002',
-      name: 'Cty CP Vinamilk',
-      contactPerson: 'Trần Thị B',
-      phone: '0912345678',
-      email: 'sales@vinamilk.com.vn',
-      address: 'TP.HCM',
-      taxCode: '9876543210',
-      status: 'active',
-      statusLabel: 'Hoạt động',
-      createdAt: '02/01/2024'
-    },
-    {
-      id: '3',
-      code: 'NCC003',
-      name: 'Cty TNHH Unilever Việt Nam',
-      contactPerson: 'Lê Văn C',
-      phone: '0923456789',
-      email: 'suppliers@unilever.com.vn',
-      address: 'Đà Nẵng',
-      taxCode: '5432109876',
-      status: 'inactive',
-      statusLabel: 'Ngừng hoạt động',
-      createdAt: '03/01/2024'
-    },
-    {
-      id: '4',
-      code: 'NCC004',
-      name: 'Cty TNHH Nestlé Việt Nam',
-      contactPerson: 'Phạm Thị D',
-      phone: '0934567890',
-      email: 'procurement@nestle.com.vn',
-      address: 'Bình Dương',
-      taxCode: '1098765432',
-      status: 'active',
-      statusLabel: 'Hoạt động',
-      createdAt: '04/01/2024'
-    },
-    {
-      id: '5',
-      code: 'NCC005',
-      name: 'Cty TNHH Coca-Cola Việt Nam',
-      contactPerson: 'Trần Văn E',
-      phone: '0945678901',
-      email: 'supplier@cocacola.com.vn',
-      address: 'Long An',
-      taxCode: '0987654321',
-      status: 'active',
-      statusLabel: 'Hoạt động',
-      createdAt: '05/01/2024'
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      const [productsRes, suppliersRes] = await Promise.all([
+        productService.getAll(),
+        supplierService.getAll()
+      ])
+
+      if (productsRes.success) {
+        const transformedProducts = productsRes.data.map((p: any) => ({
+          id: p.id,
+          code: p.code,
+          name: p.name,
+          category: p.category || 'Khác',
+          unit: p.unit,
+          costPrice: parseFloat(p.costPrice) || 0,
+          sellingPrice: parseFloat(p.sellingPrice) || 0,
+          supplierId: p.supplierId,
+          status: p.status as 'active' | 'inactive',
+          statusLabel: p.status === 'active' ? 'Đang kinh doanh' : 'Ngừng kinh doanh',
+          createdAt: new Date(p.createdAt).toLocaleDateString('vi-VN')
+        }))
+        setProducts(transformedProducts)
+      }
+
+      if (suppliersRes.success) {
+        const transformedSuppliers = suppliersRes.data.map((s: any) => ({
+          id: s.id,
+          code: s.code,
+          name: s.name,
+          contactPerson: s.contactPerson || '',
+          phone: s.phone || '',
+          email: s.email || '',
+          address: s.address || '',
+          taxCode: s.taxCode || '',
+          status: s.status as 'active' | 'inactive',
+          statusLabel: s.status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động',
+          createdAt: new Date(s.createdAt).toLocaleDateString('vi-VN')
+        }))
+        setSuppliers(transformedSuppliers)
+      }
+    } catch (error: any) {
+      console.error('Error fetching data:', error)
+      toast.error('Không thể tải dữ liệu')
+    } finally {
+      setLoading(false)
     }
-  ])
+  }
 
   // Calculate statistics
   const productStats = useMemo(() => {
@@ -262,17 +169,29 @@ const ProductSupplierManagement = () => {
     setShowDeleteModal(true)
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteItem) return
     
-    if ('category' in deleteItem) {
-      // It's a product
-      setProducts(products.filter(p => p.id !== deleteItem.id))
-      toast.success('Xóa sản phẩm thành công!')
-    } else {
-      // It's a supplier
-      setSuppliers(suppliers.filter(s => s.id !== deleteItem.id))
-      toast.success('Xóa nhà cung cấp thành công!')
+    try {
+      if ('category' in deleteItem) {
+        // It's a product
+        const response = await productService.delete(deleteItem.id)
+        if (response.success) {
+          toast.success('Xóa sản phẩm thành công!')
+          fetchData()
+        }
+      } else {
+        // It's a supplier
+        const response = await supplierService.delete(deleteItem.id)
+        if (response.success) {
+          toast.success('Xóa nhà cung cấp thành công!')
+          fetchData()
+        }
+      }
+    } catch (error: any) {
+      console.error('Error deleting:', error)
+      const errorMsg = error.response?.data?.message || 'Không thể xóa'
+      toast.error(errorMsg)
     }
     
     setShowDeleteModal(false)
@@ -289,7 +208,7 @@ const ProductSupplierManagement = () => {
         </div>
         <button 
           className="ps-btn-add"
-          onClick={() => navigate('/add-supplier-product')}
+          onClick={() => navigate('/admin/add-supplier')}
         >
           <Plus size={20} />
           <span>Thêm NCC</span>

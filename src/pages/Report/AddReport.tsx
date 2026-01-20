@@ -58,12 +58,12 @@ const AddReport = () => {
     
     // Navigate back to reports
     setTimeout(() => {
-      navigate('/reports')
+      navigate('/admin/reports')
     }, 1500)
   }
 
   const handleCancel = () => {
-    navigate('/reports')
+    navigate('/admin/reports')
   }
 
   return (

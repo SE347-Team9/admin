@@ -2,10 +2,12 @@ import { UserPlus, Save, X, Building2, MapPin, CreditCard } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { accountService } from '../../api/endpoints/accountService'
 import './AddAccount.css'
 
 const AddAccount = () => {
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
     username: '',
@@ -31,7 +33,7 @@ const AddAccount = () => {
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     // Validation
@@ -61,13 +63,43 @@ const AddAccount = () => {
       }
     }
 
-    // TODO: Call API to create account
-    toast.success('Tạo tài khoản thành công!')
-    navigate('/account-management')
+    try {
+      setLoading(true)
+      
+      // Prepare data - include agency fields if role is agency
+      const accountData: any = {
+        username: formData.username,
+        password: formData.password,
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        role: formData.role,
+        status: formData.status
+      };
+
+      // Add agency-specific fields if creating an agency account
+      if (formData.role === 'agency') {
+        accountData.agencyName = formData.agencyName;
+        accountData.agencyAddress = formData.agencyAddress;
+      }
+
+      const response = await accountService.create(accountData);
+
+      if (response.success) {
+        toast.success('Tạo tài khoản thành công!')
+        navigate('/admin/account-management')
+      }
+    } catch (error: any) {
+      console.error('Error creating account:', error)
+      const errorMsg = error.response?.data?.message || 'Không thể tạo tài khoản'
+      toast.error(errorMsg)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleCancel = () => {
-    navigate('/account-management')
+    navigate('/admin/account-management')
   }
 
   return (
@@ -291,9 +323,9 @@ const AddAccount = () => {
               <X size={20} />
               Hủy bỏ
             </button>
-            <button type="submit" className="btn-submit">
+            <button type="submit" className="btn-submit" disabled={loading}>
               <Save size={20} />
-              Tạo tài khoản
+              {loading ? 'Đang tạo...' : 'Tạo tài khoản'}
             </button>
           </div>
         </form>

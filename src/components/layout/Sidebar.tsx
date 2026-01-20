@@ -1,17 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
-  BarChart3,
-  BookOpen,
-  Building2,
-  Users,
-  Truck,
-  Boxes,
-  Package,
-  Warehouse,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { authService } from "../../api/endpoints/authService";
+import { getMenuItems, getLogoText } from "../../config/menuConfig";
 import "./Sidebar.css";
 
 interface SidebarProps {
@@ -21,64 +15,16 @@ interface SidebarProps {
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const location = useLocation();
-
-  const menuItems = [
-    {
-      id: "home",
-      icon: Home,
-      label: "Trang chủ",
-      path: "/home",
-    },
-    {
-      id: "report",
-      icon: BarChart3,
-      label: "Lập báo cáo",
-      path: "/reports",
-    },
-    {
-      id: "regulations",
-      icon: BookOpen,
-      label: "Quản lý quy định",
-      path: "/regulations",
-    },
-    {
-      id: "agency",
-      icon: Building2,
-      label: 'Quản lý đại lý',
-      path: '/agency-management'
-    },
-    {
-      id: 'product-supplier',
-      icon: Boxes,
-      label: 'Quản lý SP & NCC',
-      path: '/product-supplier-management'
-    },
-    {
-      id: 'inventory',
-      icon: Warehouse,
-      label: 'Giám sát kho',
-      path: '/inventory-overview'
-    },
-    {
-      id: 'delivery',
-      icon: Truck,
-      label: 'Quản lý giao hàng',
-      path: '/delivery-management'
-    },
-    {
-      id: "account",
-      icon: Users,
-      label: "Quản lý tài khoản",
-      path: "/account-management",
-    },
-  ];
+  const user = authService.getCurrentUser();
+  const menuItems = getMenuItems(user?.role || 'admin');
+  const logoText = getLogoText(user?.role || 'admin');
 
   return (
     <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
         <div className="logo">
           <Home className="logo-icon" size={24} />
-          {!isCollapsed && <span className="logo-text">Admin</span>}
+          {!isCollapsed && <span className="logo-text">{logoText}</span>}
         </div>
         <button
           className="sidebar-toggle"

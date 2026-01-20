@@ -1,0 +1,532 @@
+/* ============================================
+   VIEW REPORT PAGE
+   ============================================ */
+.view-report-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef7 60%, #f5f7fa 100%);
+  padding: 32px 16px 48px;
+}
+
+.view-report-container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   BACK BUTTON
+   ============================================ */
+.view-report__back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #d1e9f9;
+  border-radius: 12px;
+  color: #0f4c81;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.view-report__back-button:hover {
+  background: white;
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateX(-2px);
+}
+
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+.view-report__header {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid #e0f0ff;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(15, 76, 129, 0.08);
+}
+
+.view-report__header-icon {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.view-report__header-content {
+  flex: 1;
+}
+
+.view-report__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+}
+
+.view-report__subtitle {
+  font-size: 14px;
+  color: #718096;
+  margin: 0;
+}
+
+.view-report__actions-header {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   REPORT CONTENT CARDS
+   ============================================ */
+.view-report__content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.view-report__card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid #e0f0ff;
+  box-shadow: 0 10px 30px rgba(15, 76, 129, 0.06);
+}
+
+.view-report__card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 24px 0;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e0f0ff;
+}
+
+/* ============================================
+   INFO GRID
+   ============================================ */
+.view-report__info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.view-report__info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.view-report__info-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f4c81;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.view-report__info-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a202c;
+}
+
+.view-report__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.view-report__status.completed {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.view-report__status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* ============================================
+   NOTES SECTION
+   ============================================ */
+.view-report__notes {
+  padding-top: 24px;
+  border-top: 2px solid #e0f0ff;
+  margin-top: 24px;
+}
+
+.view-report__notes-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f4c81;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.view-report__notes-content {
+  font-size: 15px;
+  color: #2d3748;
+  line-height: 1.6;
+  margin: 0;
+  padding: 12px 16px;
+  background: #f8fbff;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+}
+
+/* ============================================
+   TABLE SECTION
+   ============================================ */
+.view-report__table-container {
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.view-report__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.view-report__table thead {
+  background: #f8fbff;
+  border-bottom: 2px solid #e0f0ff;
+}
+
+.view-report__table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #0f4c81;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.view-report__table th:last-child {
+  text-align: right;
+}
+
+.view-report__table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e0f0ff;
+  color: #2d3748;
+  background: white;
+}
+
+.view-report__table tbody tr:hover {
+  background: #f8fbff;
+}
+
+.view-report__amount {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.06), rgba(59, 130, 246, 0.12));
+  color: #0f4c81;
+}
+
+.view-report-page .text-right {
+  text-align: right;
+}
+
+.view-report-page .text-bold {
+  font-weight: 600;
+}
+
+.view-report-page .text-highlight {
+  color: #3b82f6;
+}
+
+/* ============================================
+   STATS SUMMARY
+   ============================================ */
+.view-report__stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 2px solid #e0f0ff;
+}
+
+.view-report__stat {
+  background: #f8fbff;
+  padding: 16px;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.view-report__stat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f4c81;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.view-report__stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.view-report__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 44px;
+}
+
+.view-report__btn--icon {
+  padding: 10px 12px;
+  background: #f0f8ff;
+  color: #0f4c81;
+  border: 2px solid #d1e9f9;
+}
+
+.view-report__btn--icon:hover {
+  background: #e0f0ff;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.view-report__btn--secondary {
+  background: #f0f8ff;
+  color: #0f4c81;
+  border: 2px solid #d1e9f9;
+}
+
+.view-report__btn--secondary:hover {
+  background: #e0f0ff;
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.view-report__btn--export {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+}
+
+.view-report__btn--export:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* ============================================
+   FOOTER ACTIONS
+   ============================================ */
+.view-report__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 20px 24px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e0f0ff;
+  box-shadow: 0 10px 30px rgba(15, 76, 129, 0.06);
+}
+
+.view-report__export-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+  .view-report-page {
+    padding: 20px;
+  }
+
+  .view-report__header {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .view-report__title {
+    font-size: 22px;
+  }
+
+  .view-report__info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .view-report__stats-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .view-report__card {
+    padding: 20px;
+  }
+
+  .view-report__actions-header {
+    order: -1;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .view-report__footer {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .view-report__export-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .view-report__btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .view-report__btn--icon {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-report-page {
+    padding: 12px;
+  }
+
+  .view-report__card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .view-report__header {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .view-report__header-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .view-report__title {
+    font-size: 18px;
+  }
+
+  .view-report__subtitle {
+    font-size: 12px;
+  }
+
+  .view-report__table {
+    font-size: 12px;
+  }
+
+  .view-report__table th,
+  .view-report__table td {
+    padding: 10px 8px;
+  }
+
+  .view-report__info-grid {
+    gap: 12px;
+  }
+
+  .view-report__info-value {
+    font-size: 14px;
+  }
+
+  .view-report__card-title {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .view-report__stats-summary {
+    gap: 8px;
+  }
+
+  .view-report__stat {
+    padding: 12px;
+  }
+
+  .view-report__stat-value {
+    font-size: 16px;
+  }
+
+  .view-report__footer {
+    padding: 16px;
+  }
+
+  .view-report__btn {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 40px;
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  .view-report__back-button,
+  .view-report__actions-header,
+  .view-report__footer {
+    display: none;
+  }
+
+  .view-report-page {
+    background: white;
+    padding: 0;
+  }
+
+  .view-report__card {
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
+  }
+
+  .view-report__table {
+    width: 100%;
+  }
+
+  .view-report__table th,
+  .view-report__table td {
+    border: 1px solid #ccc;
+  }
+}

@@ -1,0 +1,502 @@
+/* Payment Management Page - Modern Design */
+.payment-management-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdf4 100%);
+  min-height: 100vh;
+}
+
+/* Header Section */
+.payment-management__header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px;
+  padding: 32px 40px;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.08);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.payment-management__header-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.payment-management__header-text {
+  flex: 1;
+}
+
+.payment-management__title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.payment-management__header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.payment-management__header-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-management__header-btn--primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.payment-management__header-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Statistics Cards Grid */
+.payment-management__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.payment-management__stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.payment-management__stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.payment-management__stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+}
+
+.payment-management__stat-card--blue::before {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+}
+
+.payment-management__stat-card--green::before {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.payment-management__stat-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.payment-management__stat-card--blue .payment-management__stat-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  color: white;
+}
+
+.payment-management__stat-card--green .payment-management__stat-icon {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+}
+
+.payment-management__currency-icon {
+  font-size: 32px;
+}
+
+.payment-management__stat-content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.payment-management__stat-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-management__stat-value {
+  font-size: 48px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+}
+
+/* Table Section */
+.payment-management__table-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.payment-management__search-wrapper {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.payment-management__search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.payment-management__search-input {
+  width: 100%;
+  padding: 16px 20px 16px 54px;
+  border: 2px solid #cbd5e1;
+  border-radius: 14px;
+  font-size: 15px;
+  color: #1a202c;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.payment-management__search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.payment-management__search-input::placeholder {
+  color: #94a3b8;
+}
+
+/* Table */
+.payment-management__table-wrapper {
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.payment-management__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.payment-management__table thead {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.payment-management__table thead tr th {
+  padding: 20px 24px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: none;
+  white-space: nowrap;
+}
+
+.payment-management__table thead tr th > * {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  vertical-align: middle;
+}
+
+.payment-management__table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.payment-management__table tbody tr:hover {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.payment-management__table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.payment-management__table tbody td {
+  padding: 20px 24px;
+  font-size: 15px;
+  color: #334155;
+}
+
+.payment-management__receipt-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.payment-management__agency-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.payment-management__amount {
+  font-weight: 700;
+  color: #059669;
+  font-size: 16px;
+}
+
+.payment-status-select {
+  width: 160px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1.5px solid #dfe7f5;
+  background: #ffffff;
+  color: #111827;
+  font-weight: 600;
+  font-size: 13px;
+  outline: none;
+}
+
+.payment-management__action-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.payment-management__action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.payment-management__action-btn svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.payment-management__action-btn--edit {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.payment-management__action-btn--edit:hover {
+  background: #fde68a;
+  transform: scale(1.05);
+}
+
+.payment-management__action-btn--delete {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.payment-management__action-btn--delete:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+.payment-management__no-data {
+  text-align: center;
+  padding: 80px 20px !important;
+  color: #94a3b8;
+}
+
+.payment-management__no-data svg {
+  opacity: 0.3;
+  margin-bottom: 16px;
+}
+
+.payment-management__no-data p {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Popup xác nhận xóa phiếu thu - BEM */
+.payment-management__modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.payment-management__modal-delete {
+  max-width: 350px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 32px rgba(59,130,246,0.13);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.payment-management__modal-delete-iconbox {
+  background: #fef2f2;
+  color: #ef4444;
+  border-radius: 50%;
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.payment-management__modal-delete-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.payment-management__modal-delete-desc {
+  color: #334155;
+  font-size: 1.05rem;
+  text-align: center;
+  margin-bottom: 2px;
+}
+.payment-management__modal-delete-warning {
+  color: #ef4444;
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.payment-management__modal-delete-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  width: 100%;
+}
+.payment-management__modal-delete-cancel {
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 10px 0;
+  width: 48%;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: 0 2px 8px 0 rgba(100,116,139,0.07);
+}
+.payment-management__modal-delete-cancel:hover {
+  background: #e5e7eb;
+}
+.payment-management__modal-delete-confirm {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 10px 0;
+  width: 48%;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: 0 2px 8px 0 rgba(239,68,68,0.10);
+}
+.payment-management__modal-delete-confirm:hover {
+  background: #b91c1c;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .payment-management__stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-management__header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+  }
+
+  .payment-management__header-actions {
+    width: 100%;
+  }
+
+  .payment-management__header-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .payment-management__title {
+    font-size: 28px;
+  }
+
+  .payment-management__table-wrapper {
+    overflow-x: auto;
+  }
+
+  .payment-management__table {
+    min-width: 800px;
+  }
+}

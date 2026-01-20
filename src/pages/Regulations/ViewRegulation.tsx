@@ -1,5 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { BookOpen, ArrowLeft, Edit } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
+import regulationService from '../../api/endpoints/regulationService'
 import './ViewRegulation.css'
 
 interface RegulationData {
@@ -14,15 +17,42 @@ interface RegulationData {
 const ViewRegulation = () => {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
+  const [regulationData, setRegulationData] = useState<RegulationData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Mock regulation data - in real app, fetch from API
-  const regulationData: RegulationData = {
-    id: id || '1',
-    code: 'max_debt_level_1',
-    value: 100000000,
-    description: 'Trần nợ đại lý cấp 1',
-    lastUpdated: '21:35 11 thg 7, 2025',
-    notes: 'Quy định về trần nợ tối đa cho các đại lý cấp 1 trong hệ thống'
+  useEffect(() => {
+    loadRegulation()
+  }, [id])
+
+  const loadRegulation = async () => {
+    try {
+      setLoading(true)
+      const response = await regulationService.getById(id!)
+      if (response.success && response.data) {
+        const reg = response.data
+        setRegulationData({
+          id: reg.id?.toString() || id!,
+          code: reg.code,
+          value: reg.value,
+          description: reg.description,
+          lastUpdated: new Date(reg.updated_at || reg.created_at).toLocaleString('vi-VN'),
+          notes: 'Quy định trong hệ thống'
+        })
+      }
+    } catch (error) {
+      console.error('Error loading regulation:', error)
+      toast.error('Không thể tải thông tin quy định')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="view-regulation-page"><p>Đang tải...</p></div>
+  }
+
+  if (!regulationData) {
+    return <div className="view-regulation-page"><p>Không tìm thấy quy định</p></div>
   }
 
   const formatNumber = (num: number) => {
@@ -30,7 +60,7 @@ const ViewRegulation = () => {
   }
 
   const handleBack = () => {
-    navigate('/regulations')
+    navigate('/admin/regulations')
   }
 
   const handleEdit = () => {

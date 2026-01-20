@@ -5,13 +5,12 @@ import {
   FileText,
   LayoutDashboard,
   TrendingUp,
-  AlertTriangle,
   Warehouse,
   Package,
 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  BarChart,
   Bar,
   XAxis,
   YAxis,
@@ -23,40 +22,68 @@ import {
   Line,
   ComposedChart,
 } from "recharts";
+import dashboardService, { StaffDashboardStats } from "../../api/endpoints/dashboardService";
+import { toast } from "react-toastify";
 import "./Home.css";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [stats, setStats] = useState<StaffDashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data cho biểu đồ - Giá trị phân phối vs Giá trị nhập kho (6 tháng gần nhất)
-  const revenueVsCostData = [
-    { month: "T1", giaTriPhanPhoi: 850000000, giaTriNhapKho: 680000000 },
-    { month: "T2", giaTriPhanPhoi: 920000000, giaTriNhapKho: 720000000 },
-    { month: "T3", giaTriPhanPhoi: 780000000, giaTriNhapKho: 650000000 },
-    { month: "T4", giaTriPhanPhoi: 1050000000, giaTriNhapKho: 820000000 },
-    { month: "T5", giaTriPhanPhoi: 980000000, giaTriNhapKho: 780000000 },
-    { month: "T6", giaTriPhanPhoi: 1150000000, giaTriNhapKho: 890000000 },
-  ];
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
-  // Mock data cho biểu đồ lợi nhuận theo tháng
-  const profitTrendData = [
-    { month: "T1", loiNhuan: 170000000 },
-    { month: "T2", loiNhuan: 200000000 },
-    { month: "T3", loiNhuan: 130000000 },
-    { month: "T4", loiNhuan: 230000000 },
-    { month: "T5", loiNhuan: 200000000 },
-    { month: "T6", loiNhuan: 260000000 },
-  ];
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await dashboardService.getStats();
+      if (response.success) {
+        setStats(response.data as StaffDashboardStats);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      toast.error('Không thể tải dữ liệu dashboard');
+      // Set empty stats as fallback
+      setStats({
+        totalAgencies: 0,
+        monthlyExports: 0,
+        totalDebt: 0,
+        monthlyPayments: 0,
+        distributionTrend: []
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Mock data cho biểu đồ tổng công nợ đại lý theo tháng
-  const debtByMonthData = [
-    { month: "T1", congNo: 280000000 },
-    { month: "T2", congNo: 320000000 },
-    { month: "T3", congNo: 295000000 },
-    { month: "T4", congNo: 350000000 },
-    { month: "T5", congNo: 340000000 },
-    { month: "T6", congNo: 325000000 },
-  ];
+  if (loading) {
+    return <div className="home"><p>Đang tải...</p></div>;
+  }
+
+  if (!stats) {
+    return <div className="home"><p>Không thể tải dữ liệu</p></div>;
+  }
+
+  // Format distribution trend data for charts
+  const revenueVsCostData = stats.distributionTrend.map(item => ({
+    month: item.month,
+    giaTriPhanPhoi: parseFloat(item.distribution_value?.toString() || '0'),
+    giaTriNhapKho: parseFloat(item.import_value?.toString() || '0')
+  }));
+
+  // Calculate profit trend
+  const profitTrendData = stats.distributionTrend.map(item => ({
+    month: item.month,
+    loiNhuan: parseFloat(item.distribution_value?.toString() || '0') - parseFloat(item.import_value?.toString() || '0')
+  }));
+
+  // Use total debt divided by months for debt trend (simplified)
+  const debtByMonthData = stats.distributionTrend.map(() => ({
+    month: '',
+    congNo: stats.totalDebt / (stats.distributionTrend.length || 1)
+  }));
 
   // Format số tiền VND
   const formatCurrency = (value: number) => {
@@ -90,56 +117,47 @@ const Home = () => {
     {
       id: "agencies",
       label: "Tổng đại lý",
-      value: "156",
+      value: stats.totalAgencies.toString(),
       icon: Building2,
       gradient: "blue",
-      change: "+8.2%",
+      change: "+" + stats.totalAgencies,
       description: "Đại lý đang hoạt động",
     },
     {
       id: "revenue",
       label: "Giá trị phân phối tháng",
-      value: "1.15 tỷ",
+      value: formatCurrency(stats.distributionTrend[stats.distributionTrend.length - 1]?.distribution_value || 0),
       icon: TrendingUp,
       gradient: "green",
-      change: "+17.3%",
-      description: "So với tháng trước",
+      change: formatCurrency(stats.distributionTrend[stats.distributionTrend.length - 1]?.distribution_value || 0),
+      description: "Tháng này",
     },
     {
       id: "inventory",
-      label: "Giá trị tồn kho",
-      value: "2.8 tỷ",
+      label: "Tổng công nợ",
+      value: formatCurrency(stats.totalDebt),
       icon: Warehouse,
       gradient: "cyan",
-      change: "+5.1%",
-      description: "Tổng giá trị hàng trong kho",
+      change: formatCurrency(stats.totalDebt),
+      description: "Tổng công nợ các đại lý",
     },
     {
-      id: "lowstock",
-      label: "Sản phẩm cần nhập",
-      value: "12",
+      id: "exports",
+      label: "Xuất hàng tháng này",
+      value: stats.monthlyExports.toString(),
       icon: Package,
       gradient: "red",
-      change: "+3",
-      description: "SP sắp hết/hết hàng",
+      change: "+" + stats.monthlyExports,
+      description: "Đơn xuất hàng tháng này",
     },
     {
       id: "profit",
-      label: "Lợi nhuận tháng",
-      value: "260 tr",
+      label: "Thanh toán tháng này",
+      value: formatCurrency(stats.monthlyPayments),
       icon: TrendingUp,
       gradient: "purple",
-      change: "+30%",
-      description: "So với tháng trước",
-    },
-    {
-      id: "debt",
-      label: "Tổng công nợ",
-      value: "325 tr",
-      icon: AlertTriangle,
-      gradient: "orange",
-      change: "-3.2%",
-      description: "Giảm so với tháng trước",
+      change: formatCurrency(stats.monthlyPayments),
+      description: "Tổng thanh toán tháng này",
     },
   ];
 

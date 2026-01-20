@@ -36,7 +36,7 @@ const ViewSupplier = () => {
     return (
       <div className="add-supplier-page">
         <div className="as-header">
-          <button className="as-back-btn" onClick={() => navigate('/product-supplier-management')}>
+          <button className="as-back-btn" onClick={() => navigate('/admin/product-supplier-management')}>
             <ArrowLeft size={20} />
             <span>Quay lại</span>
           </button>
@@ -54,7 +54,7 @@ const ViewSupplier = () => {
   return (
     <div className="add-supplier-page">
       <div className="as-header">
-        <button className="as-back-btn" onClick={() => navigate('/product-supplier-management')}>
+        <button className="as-back-btn" onClick={() => navigate('/admin/product-supplier-management')}>
           <ArrowLeft size={20} />
           <span>Quay lại</span>
         </button>

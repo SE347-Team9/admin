@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   Truck, 
@@ -14,6 +14,7 @@ import {
   Car
 } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { driverService } from '../../api/endpoints/driverService'
 import './DeliveryManagement.css'
 
 interface Driver {
@@ -36,69 +37,42 @@ const DeliveryManagement = () => {
   const navigate = useNavigate()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteDriver, setDeleteDriver] = useState<Driver | null>(null)
+  const [drivers, setDrivers] = useState<Driver[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const [drivers, setDrivers] = useState<Driver[]>([
-    {
-      id: '1',
-      code: 'TX001',
-      fullName: 'Nguyễn Văn Hùng',
-      phone: '0901234567',
-      idCard: '079201012345',
-      vehicleType: 'truck_medium',
-      vehicleTypeLabel: 'Xe tải 2.5T',
-      licensePlate: '51C-12345',
-      areas: ['Quận 1', 'Quận 3', 'Quận 5'],
-      status: 'available',
-      statusLabel: 'Sẵn sàng',
-      totalDeliveries: 156,
-      createdAt: '15/03/2024'
-    },
-    {
-      id: '2',
-      code: 'TX002',
-      fullName: 'Trần Văn Dũng',
-      phone: '0912345678',
-      idCard: '079201023456',
-      vehicleType: 'truck_large',
-      vehicleTypeLabel: 'Xe tải 5T',
-      licensePlate: '51C-67890',
-      areas: ['Quận 7', 'Quận 8', 'Bình Chánh'],
-      status: 'delivering',
-      statusLabel: 'Đang giao hàng',
-      totalDeliveries: 203,
-      createdAt: '20/02/2024'
-    },
-    {
-      id: '3',
-      code: 'TX003',
-      fullName: 'Lê Minh Tuấn',
-      phone: '0923456789',
-      idCard: '079201034567',
-      vehicleType: 'motorcycle',
-      vehicleTypeLabel: 'Xe máy',
-      licensePlate: '59P1-23456',
-      areas: ['Quận 1', 'Quận 3'],
-      status: 'available',
-      statusLabel: 'Sẵn sàng',
-      totalDeliveries: 89,
-      createdAt: '10/04/2024'
-    },
-    {
-      id: '4',
-      code: 'TX004',
-      fullName: 'Phạm Văn Thành',
-      phone: '0934567890',
-      idCard: '079201045678',
-      vehicleType: 'truck_small',
-      vehicleTypeLabel: 'Xe tải 1T',
-      licensePlate: '51C-11111',
-      areas: ['Quận 10', 'Quận 11', 'Tân Bình'],
-      status: 'off',
-      statusLabel: 'Nghỉ phép',
-      totalDeliveries: 124,
-      createdAt: '05/01/2024'
+  useEffect(() => {
+    fetchDrivers()
+  }, [])
+
+  const fetchDrivers = async () => {
+    try {
+      setLoading(true)
+      const response = await driverService.getAll()
+      if (response.success) {
+        const transformedData = response.data.map((driver: any) => ({
+          id: driver.id,
+          code: driver.code,
+          fullName: driver.fullName,
+          phone: driver.phone || '',
+          idCard: driver.idCard || '',
+          vehicleType: 'truck_medium' as 'motorcycle' | 'truck_small' | 'truck_medium' | 'truck_large',
+          vehicleTypeLabel: 'Xe tải 2.5T',
+          licensePlate: driver.licensePlate || '',
+          areas: [],
+          status: 'available' as 'available' | 'delivering' | 'off',
+          statusLabel: 'Sẵn sàng',
+          totalDeliveries: 0,
+          createdAt: new Date(driver.createdAt).toLocaleDateString('vi-VN')
+        }))
+        setDrivers(transformedData)
+      }
+    } catch (error: any) {
+      console.error('Error fetching drivers:', error)
+      toast.error('Không thể tải danh sách tài xế')
+    } finally {
+      setLoading(false)
     }
-  ])
+  }
 
   const totalDrivers = drivers.length
   const availableDrivers = drivers.filter(d => d.status === 'available').length
@@ -132,10 +106,19 @@ const DeliveryManagement = () => {
     setShowDeleteModal(true)
   }
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteDriver) {
-      setDrivers(prev => prev.filter(d => d.id !== deleteDriver.id))
-      toast.success(`Đã xóa tài xế ${deleteDriver.fullName}`)
+      try {
+        const response = await driverService.delete(deleteDriver.id)
+        if (response.success) {
+          toast.success(`Đã xóa tài xế ${deleteDriver.fullName}`)
+          fetchDrivers()
+        }
+      } catch (error: any) {
+        console.error('Error deleting driver:', error)
+        const errorMsg = error.response?.data?.message || 'Không thể xóa tài xế'
+        toast.error(errorMsg)
+      }
     }
     setShowDeleteModal(false)
     setDeleteDriver(null)
@@ -210,7 +193,7 @@ const DeliveryManagement = () => {
           </div>
           <button 
             className="btn-create-driver"
-            onClick={() => navigate('/add-driver')}
+            onClick={() => navigate('/admin/add-driver')}
           >
             <UserPlus size={20} />
             Thêm tài xế

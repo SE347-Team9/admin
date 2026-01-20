@@ -2,57 +2,14 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Users, Mail, Phone, Lock, ArrowLeft, CheckCircle2, XCircle, Building2, MapPin, CreditCard } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { accountService } from '../../api/endpoints/accountService'
 import './EditAccount.css'
-
-// Mock accounts data - In real app, this would come from API
-const mockAccounts = [
-  {
-    id: '1',
-    username: 'admin01',
-    fullName: 'Nguyễn Văn A',
-    email: 'admin01@example.com',
-    phone: '0123456789',
-    role: 'admin',
-    status: 'active',
-    agencyType: '',
-    agencyName: '',
-    agencyOwner: '',
-    agencyAddress: '',
-    debtLimit: ''
-  },
-  {
-    id: '2',
-    username: 'staff01',
-    fullName: 'Trần Văn B',
-    email: 'staff01@example.com',
-    phone: '0987654321',
-    role: 'staff',
-    status: 'active',
-    agencyType: '',
-    agencyName: '',
-    agencyOwner: '',
-    agencyAddress: '',
-    debtLimit: ''
-  },
-  {
-    id: '3',
-    username: 'agency01',
-    fullName: 'Lê Văn C',
-    email: 'agency01@example.com',
-    phone: '0369852147',
-    role: 'agency',
-    status: 'active',
-    agencyType: '1',
-    agencyName: 'Đại lý Nghĩa',
-    agencyOwner: 'Lê Văn C',
-    agencyAddress: 'Số 1, Phố Tràng Tiền, Hoàn Kiếm, Hà Nội',
-    debtLimit: '50000000'
-  }
-]
 
 const EditAccount = () => {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -74,25 +31,41 @@ const EditAccount = () => {
 
   // Load account data based on ID
   useEffect(() => {
-    const account = mockAccounts.find(acc => acc.id === id)
-    if (account) {
-      setFormData({
-        username: account.username,
-        fullName: account.fullName,
-        email: account.email,
-        phone: account.phone,
-        role: account.role,
-        status: account.status,
-        password: '',
-        confirmPassword: '',
-        agencyType: account.agencyType || '1',
-        agencyName: account.agencyName || '',
-        agencyOwner: account.agencyOwner || '',
-        agencyAddress: account.agencyAddress || '',
-        debtLimit: account.debtLimit || ''
-      })
+    const fetchAccount = async () => {
+      if (!id) return
+      
+      try {
+        setLoading(true)
+        const response = await accountService.getById(id)
+        if (response.success) {
+          const account = response.data
+          setFormData({
+            username: account.username,
+            fullName: account.fullName,
+            email: account.email,
+            phone: account.phone,
+            role: account.role,
+            status: account.status,
+            password: '',
+            confirmPassword: '',
+            agencyType: '1',
+            agencyName: '',
+            agencyOwner: '',
+            agencyAddress: '',
+            debtLimit: ''
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching account:', error)
+        toast.error('Không thể tải thông tin tài khoản')
+        navigate('/admin/account-management')
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [id])
+
+    fetchAccount()
+  }, [id, navigate])
 
   const roles = [
     { value: 'admin', label: 'Quản trị viên' },
@@ -114,10 +87,10 @@ const EditAccount = () => {
   }
 
   const handleCancel = () => {
-    navigate('/account-management')
+    navigate('/admin/account-management')
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     // Validation
@@ -165,25 +138,54 @@ const EditAccount = () => {
       }
     }
 
-    console.log('Form submitted:', formData)
-    // TODO: Add API call to update account
-    toast.success(`Cập nhật tài khoản ${formData.username} thành công!`)
-    // After successful update, navigate back
-    navigate('/account-management')
+    if (!id) return
+
+    try {
+      setSubmitting(true)
+      const updateData: any = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        role: formData.role,
+        status: formData.status
+      }
+
+      // Only include password if it was changed
+      if (formData.password) {
+        updateData.password = formData.password
+      }
+
+      const response = await accountService.update(id, updateData)
+      
+      if (response.success) {
+        toast.success(`Cập nhật tài khoản ${formData.username} thành công!`)
+        navigate('/admin/account-management')
+      }
+    } catch (error: any) {
+      console.error('Error updating account:', error)
+      const errorMsg = error.response?.data?.message || 'Không thể cập nhật tài khoản'
+      toast.error(errorMsg)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
     <div className="edit-account-page">
-      {/* Header Section */}
-      <div className="edit-account__header">
-        <div className="edit-account__header-icon">
-          <Users size={36} />
-        </div>
-        <div className="edit-account__header-text">
-          <h1 className="edit-account__title">Chỉnh sửa tài khoản</h1>
-          <p className="edit-account__subtitle">Cập nhật thông tin tài khoản người dùng</p>
-        </div>
-      </div>
+      {loading ? (
+        <div style={{ padding: '40px', textAlign: 'center' }}>Đang tải dữ liệu...</div>
+      ) : (
+        <>
+          {/* Header Section */}
+          <div className="edit-account__header">
+            <div className="edit-account__header-icon">
+              <Users size={36} />
+            </div>
+            <div className="edit-account__header-text">
+              <h1 className="edit-account__title">Chỉnh sửa tài khoản</h1>
+              <p className="edit-account__subtitle">Cập nhật thông tin tài khoản người dùng</p>
+            </div>
+          </div>
 
       {/* Form Section */}
       <form className="edit-account__form-card" onSubmit={handleSubmit}>
@@ -460,12 +462,15 @@ const EditAccount = () => {
           <button
             type="submit"
             className="edit-account__btn edit-account__btn--submit"
+            disabled={submitting}
           >
             <CheckCircle2 size={20} />
-            <span>Lưu thay đổi</span>
+            <span>{submitting ? 'Đang lưu...' : 'Lưu thay đổi'}</span>
           </button>
         </div>
       </form>
+        </>
+      )}
     </div>
   )
 }

@@ -92,14 +92,14 @@ const EditSupplier = () => {
       return
     }
     toast.success('Cập nhật nhà cung cấp thành công!')
-    navigate('/product-supplier-management')
+    navigate('/admin/product-supplier-management')
   }
 
   if (!hasSupplier) {
     return (
       <div className="add-supplier-page">
         <div className="as-header">
-          <button className="as-back-btn" onClick={() => navigate('/product-supplier-management')}>
+          <button className="as-back-btn" onClick={() => navigate('/admin/product-supplier-management')}>
             <ArrowLeft size={20} />
             <span>Quay lại</span>
           </button>
@@ -331,7 +331,7 @@ const EditSupplier = () => {
           </div>
 
           <div className="as-form-actions">
-            <button type="button" className="as-btn-cancel" onClick={() => navigate('/product-supplier-management')}>
+            <button type="button" className="as-btn-cancel" onClick={() => navigate('/admin/product-supplier-management')}>
               Hủy
             </button>
             <button type="submit" className="as-btn-submit">

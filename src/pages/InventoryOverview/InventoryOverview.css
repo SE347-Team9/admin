@@ -459,8 +459,8 @@
   justify-content: center;
 }
 
-.btn-view,
-.btn-expand {
+.inventory-overview-page .btn-view,
+.inventory-overview-page .btn-expand {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -474,12 +474,12 @@
   color: white;
 }
 
-.btn-view {
+.inventory-overview-page .btn-view {
   background: #3b82f6;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
-.btn-view:hover {
+.inventory-overview-page .btn-view:hover {
   background: #2563eb;
   transform: scale(1.05);
 }
