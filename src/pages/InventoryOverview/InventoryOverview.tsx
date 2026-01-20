@@ -66,6 +66,17 @@ const InventoryOverview = () => {
   const [inventory, setInventory] = useState<InventoryItem[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Format date as DD-MM-YYYY
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return 'N/A'
+    const d = new Date(dateStr)
+    if (Number.isNaN(d.getTime())) return 'N/A'
+    const dd = String(d.getDate()).padStart(2, '0')
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const yyyy = d.getFullYear()
+    return `${dd}-${mm}-${yyyy}`
+  }
+
   useEffect(() => {
     fetchInventory()
   }, [])
@@ -75,23 +86,58 @@ const InventoryOverview = () => {
       setLoading(true)
       const response = await inventoryService.getOverview()
       if (response.success && response.data) {
-        // Transform API data to match frontend interface
-        const transformedData: InventoryItem[] = response.data.products?.map((item: any) => ({
-          id: item.id,
-          productId: item.productId || item.id,
-          productCode: item.code,
-          productName: item.name,
-          category: item.category || 'Khác',
-          unit: item.unit,
-          warehouseType: 'Kho thường',
-          currentStock: item.quantity || 0,
-          minStockLevel: 50,
-          maxStockLevel: 500,
-          costPrice: parseFloat(item.costPrice) || 0,
-          sellingPrice: parseFloat(item.sellingPrice) || 0,
-          lastUpdated: new Date(item.updatedAt).toLocaleString('vi-VN'),
-          batches: []
-        })) || []
+        // Group products by product_id and warehouse_id to aggregate batches
+        const productMap = new Map<string, InventoryItem>()
+
+        response.data.products?.forEach((item: any) => {
+          const key = `${item.product_id}-${item.warehouse_id}`
+          const expiryDate = item.expiry_date || null
+          const importDate = item.import_date || null
+          const batchCode = item.batch_code || 'N/A'
+          const batchQuantity = Number(item.quantity) || 0
+
+          if (!productMap.has(key)) {
+            // Create new product entry
+            productMap.set(key, {
+              id: key,
+              productId: item.product_id,
+              productCode: item.code,
+              productName: item.name,
+              category: item.category || 'Khác',
+              unit: item.unit,
+              warehouseType: item.warehouse_name || 'Kho thường',
+              currentStock: 0,
+              minStockLevel: item.min_stock || 50,
+              maxStockLevel: 500,
+              costPrice: parseFloat(item.price || 0),
+              sellingPrice: parseFloat(item.price || 0),
+              lastUpdated: new Date().toLocaleString('vi-VN'),
+              batches: []
+            })
+          }
+
+          const product = productMap.get(key)!
+          
+          // Add to total stock
+          product.currentStock += batchQuantity
+
+          // Add batch if it exists
+          if (expiryDate && batchCode !== 'N/A') {
+            product.batches.push({
+              id: batchCode,
+              batchNumber: batchCode,
+              productId: item.product_id,
+              quantity: batchQuantity,
+              expiryDate: formatDate(expiryDate),
+              importDate: formatDate(importDate),
+              importReceiptCode: batchCode,
+              remainingQuantity: batchQuantity,
+            })
+          }
+        })
+
+        const transformedData = Array.from(productMap.values())
+
         setInventory(transformedData)
       }
     } catch (error: any) {
@@ -403,7 +449,7 @@ const InventoryOverview = () => {
                 className="filter-select"
               >
                 <option value="all">Tất cả trạng thái</option>
-                <option value="normal">Bình thường</option>
+                <option value="normal">Còn hàng</option>
                 <option value="low">Sắp hết hàng</option>
                 <option value="out">Hết hàng</option>
               </select>
@@ -441,13 +487,9 @@ const InventoryOverview = () => {
               </thead>
               <tbody>
                 {filteredInventory.map(item => {
-                  // Lấy ngày hết hạn gần nhất
+                  // Lấy ngày hết hạn gần nhất (already formatted as DD-MM-YYYY)
                   const nearestExpiry = item.batches.length > 0
-                    ? item.batches.reduce((nearest, batch) => {
-                        const batchDate = new Date(batch.expiryDate)
-                        const nearestDate = new Date(nearest.expiryDate)
-                        return batchDate < nearestDate ? batch : nearest
-                      }).expiryDate
+                    ? item.batches[0].expiryDate
                     : 'N/A'
 
                   return (

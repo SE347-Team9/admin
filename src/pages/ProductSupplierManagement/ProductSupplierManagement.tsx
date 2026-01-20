@@ -23,8 +23,7 @@ interface Product {
   name: string
   category: string
   unit: string
-  costPrice: number
-  sellingPrice: number
+  unitPrice: number
   supplierId?: string
   status: 'active' | 'inactive'
   statusLabel: string
@@ -55,6 +54,7 @@ const ProductSupplierManagement = () => {
   const [expandedSupplier, setExpandedSupplier] = useState<string | null>(null)
   const [products, setProducts] = useState<Product[]>([])
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
+  const [supplierProducts, setSupplierProducts] = useState<Record<string, Product[]>>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -64,27 +64,7 @@ const ProductSupplierManagement = () => {
   const fetchData = async () => {
     try {
       setLoading(true)
-      const [productsRes, suppliersRes] = await Promise.all([
-        productService.getAll(),
-        supplierService.getAll()
-      ])
-
-      if (productsRes.success) {
-        const transformedProducts = productsRes.data.map((p: any) => ({
-          id: p.id,
-          code: p.code,
-          name: p.name,
-          category: p.category || 'Khác',
-          unit: p.unit,
-          costPrice: parseFloat(p.costPrice) || 0,
-          sellingPrice: parseFloat(p.sellingPrice) || 0,
-          supplierId: p.supplierId,
-          status: p.status as 'active' | 'inactive',
-          statusLabel: p.status === 'active' ? 'Đang kinh doanh' : 'Ngừng kinh doanh',
-          createdAt: new Date(p.createdAt).toLocaleDateString('vi-VN')
-        }))
-        setProducts(transformedProducts)
-      }
+      const suppliersRes = await supplierService.getAll()
 
       if (suppliersRes.success) {
         const transformedSuppliers = suppliersRes.data.map((s: any) => ({
@@ -101,6 +81,34 @@ const ProductSupplierManagement = () => {
           createdAt: new Date(s.createdAt).toLocaleDateString('vi-VN')
         }))
         setSuppliers(transformedSuppliers)
+
+        // Fetch products for each supplier
+        const productsMap: Record<string, Product[]> = {}
+        await Promise.all(
+          transformedSuppliers.map(async (supplier: Supplier) => {
+            try {
+              const productsRes = await supplierService.getProducts(supplier.id)
+              if (productsRes.success) {
+                productsMap[supplier.id] = productsRes.data.map((p: any) => ({
+                  id: p.id,
+                  code: p.code,
+                  name: p.name,
+                  category: p.category || 'Khác',
+                  unit: p.unit,
+                  unitPrice: parseFloat(p.unitPrice) || 0,
+                  supplierId: supplier.id,
+                  status: p.status as 'active' | 'inactive',
+                  statusLabel: p.status === 'active' ? 'Đang kinh doanh' : 'Ngừng kinh doanh',
+                  createdAt: new Date(p.createdAt).toLocaleDateString('vi-VN')
+                }))
+              }
+            } catch (error) {
+              console.error(`Error fetching products for supplier ${supplier.id}:`, error)
+              productsMap[supplier.id] = []
+            }
+          })
+        )
+        setSupplierProducts(productsMap)
       }
     } catch (error: any) {
       console.error('Error fetching data:', error)
@@ -111,14 +119,6 @@ const ProductSupplierManagement = () => {
   }
 
   // Calculate statistics
-  const productStats = useMemo(() => {
-    return {
-      total: products.length,
-      active: products.filter(p => p.status === 'active').length,
-      inactive: products.filter(p => p.status === 'inactive').length
-    }
-  }, [products])
-
   const supplierStats = useMemo(() => {
     return {
       total: suppliers.length,
@@ -127,35 +127,20 @@ const ProductSupplierManagement = () => {
     }
   }, [suppliers])
 
-  // Filter products
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      const matchesSearch = product.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = statusFilter === 'all' || product.status === statusFilter
-      return matchesSearch && matchesStatus
-    })
-  }, [products, searchTerm, statusFilter])
-
   // Filter suppliers
   const filteredSuppliers = useMemo(() => {
     return suppliers.filter(supplier => {
       const matchesSearch = supplier.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           supplier.name.toLowerCase().includes(searchTerm.toLowerCase())
+                           supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           supplier.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesStatus = statusFilter === 'all' || supplier.status === statusFilter
       return matchesSearch && matchesStatus
     })
   }, [suppliers, searchTerm, statusFilter])
 
-  // Get supplier name by ID
-  const getSupplierName = (supplierId?: string) => {
-    if (!supplierId) return 'N/A'
-    return suppliers.find(s => s.id === supplierId)?.name || 'N/A'
-  }
-
   // Get products by supplier ID
   const getSupplierProducts = (supplierId: string) => {
-    return products.filter(p => p.supplierId === supplierId)
+    return supplierProducts[supplierId] || []
   }
 
   // Delete handlers
@@ -173,20 +158,11 @@ const ProductSupplierManagement = () => {
     if (!deleteItem) return
     
     try {
-      if ('category' in deleteItem) {
-        // It's a product
-        const response = await productService.delete(deleteItem.id)
-        if (response.success) {
-          toast.success('Xóa sản phẩm thành công!')
-          fetchData()
-        }
-      } else {
-        // It's a supplier
-        const response = await supplierService.delete(deleteItem.id)
-        if (response.success) {
-          toast.success('Xóa nhà cung cấp thành công!')
-          fetchData()
-        }
+      // It's a supplier
+      const response = await supplierService.delete(deleteItem.id)
+      if (response.success) {
+        toast.success('Xóa nhà cung cấp thành công!')
+        fetchData()
       }
     } catch (error: any) {
       console.error('Error deleting:', error)
@@ -369,16 +345,16 @@ const ProductSupplierManagement = () => {
                                   <h5 className="ps-product-name">{product.name}</h5>
                                   <div className="ps-product-details">
                                     <div className="ps-product-detail">
+                                      <span className="ps-detail-label">Danh mục:</span>
+                                      <span className="ps-detail-value">{product.category}</span>
+                                    </div>
+                                    <div className="ps-product-detail">
                                       <span className="ps-detail-label">Đơn vị:</span>
                                       <span className="ps-detail-value">{product.unit}</span>
                                     </div>
                                     <div className="ps-product-detail">
-                                      <span className="ps-detail-label">Giá vốn:</span>
-                                      <span className="ps-detail-value">{product.costPrice.toLocaleString('vi-VN')} ₫</span>
-                                    </div>
-                                    <div className="ps-product-detail">
-                                      <span className="ps-detail-label">Giá bán:</span>
-                                      <span className="ps-detail-value ps-detail-selling">{product.sellingPrice.toLocaleString('vi-VN')} ₫</span>
+                                      <span className="ps-detail-label">Giá:</span>
+                                      <span className="ps-detail-value ps-detail-selling">{product.unitPrice.toLocaleString('vi-VN')} ₫</span>
                                     </div>
                                   </div>
                                 </div>
@@ -406,10 +382,7 @@ const ProductSupplierManagement = () => {
           <div className="ps-modal-content">
             <h2 className="ps-modal-title">Xác nhận xóa</h2>
             <p className="ps-modal-message">
-              {deleteItem && ('category' in deleteItem) 
-                ? `Bạn có chắc chắn muốn xóa sản phẩm "${deleteItem.name}" không?`
-                : `Bạn có chắc chắn muốn xóa nhà cung cấp "${(deleteItem as Supplier)?.name}" không?`
-              }
+              Bạn có chắc chắn muốn xóa nhà cung cấp "{(deleteItem as Supplier)?.name}" không?
             </p>
             <div className="ps-modal-actions">
               <button 

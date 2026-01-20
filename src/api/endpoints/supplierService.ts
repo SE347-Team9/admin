@@ -44,5 +44,10 @@ export const supplierService = {
   // DELETE supplier
   delete: async (id: string): Promise<ApiResponse<Supplier>> => {
     return await axiosClient.delete(`/suppliers/${id}`);
+  },
+
+  // GET products by supplier
+  getProducts: async (id: string): Promise<ApiResponse<any[]>> => {
+    return await axiosClient.get(`/suppliers/${id}/products`);
   }
 };

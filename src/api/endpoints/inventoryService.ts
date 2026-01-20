@@ -2,21 +2,28 @@ import axiosClient from '../axiosClient';
 
 interface InventorySummary {
   totalProducts: number;
-  totalStock: number;
-  lowStock: number;
+  inStock: number;
+  outOfStock: number;
+  nearExpiry: number;
+  expired: number;
 }
 
 interface InventoryProduct {
-  id: string;
+  product_id: string;
   code: string;
   name: string;
   category: string;
   unit: string;
-  unitPrice: number;
-  stock: number;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
+  quantity: number;
+  min_stock: number;
+  warehouse_id: number;
+  warehouse_name: string;
+  warehouse_code: string;
+  batch_code: string | null;
+  expiry_date: string | null;
+  batch_status: string | null;
+  expiry_status: string | null;
+  days_until_expiry: number | null;
 }
 
 interface InventoryOverview {

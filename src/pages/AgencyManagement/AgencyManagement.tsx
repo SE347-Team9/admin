@@ -635,19 +635,14 @@ const AgencyManagement = () => {
                   className="assign-form-select"
                 >
                   <option value="">-- Chọn nhân viên --</option>
-                  {staffList.map(staff => {
-                    const isAssignedToOther = staff.id !== selectedAgencyForAssignment.assignedStaffId && staff.agenciesCount >= 2
-                    return (
-                      <option 
-                        key={staff.id} 
-                        value={staff.id}
-                        disabled={isAssignedToOther}
-                      >
-                        {staff.name} (Số đại lý quản lý: {staff.agenciesCount})
-                        {isAssignedToOther && ' - Đã đủ'}
-                      </option>
-                    )
-                  })}
+                  {staffList.map(staff => (
+                    <option 
+                      key={staff.id} 
+                      value={staff.id}
+                    >
+                      {staff.name} (Số đại lý quản lý: {staff.agenciesCount})
+                    </option>
+                  ))}
                 </select>
               </div>
 

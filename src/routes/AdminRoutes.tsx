@@ -23,10 +23,6 @@ import EditSupplierForProduct from "../pages/ProductSupplierManagement/EditSuppl
 import Regulations from "../pages/Regulations/Regulations";
 import ViewRegulation from "../pages/Regulations/ViewRegulation";
 import EditRegulation from "../pages/Regulations/EditRegulation";
-import DeliveryManagement from "../pages/DeliveryManagement/DeliveryManagement";
-import AddDriver from "../pages/DeliveryManagement/AddDriver";
-import ViewDriver from "../pages/DeliveryManagement/ViewDriver";
-import EditDriver from "../pages/DeliveryManagement/EditDriver";
 import InventoryOverview from "../pages/InventoryOverview/InventoryOverview";
 
 export const AdminRoutes = () => (
@@ -227,46 +223,6 @@ export const AdminRoutes = () => (
         <RoleBasedRoute allowedRoles={['admin']}>
           <ProtectedLayout>
             <EditRegulation />
-          </ProtectedLayout>
-        </RoleBasedRoute>
-      }
-    />
-    <Route
-      path="/admin/delivery-management"
-      element={
-        <RoleBasedRoute allowedRoles={['admin']}>
-          <ProtectedLayout>
-            <DeliveryManagement />
-          </ProtectedLayout>
-        </RoleBasedRoute>
-      }
-    />
-    <Route
-      path="/admin/add-driver"
-      element={
-        <RoleBasedRoute allowedRoles={['admin']}>
-          <ProtectedLayout>
-            <AddDriver />
-          </ProtectedLayout>
-        </RoleBasedRoute>
-      }
-    />
-    <Route
-      path="/admin/view-driver/:driverId"
-      element={
-        <RoleBasedRoute allowedRoles={['admin']}>
-          <ProtectedLayout>
-            <ViewDriver />
-          </ProtectedLayout>
-        </RoleBasedRoute>
-      }
-    />
-    <Route
-      path="/admin/edit-driver/:driverId"
-      element={
-        <RoleBasedRoute allowedRoles={['admin']}>
-          <ProtectedLayout>
-            <EditDriver />
           </ProtectedLayout>
         </RoleBasedRoute>
       }

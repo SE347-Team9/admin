@@ -62,12 +62,6 @@ export const getMenuItems = (role: string): MenuItem[] => {
           path: '/admin/inventory-overview'
         },
         {
-          id: 'delivery',
-          icon: Truck,
-          label: 'Quản lý giao hàng',
-          path: '/admin/delivery-management'
-        },
-        {
           id: "account",
           icon: Users,
           label: "Quản lý tài khoản",
