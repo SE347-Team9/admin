@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { agencyService } from '../../api/endpoints/agencyService'
+import { accountService } from '../../api/endpoints/accountService'
 import './AgencyManagement.css'
 
 interface Staff {
@@ -47,13 +48,8 @@ const AgencyManagement = () => {
   const [selectedAgencyForAssignment, setSelectedAgencyForAssignment] = useState<Agency | null>(null)
   const [selectedStaffId, setSelectedStaffId] = useState<string>('')
   
-  // Mock staff data
-  const [staffList] = useState<Staff[]>([
-    { id: 's1', name: 'Nguyễn Văn A', email: 'nguyenvana@email.com', phone: '0912345678', agenciesCount: 1 },
-    { id: 's2', name: 'Trần Thị B', email: 'tranthib@email.com', phone: '0987654321', agenciesCount: 1 },
-    { id: 's3', name: 'Lê Văn C', email: 'levanc@email.com', phone: '0901234567', agenciesCount: 0 },
-    { id: 's4', name: 'Phạm Thị D', email: 'phamthid@email.com', phone: '0923456789', agenciesCount: 0 }
-  ])
+  // Staff data from API
+  const [staffList, setStaffList] = useState<Staff[]>([])
   
   // Level filter options
   const levelOptions = [
@@ -90,10 +86,33 @@ const AgencyManagement = () => {
   const [agencies, setAgencies] = useState<Agency[]>([])
   // Removed unused loading state
 
-  // Fetch agencies from API
+  // Fetch agencies and staff from API
   useEffect(() => {
-    fetchAgencies()
+    const loadData = async () => {
+      await fetchStaffList()
+      await fetchAgencies() // Load agencies sau để tính count đúng
+    }
+    loadData()
   }, [])
+
+  const fetchStaffList = async () => {
+    try {
+      const response = await accountService.getAllStaff()
+      if (response.success) {
+        const staffData = response.data.map((account: any) => ({
+          id: account.staffId, // Use staffId as identifier
+          name: account.fullName,
+          email: account.email,
+          phone: account.phone,
+          agenciesCount: 0 // Có thể tính từ backend nếu cần
+        }))
+        setStaffList(staffData)
+      }
+    } catch (error: any) {
+      console.error('Error fetching staff:', error)
+      // Không hiển thị lỗi nếu lấy staff thất bại, gán nhân viên là optional
+    }
+  }
 
   const fetchAgencies = async () => {
     try {
@@ -101,21 +120,48 @@ const AgencyManagement = () => {
       const response = await agencyService.getAll()
       if (response.success) {
         // Transform API data to match frontend interface
-        const transformedData = response.data.map((agency: any) => ({
-          id: agency.id,
-          code: agency.code,
-          name: agency.name,
-          address: agency.address,
-          phone: agency.phone || '',
-          level: 1 as 1 | 2 | 3,
-          levelLabel: 'Cấp 1',
-          totalSales: 0,
-          debt: 0,
-          debtLimit: 50000000,
-          assignedStaffId: agency.managerId,
-          assignedStaffName: ''
-        }))
+        const transformedData = response.data.map((agency: any) => {
+          // Helper function to get level label
+          const getLevelLabel = (level: number) => {
+            switch(level) {
+              case 1: return 'Cấp 1'
+              case 2: return 'Cấp 2'
+              case 3: return 'Cấp 3'
+              default: return 'Không xác định'
+            }
+          }
+          
+          return {
+            id: agency.id,
+            code: agency.code,
+            name: agency.name,
+            address: agency.address,
+            phone: agency.phone || '',
+            level: agency.level as 1 | 2 | 3,
+            levelLabel: getLevelLabel(agency.level),
+            totalSales: agency.salesVolume || 0,
+            debt: agency.currentDebt || 0,
+            debtLimit: agency.debtLimit || 30000000,
+            assignedStaffId: agency.managedByStaffId,
+            assignedStaffName: agency.managerName || ''
+          }
+        })
+
+        // Tính số đại lý mỗi nhân viên đang quản lý từ dữ liệu agencies
+        const staffAgencyCounts: Record<number, number> = {}
+        transformedData.forEach((ag: any) => {
+          if (ag.assignedStaffId !== null && ag.assignedStaffId !== undefined) {
+            const key = Number(ag.assignedStaffId)
+            staffAgencyCounts[key] = (staffAgencyCounts[key] || 0) + 1
+          }
+        })
+
         setAgencies(transformedData)
+        // Cập nhật lại agenciesCount cho danh sách nhân viên
+        setStaffList(prev => prev.map(s => ({
+          ...s,
+          agenciesCount: staffAgencyCounts[Number(s.id)] || 0
+        })))
       }
     } catch (error: any) {
       console.error('Error fetching agencies:', error)
@@ -144,6 +190,7 @@ const AgencyManagement = () => {
   }
 
   const formatFullCurrency = (amount: number) => {
+    if (!amount || amount === 0) return '0đ'
     return amount.toLocaleString('vi-VN') + 'đ'
   }
 
@@ -216,33 +263,64 @@ const AgencyManagement = () => {
     navigate(`/admin/edit-agency/${agencyId}`)
   }
 
-  const handleAssignStaff = () => {
+  const handleAssignStaff = async () => {
     if (!selectedAgencyForAssignment || !selectedStaffId) {
       toast.error('Vui lòng chọn nhân viên')
       return
     }
 
-    const selectedStaff = staffList.find(s => s.id === selectedStaffId)
-    if (!selectedStaff) return
-
-    // Check if staff already manages 2 agencies
-    const staffAgenciesCount = agencies.filter(a => a.assignedStaffId === selectedStaffId).length
-    if (staffAgenciesCount >= 2 && selectedAgencyForAssignment.assignedStaffId !== selectedStaffId) {
-      toast.error('Nhân viên này đã quản lý 2 đại lý rồi')
+    const staffIdNumber = Number(selectedStaffId)
+    if (Number.isNaN(staffIdNumber)) {
+      toast.error('ID nhân viên không hợp lệ')
       return
     }
 
-    // Update agency with assigned staff
-    setAgencies(prev => prev.map(a => 
-      a.id === selectedAgencyForAssignment.id 
-        ? { ...a, assignedStaffId: selectedStaffId, assignedStaffName: selectedStaff.name }
-        : a
-    ))
+    const selectedStaff = staffList.find(s => Number(s.id) === staffIdNumber)
+    if (!selectedStaff) {
+      toast.error('Không tìm thấy nhân viên')
+      return
+    }
 
-    toast.success(`Gán nhân viên ${selectedStaff.name} thành công!`)
-    setShowAssignModal(false)
-    setSelectedAgencyForAssignment(null)
-    setSelectedStaffId('')
+    try {
+      // Call API to update agency manager
+      const response = await agencyService.update(selectedAgencyForAssignment.id, {
+        managerId: staffIdNumber,
+        managedByStaffId: staffIdNumber
+      } as any)
+
+      if (response.success) {
+        const previousStaffId = selectedAgencyForAssignment.assignedStaffId ? Number(selectedAgencyForAssignment.assignedStaffId) : null
+        // Update local state
+        setAgencies(prev => prev.map(a => 
+          a.id === selectedAgencyForAssignment.id 
+            ? { ...a, assignedStaffId: staffIdNumber, assignedStaffName: selectedStaff.name }
+            : a
+        ))
+
+        // Cập nhật số đại lý quản lý cho staff
+        setStaffList(prev => prev.map(s => {
+          const sid = Number(s.id)
+          // tăng cho nhân viên mới
+          if (sid === staffIdNumber) {
+            return { ...s, agenciesCount: (s.agenciesCount || 0) + (previousStaffId === staffIdNumber ? 0 : 1) }
+          }
+          // giảm cho nhân viên cũ nếu khác nhân viên mới
+          if (previousStaffId && sid === previousStaffId && previousStaffId !== staffIdNumber) {
+            return { ...s, agenciesCount: Math.max(0, (s.agenciesCount || 0) - 1) }
+          }
+          return s
+        }))
+
+        toast.success(`Gán nhân viên ${selectedStaff.name} thành công!`)
+        setShowAssignModal(false)
+        setSelectedAgencyForAssignment(null)
+        setSelectedStaffId('')
+      }
+    } catch (error: any) {
+      console.error('Error assigning staff:', error)
+      const errorMsg = error.response?.data?.message || 'Không thể gán nhân viên'
+      toast.error(errorMsg)
+    }
   }
 
   return (

@@ -12,6 +12,8 @@ interface Account {
   status: string;
   createdAt: string;
   updatedAt: string;
+  staffId?: string;
+  agencyId?: string;
 }
 
 interface ApiResponse<T> {
@@ -44,5 +46,11 @@ export const accountService = {
   // DELETE account
   delete: async (id: string): Promise<ApiResponse<Account>> => {
     return await axiosClient.delete(`/accounts/${id}`);
+  },
+
+  // GET all staff accounts
+  getAllStaff: async (): Promise<ApiResponse<Account[]>> => {
+    return await axiosClient.get('/accounts?role=staff');
   }
 };
+

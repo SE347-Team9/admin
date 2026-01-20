@@ -19,11 +19,11 @@ const AddAccount = () => {
     role: 'staff',
     status: 'active',
     // Agency specific fields
-    agencyType: '1',
+    agencyType: '3', // Luôn là cấp 3
     agencyName: '',
     agencyOwner: '',
     agencyAddress: '',
-    debtLimit: ''
+    debtLimit: '30000000' // Luôn là 30 triệu
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -243,18 +243,18 @@ const AddAccount = () => {
                 Thông tin đại lý
               </h3>
               <div className="form-grid">
+                {/* Loại đại lý: Hiển thị cố định là Cấp 3 */}
                 <div className="form-group">
                   <label htmlFor="agencyType">Loại đại lý <span className="required">*</span></label>
-                  <select
-                    id="agencyType"
-                    name="agencyType"
-                    value={formData.agencyType}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="1">Đại lý cấp 1</option>
-                    <option value="2">Đại lý cấp 2</option>
-                  </select>
+                  <div className="form-static-field">
+                    <input
+                      type="text"
+                      id="agencyType"
+                      disabled
+                      value="Đại lý cấp 3"
+                      placeholder="Đại lý cấp 3"
+                    />
+                  </div>
                 </div>
 
                 <div className="form-group">
@@ -283,20 +283,21 @@ const AddAccount = () => {
                   />
                 </div>
 
+                {/* Hạn mức nợ: Hiển thị cố định 30 triệu */}
                 <div className="form-group">
                   <label htmlFor="debtLimit">
                     <CreditCard size={16} style={{ marginRight: 6, verticalAlign: 'middle' }} />
                     Hạn mức nợ (VNĐ)
                   </label>
-                  <input
-                    type="number"
-                    id="debtLimit"
-                    name="debtLimit"
-                    value={formData.debtLimit}
-                    onChange={handleChange}
-                    placeholder="VD: 10000000"
-                    min="0"
-                  />
+                  <div className="form-static-field">
+                    <input
+                      type="text"
+                      id="debtLimit"
+                      disabled
+                      value="30,000,000"
+                      placeholder="30,000,000"
+                    />
+                  </div>
                 </div>
 
                 <div className="form-group form-group-full">
