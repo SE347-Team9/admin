@@ -211,7 +211,11 @@ const InventoryOverview = () => {
       if (item.batches) {
         item.batches.forEach(batch => {
           if (batch.expiryDate && batch.remainingQuantity > 0) {
-            const expiryDate = new Date(batch.expiryDate)
+            // Parse DD-MM-YYYY format
+            const [day, month, year] = batch.expiryDate.split('-').map(Number)
+            const expiryDate = new Date(year, month - 1, day)
+            if (Number.isNaN(expiryDate.getTime())) return
+            
             if (expiryDate <= today) {
               expiredCount++
             } else if (expiryDate <= thirtyDaysLater) {
@@ -535,36 +539,66 @@ const InventoryOverview = () => {
                             <div className="batch-details">
                               <h4 className="batch-title">Chi tiết lô hàng:</h4>
                               {item.batches.length > 0 ? (
-                                <div className="batch-list">
-                                  {item.batches.map(batch => (
-                                    <div key={batch.id} className="batch-item">
-                                      <div className="batch-row">
-                                        <span className="batch-label">Lô:</span>
-                                        <span className="batch-value">{batch.batchNumber}</span>
-                                      </div>
-                                      <div className="batch-row">
-                                        <span className="batch-label">Số lượng nhập:</span>
-                                        <span className="batch-value">{batch.quantity}</span>
-                                      </div>
-                                      <div className="batch-row">
-                                        <span className="batch-label">Còn lại:</span>
-                                        <span className="batch-value">{batch.remainingQuantity}</span>
-                                      </div>
-                                      <div className="batch-row">
-                                        <span className="batch-label">Hạn sử dụng:</span>
-                                        <span className="batch-value">{batch.expiryDate}</span>
-                                      </div>
-                                      <div className="batch-row">
-                                        <span className="batch-label">Ngày nhập:</span>
-                                        <span className="batch-value">{batch.importDate}</span>
-                                      </div>
-                                      <div className="batch-row">
-                                        <span className="batch-label">Phiếu nhập:</span>
-                                        <span className="batch-value">{batch.importReceiptCode}</span>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
+                                <table className="batch-details-table">
+                                  <thead>
+                                    <tr>
+                                      <th>MÃ LÔ</th>
+                                      <th>NGÀY SX</th>
+                                      <th>HSD</th>
+                                      <th>SỐ LƯỢNG</th>
+                                      <th>TRẠNG THÁI</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {item.batches.map(batch => (
+                                      <tr key={batch.id}>
+                                        <td>{batch.batchNumber}</td>
+                                        <td>{batch.importDate}</td>
+                                        <td>{batch.expiryDate}</td>
+                                        <td>{batch.remainingQuantity}</td>
+                                        <td>
+                                          <span className={`batch-status batch-status--${
+                                            (() => {
+                                              const today = new Date()
+                                              const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+                                              if (!batch.expiryDate || batch.expiryDate === 'N/A') return 'normal'
+                                              const [day, month, year] = batch.expiryDate.split('-').map(Number)
+                                              if (!day || !month || !year) return 'normal'
+                                              const expDate = new Date(year, month - 1, day)
+                                              if (Number.isNaN(expDate.getTime())) return 'normal'
+                                              
+                                              // Compare dates at midnight
+                                              const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+                                              const expMidnight = new Date(expDate.getFullYear(), expDate.getMonth(), expDate.getDate())
+                                              
+                                              if (expMidnight <= todayMidnight) return 'expired'
+                                              if (expMidnight <= thirtyDaysLater) return 'expiring'
+                                              return 'normal'
+                                            })()
+                                          }`}>
+                                            {(() => {
+                                              const today = new Date()
+                                              const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+                                              if (!batch.expiryDate || batch.expiryDate === 'N/A') return 'Bình thường'
+                                              const [day, month, year] = batch.expiryDate.split('-').map(Number)
+                                              if (!day || !month || !year) return 'Bình thường'
+                                              const expDate = new Date(year, month - 1, day)
+                                              if (Number.isNaN(expDate.getTime())) return 'Bình thường'
+                                              
+                                              // Compare dates at midnight
+                                              const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+                                              const expMidnight = new Date(expDate.getFullYear(), expDate.getMonth(), expDate.getDate())
+                                              
+                                              if (expMidnight <= todayMidnight) return 'Đã hết hạn'
+                                              if (expMidnight <= thirtyDaysLater) return 'Sắp hết hạn'
+                                              return 'Bình thường'
+                                            })()}
+                                          </span>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
                               ) : (
                                 <div className="no-batch">Không có lô hàng nào</div>
                               )}
@@ -654,28 +688,35 @@ const InventoryOverview = () => {
                       <th>MÃ LÔ</th>
                       <th>NGÀY SX</th>
                       <th>HSD</th>
-                      <th>SL</th>
-                      <th>CÒN LẠI</th>
+                      <th>SỐ LƯỢNG</th>
                       <th>TRẠNG THÁI</th>
                     </tr>
                   </thead>
                   <tbody>
                     {selectedProduct.batches.map(batch => {
-                      const expiryDate = new Date(batch.expiryDate)
                       const today = new Date()
-                      const daysUntilExpiry = Math.floor((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+                      const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+                      
                       let batchStatus = 'Bình thường'
                       let statusClass = 'normal'
                       
-                      if (batch.remainingQuantity === 0) {
-                        batchStatus = 'Hết hàng'
-                        statusClass = 'out'
-                      } else if (daysUntilExpiry <= 0) {
-                        batchStatus = 'Đã hết hạn'
-                        statusClass = 'expired'
-                      } else if (daysUntilExpiry <= 30) {
-                        batchStatus = 'Sắp hết hạn'
-                        statusClass = 'expiring'
+                      if (batch.expiryDate && batch.expiryDate !== 'N/A') {
+                        const [day, month, year] = batch.expiryDate.split('-').map(Number)
+                        if (day && month && year) {
+                          const expDate = new Date(year, month - 1, day)
+                          if (!Number.isNaN(expDate.getTime())) {
+                            const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+                            const expMidnight = new Date(expDate.getFullYear(), expDate.getMonth(), expDate.getDate())
+                            
+                            if (expMidnight <= todayMidnight) {
+                              batchStatus = 'Đã hết hạn'
+                              statusClass = 'expired'
+                            } else if (expMidnight <= thirtyDaysLater) {
+                              batchStatus = 'Sắp hết hạn'
+                              statusClass = 'expiring'
+                            }
+                          }
+                        }
                       }
                       
                       return (
@@ -685,9 +726,6 @@ const InventoryOverview = () => {
                           </td>
                           <td>{batch.importDate}</td>
                           <td>{batch.expiryDate}</td>
-                          <td>
-                            <span className="inventory-overview__batch-quantity">{batch.quantity}</span>
-                          </td>
                           <td>
                             <span className="inventory-overview__batch-quantity">{batch.remainingQuantity}</span>
                           </td>

@@ -11,6 +11,7 @@ interface ProductBatch {
   mfgDate: string
   expDate: string
   quantity: number
+  remainingQuantity: number
   status: string
   statusKey?: 'normal' | 'expiring' | 'expired' | 'out'
   statusLabel?: string
@@ -57,12 +58,18 @@ const WarehouseManagement = () => {
 
     if (!expiryDate) return { statusKey: 'normal' as const, statusLabel: 'Bình thường' }
 
+    // Parse ISO date from database (YYYY-MM-DD)
     const exp = new Date(expiryDate)
     if (Number.isNaN(exp.getTime())) return { statusKey: 'normal' as const, statusLabel: 'Bình thường' }
 
     if (quantity <= 0) return { statusKey: 'out' as const, statusLabel: 'Hết hàng' }
-    if (exp <= today) return { statusKey: 'expired' as const, statusLabel: 'Đã hết hạn' }
-    if (exp <= thirtyDaysLater) return { statusKey: 'expiring' as const, statusLabel: 'Sắp hết hạn' }
+    
+    // Compare dates at midnight to avoid time issues
+    const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    const expMidnight = new Date(exp.getFullYear(), exp.getMonth(), exp.getDate())
+    
+    if (expMidnight <= todayMidnight) return { statusKey: 'expired' as const, statusLabel: 'Đã hết hạn' }
+    if (expMidnight <= thirtyDaysLater) return { statusKey: 'expiring' as const, statusLabel: 'Sắp hết hạn' }
     return { statusKey: 'normal' as const, statusLabel: 'Bình thường' }
   }
 
@@ -79,6 +86,7 @@ const WarehouseManagement = () => {
 
         response.data.products?.forEach((item: any) => {
           const key = `${item.product_id}-${item.warehouse_id}`
+          const batchCode = item.batch_code || 'N/A'
           const batchQuantity = Number(item.quantity) || 0
 
           if (!productMap.has(key)) {
@@ -102,14 +110,15 @@ const WarehouseManagement = () => {
           product.totalQuantity += batchQuantity
 
           // Add batch if it exists
-          if (item.batch_code && item.expiry_date) {
+          if (item.expiry_date && batchCode !== 'N/A') {
             const { statusKey, statusLabel } = getBatchStatus(item.expiry_date, batchQuantity)
             product.batches.push({
-              id: item.batch_code,
-              batchCode: item.batch_code,
+              id: batchCode,
+              batchCode: batchCode,
               mfgDate: formatDate(item.import_date),
               expDate: formatDate(item.expiry_date),
               quantity: batchQuantity,
+              remainingQuantity: batchQuantity,
               status: statusLabel,
               statusKey,
               statusLabel
@@ -135,25 +144,28 @@ const WarehouseManagement = () => {
 
   const statistics = useMemo(() => {
     const totalProducts = products.length
-    const normalCount = products.filter(p => p.status === 'normal').length
-    const lowStockCount = products.filter(p => p.status === 'low').length
-    const outOfStockCount = products.filter(p => p.status === 'out').length
+    const normalCount = products.filter(p => p.totalQuantity > p.threshold).length
+    const lowStockCount = products.filter(p => p.totalQuantity > 0 && p.totalQuantity <= p.threshold).length
+    const outOfStockCount = products.filter(p => p.totalQuantity === 0).length
 
     const today = new Date()
     const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
-
     let expiringCount = 0
     let expiredCount = 0
 
     products.forEach(product => {
       product.batches.forEach(batch => {
-        if (!batch.expDate || batch.expDate === 'N/A' || batch.quantity <= 0) return
-        const [day, month, year] = batch.expDate.split('-').map(Number)
-        const expDate = new Date(year, month - 1, day)
-        if (expDate <= today) {
-          expiredCount += 1
-        } else if (expDate <= thirtyDaysLater) {
-          expiringCount += 1
+        if (batch.expDate && batch.expDate !== 'N/A' && batch.remainingQuantity > 0) {
+          const [day, month, year] = batch.expDate.split('-').map(Number)
+          if (!day || !month || !year) return
+          const expiryDate = new Date(year, month - 1, day)
+          if (Number.isNaN(expiryDate.getTime())) return
+          
+          if (expiryDate <= today) {
+            expiredCount++
+          } else if (expiryDate <= thirtyDaysLater) {
+            expiringCount++
+          }
         }
       })
     })
@@ -481,7 +493,7 @@ const WarehouseManagement = () => {
                     <th>MÃ LÔ</th>
                     <th>NGÀY SX</th>
                     <th>HSD</th>
-                    <th>SL</th>
+                    <th>SỐ LƯỢNG</th>
                     <th>TRẠNG THÁI</th>
                   </tr>
                 </thead>
@@ -494,7 +506,7 @@ const WarehouseManagement = () => {
                       <td>{batch.mfgDate}</td>
                       <td>{batch.expDate}</td>
                       <td>
-                        <span className="warehouse-management__batch-quantity">{batch.quantity.toLocaleString('vi-VN')}</span>
+                        <span className="warehouse-management__batch-quantity">{batch.remainingQuantity.toLocaleString('vi-VN')}</span>
                       </td>
                       <td>
                         <span className={`warehouse-management__batch-status warehouse-management__batch-status--${(batch.statusKey || 'normal') === 'expiring' ? 'sắp-hết-hạn' : (batch.statusKey === 'expired' ? 'đã-hết-hạn' : 'bình-thường')}`}>

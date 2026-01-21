@@ -55,7 +55,7 @@ const Regulations = () => {
 
   const navigate = useNavigate();
   const handleView = (id: string) => {
-    navigate(`/regulations/view/${id}`)
+    navigate(`/staff/regulations/view/${id}`)
   }
 
 
