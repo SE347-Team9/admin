@@ -58,6 +58,12 @@ const reportService = {
   delete: async (id: number): Promise<ApiResponse<any>> => {
     const response = await axiosClient.delete(`/reports/${id}`);
     return response.data;
+  },
+
+  // Get summary totals for staff/admin
+  getSummary: async (): Promise<ApiResponse<{ totalImportValue: number; totalDistributionValue: number; totalDebt: number }>> => {
+    const response = await axiosClient.get('/reports/summary/data');
+    return response.data;
   }
 };
 

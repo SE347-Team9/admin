@@ -34,16 +34,33 @@ const Reports = () => {
   const navigate = useNavigate()
   const [typeFilter, setTypeFilter] = useState<string>('all')
   const [reports, setReports] = useState<Report[]>([])
+  const [summary, setSummary] = useState({
+    totalImportValue: 0,
+    totalDistributionValue: 0,
+    totalDebt: 0
+  })
   // Removed unused loading state
-
-  // Statistics data
-  const totalImportValue = 125000000
-  const totalDistributionValue = 98500000
-  const totalDebt = 36460000
 
   useEffect(() => {
     fetchReports()
+    fetchSummary()
   }, [])
+
+  const fetchSummary = async () => {
+    try {
+      const response = await reportService.getSummary()
+      if (response.success && response.data) {
+        setSummary({
+          totalImportValue: response.data.totalImportValue || 0,
+          totalDistributionValue: response.data.totalDistributionValue || 0,
+          totalDebt: response.data.totalDebt || 0
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching report summary:', error)
+      toast.error('Không thể tải thống kê báo cáo')
+    }
+  }
 
   const fetchReports = async () => {
     try {
@@ -253,7 +270,7 @@ const Reports = () => {
         <div className="stats-card gradient-green-blue">
           <div className="stats-card-content">
             <div className="stats-label">Tổng giá trị nhập kho</div>
-            <div className="stats-value">{totalImportValue.toLocaleString('vi-VN')} đ</div>
+            <div className="stats-value">{summary.totalImportValue.toLocaleString('vi-VN')} đ</div>
           </div>
           <div className="stats-icon">
             <Package size={48} strokeWidth={2.5} />
@@ -263,7 +280,7 @@ const Reports = () => {
         <div className="stats-card gradient-purple">
           <div className="stats-card-content">
             <div className="stats-label">Tổng giá trị phân phối</div>
-            <div className="stats-value">{totalDistributionValue.toLocaleString('vi-VN')} đ</div>
+            <div className="stats-value">{summary.totalDistributionValue.toLocaleString('vi-VN')} đ</div>
           </div>
           <div className="stats-icon">
             <Truck size={48} strokeWidth={2.5} />
@@ -273,7 +290,7 @@ const Reports = () => {
         <div className="stats-card gradient-pink">
           <div className="stats-card-content">
             <div className="stats-label">Tổng công nợ</div>
-            <div className="stats-value">{totalDebt.toLocaleString('vi-VN')} đ</div>
+            <div className="stats-value">{summary.totalDebt.toLocaleString('vi-VN')} đ</div>
           </div>
           <div className="stats-icon">
             <CreditCard size={48} strokeWidth={2.5} />

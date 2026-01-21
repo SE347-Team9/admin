@@ -22,6 +22,12 @@ const ReceiveGoods = () => {
   const [inventoryItems, setInventoryItems] = useState<any[]>([])
   const [receipts, setReceipts] = useState<Receipt[]>([])
   const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({
+    totalReceipts: 0,
+    totalValue: 0,
+    monthCount: 0,
+    monthValue: 0
+  })
 
   useEffect(() => {
     loadData()
@@ -45,6 +51,24 @@ const ReceiveGoods = () => {
           status: imp.status as 'pending' | 'approved' | 'rejected'
         }))
         setReceipts(receiptData)
+
+        // Calculate statistics
+        const totalReceipts = importsResponse.data.length
+        const totalValue = importsResponse.data.reduce((sum: number, imp: any) => sum + (Number(imp.total_amount) || 0), 0)
+        const now = new Date()
+        const monthCount = importsResponse.data.filter((imp: any) => {
+          const created = new Date(imp.created_at)
+          return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear()
+        }).length
+        const monthValue = importsResponse.data.reduce((sum: number, imp: any) => {
+          const created = new Date(imp.created_at)
+          if (created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear()) {
+            return sum + (Number(imp.total_amount) || 0)
+          }
+          return sum
+        }, 0)
+
+        setStats({ totalReceipts, totalValue, monthCount, monthValue })
       }
       
       if (inventoryResponse.success && inventoryResponse.data) {
@@ -59,10 +83,6 @@ const ReceiveGoods = () => {
   };
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteReceipt, setDeleteReceipt] = useState<Receipt | null>(null);
-
-  const totalReceipts = 4
-  const totalValue = 13300000
-  const thisMonth = 0
 
   const filteredReceipts = receipts.filter(receipt =>
     receipt.code.toLowerCase().includes(searchTerm.toLowerCase())
@@ -155,7 +175,7 @@ const ReceiveGoods = () => {
           </div>
           <div className="receive-goods__stat-content">
             <div className="receive-goods__stat-label">Tổng phiếu nhập</div>
-            <div className="receive-goods__stat-value">{totalReceipts}</div>
+            <div className="receive-goods__stat-value">{stats.totalReceipts}</div>
             <div className="receive-goods__stat-note">Tất cả thời gian</div>
           </div>
           <div className="receive-goods__stat-badge receive-goods__stat-badge--up">
@@ -170,8 +190,8 @@ const ReceiveGoods = () => {
           </div>
           <div className="receive-goods__stat-content">
             <div className="receive-goods__stat-label">Tổng giá trị</div>
-            <div className="receive-goods__stat-value">{(totalValue / 1000000).toFixed(1)}M</div>
-            <div className="receive-goods__stat-note">VND</div>
+            <div className="receive-goods__stat-value">{(stats.totalValue / 1000000).toFixed(1)}M</div>
+            <div className="receive-goods__stat-note">{formatCurrency(stats.totalValue)}</div>
           </div>
           <div className="receive-goods__stat-badge receive-goods__stat-badge--up">
             <TrendingUp size={16} />
@@ -185,8 +205,8 @@ const ReceiveGoods = () => {
           </div>
           <div className="receive-goods__stat-content">
             <div className="receive-goods__stat-label">Tháng này</div>
-            <div className="receive-goods__stat-value">{thisMonth}</div>
-            <div className="receive-goods__stat-note">0.0M VND</div>
+            <div className="receive-goods__stat-value">{stats.monthCount}</div>
+            <div className="receive-goods__stat-note">{(stats.monthValue / 1000000).toFixed(1)}M VND</div>
           </div>
           <div className="receive-goods__stat-badge receive-goods__stat-badge--up">
             <TrendingUp size={16} />
