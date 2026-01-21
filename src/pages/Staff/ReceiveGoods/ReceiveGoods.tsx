@@ -36,14 +36,20 @@ const ReceiveGoods = () => {
       ])
       
       if (importsResponse.success && importsResponse.data) {
-        const receiptData = importsResponse.data.map(imp => ({
-          id: imp.id.toString(),
-          code: imp.code,
-          supplier: imp.agency_name || 'N/A',
-          date: new Date(imp.created_at).toLocaleDateString('vi-VN'),
-          total: imp.total_amount,
-          status: imp.status as 'pending' | 'approved' | 'rejected'
-        }))
+        const receiptData = importsResponse.data.map(imp => {
+          // Parse date properly
+          const date = new Date(imp.created_at || imp.import_date)
+          const dateString = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
+          
+          return {
+            id: imp.id.toString(),
+            code: imp.code || imp.import_code,
+            supplier: imp.supplier_name || imp.agency_name || 'N/A',
+            date: dateString,
+            total: imp.total_amount || 0,
+            status: imp.status as 'pending' | 'approved' | 'rejected'
+          }
+        })
         setReceipts(receiptData)
       }
       
@@ -60,9 +66,17 @@ const ReceiveGoods = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteReceipt, setDeleteReceipt] = useState<Receipt | null>(null);
 
-  const totalReceipts = 4
-  const totalValue = 13300000
-  const thisMonth = 0
+  // Calculate statistics from actual data
+  const totalReceipts = receipts.length
+  const totalValue = receipts.reduce((sum, receipt) => sum + receipt.total, 0)
+  
+  // Calculate this month's receipts
+  const currentMonth = new Date().getMonth()
+  const currentYear = new Date().getFullYear()
+  const thisMonth = receipts.filter(receipt => {
+    const receiptDate = new Date(receipt.date)
+    return receiptDate.getMonth() === currentMonth && receiptDate.getFullYear() === currentYear
+  }).length
 
   const filteredReceipts = receipts.filter(receipt =>
     receipt.code.toLowerCase().includes(searchTerm.toLowerCase())
@@ -107,8 +121,9 @@ const ReceiveGoods = () => {
     navigate('/staff/create-receipt')
   }
 
-  const handleRefresh = () => {
-    console.log('Refresh data')
+  const handleRefresh = async () => {
+    await loadData()
+    toast.success('Đã làm mới dữ liệu!')
   }
 
   const handleViewInventory = () => {

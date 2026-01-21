@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Package, Plus, X } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { productService } from '../../../api/endpoints/productService'
-import { agencyService } from '../../../api/endpoints/agencyService'
+import { supplierService } from '../../../api/endpoints/supplierService'
+import importService from '../../../api/endpoints/importService'
 import './CreateReceipt.css'
 
 interface ReceiptItem {
@@ -17,12 +18,14 @@ interface ReceiptItem {
 
 const CreateReceipt = () => {
   const navigate = useNavigate()
-  const [manufacturer, setManufacturer] = useState('')
+  const [supplierId, setSupplierId] = useState('')
+  const [supplierName, setSupplierName] = useState('')
   const [items, setItems] = useState<ReceiptItem[]>([
     { id: 1, product: '', unit: '', quantity: 0, price: 0, total: 0 }
   ])
-  const [agencies, setAgencies] = useState<any[]>([])
-  const [products, setProducts] = useState<any[]>([])
+  const [suppliers, setSuppliers] = useState<any[]>([])
+  const [allProducts, setAllProducts] = useState<any[]>([])
+  const [supplierProducts, setSupplierProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -32,12 +35,16 @@ const CreateReceipt = () => {
   const loadData = async () => {
     try {
       setLoading(true)
-      const [agencyRes, productRes] = await Promise.all([
-        agencyService.getAll(),
+      const [supplierRes, productRes] = await Promise.all([
+        supplierService.getAll(),
         productService.getAll()
       ])
-      if (agencyRes.success) setAgencies(agencyRes.data)
-      if (productRes.success) setProducts(productRes.data)
+      
+      console.log('Suppliers:', supplierRes.data)
+      console.log('Products:', productRes.data)
+      
+      if (supplierRes.success) setSuppliers(supplierRes.data)
+      if (productRes.success) setAllProducts(productRes.data)
     } catch (error) {
       console.error('Error loading data:', error)
       toast.error('Không thể tải dữ liệu')
@@ -76,21 +83,78 @@ const CreateReceipt = () => {
   }
 
   const handleProductChange = (id: number, productName: string) => {
-     const selectedProduct = currentProducts.find(p => p.name === productName)
+     const selectedProduct = supplierProducts.find(p => p.name === productName)
     if (selectedProduct) {
       setItems(items.map(item => {
         if (item.id === id) {
+          const costPrice = selectedProduct.cost_price || selectedProduct.costPrice || 0
           const updatedItem = {
             ...item,
             product: productName,
-            unit: selectedProduct.unit,
-            price: selectedProduct.price,
-            total: item.quantity * selectedProduct.price
+            unit: selectedProduct.unit || '',
+            price: costPrice,
+            total: item.quantity * costPrice
           }
           return updatedItem
         }
         return item
       }))
+    }
+  }
+
+  const handleSupplierChange = async (selectedSupplierId: string) => {
+    setSupplierId(selectedSupplierId)
+    const supplier = suppliers.find(s => s.id.toString() === selectedSupplierId)
+    setSupplierName(supplier?.name || '')
+    
+    // Reset items when changing supplier
+    setItems([{ id: 1, product: '', unit: '', quantity: 0, price: 0, total: 0 }])
+    
+    if (selectedSupplierId) {
+      try {
+        // Log first product to see structure
+        if (allProducts.length > 0) {
+          console.log('Sample product structure:', allProducts[0])
+        }
+        
+        // Filter products by supplier_id (check multiple field names and formats)
+        const filtered = allProducts.filter(p => {
+          // Try different field name variations
+          const suppId = p.supplier_id || p.supplierId || p.supplier?.id || p.supplier || 
+                        p.supplierID || p.Supplier_id || p.SupplierId
+          
+          if (!suppId) {
+            console.log('Product without supplier_id:', p.name || p.code)
+            return false
+          }
+          
+          const supplierIdStr = suppId.toString()
+          const match = supplierIdStr === selectedSupplierId
+          
+          if (match) {
+            console.log('Matched product:', p.name, 'supplier_id:', suppId)
+          }
+          
+          return match
+        })
+        
+        console.log('Selected supplier ID:', selectedSupplierId)
+        console.log('Total products:', allProducts.length)
+        console.log('Filtered products:', filtered.length)
+        
+        setSupplierProducts(filtered)
+        
+        if (filtered.length === 0) {
+          toast.warning('Nhà cung cấp này chưa có sản phẩm nào. Vui lòng kiểm tra lại dữ liệu.')
+        } else {
+          toast.success(`Tìm thấy ${filtered.length} sản phẩm`)
+        }
+      } catch (error) {
+        console.error('Error filtering products:', error)
+        toast.error('Không thể tải sản phẩm của nhà cung cấp')
+      }
+    } else {
+      setSupplierProducts([])
     }
   }
 
@@ -104,28 +168,53 @@ const CreateReceipt = () => {
     }))
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate form
-     if (!manufacturer) {
-       alert('Vui lòng chọn nhà sản xuất')
+     if (!supplierId) {
+       toast.error('Vui lòng chọn nhà cung cấp')
        return
      }
 
      if (items.some(item => !item.product || item.quantity === 0 || item.price === 0)) {
-       alert('Vui lòng điền đầy đủ thông tin sản phẩm')
+       toast.error('Vui lòng điền đầy đủ thông tin sản phẩm')
       return
     }
 
-    const receiptData = {
-       manufacturer,
-      items,
-      total: calculateTotal()
-    }
+    try {
+      // Prepare import data to match backend API
+      const importData = {
+        supplierId: parseInt(supplierId),
+        agencyId: null,
+        shipDate: new Date().toISOString().split('T')[0],
+        receiveDate: new Date().toISOString().split('T')[0],
+        notes: `Nhập hàng từ nhà cung cấp: ${supplierName}`,
+        products: items.map(item => {
+          const product = supplierProducts.find(p => p.name === item.product)
+          return {
+            productId: product?.id,
+            batch: `BATCH${Date.now()}`,
+            mfgDate: new Date().toISOString().split('T')[0],
+            expDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            quantity: item.quantity,
+            price: item.price
+          }
+        })
+      }
 
-    console.log('Receipt data:', receiptData)
-    // TODO: Call API to save receipt
-    alert('Tạo phiếu nhập thành công!')
-    navigate('/staff/receive-goods')
+      console.log('Creating import:', importData)
+      
+      const response = await importService.create(importData)
+      
+      if (response.success) {
+        toast.success('Tạo phiếu nhập thành công!')
+        navigate('/staff/receive-goods')
+      } else {
+        toast.error(response.message || 'Không thể tạo phiếu nhập')
+      }
+    } catch (error: any) {
+      console.error('Error creating import:', error)
+      toast.error('Lỗi khi tạo phiếu nhập: ' + (error.response?.data?.message || error.message || 'Unknown error'))
+    }
   }
 
   const handleCancel = () => {
@@ -151,21 +240,17 @@ const CreateReceipt = () => {
         {/* Form */}
         <div className="create-receipt-form">
           {/* Date */}
-           {/* Manufacturer */}
+           {/* Supplier */}
            <div className="create-receipt-form-section">
-             <label className="create-receipt-form-label">Nhà sản xuất</label>
+             <label className="create-receipt-form-label">Nhà cung cấp</label>
              <select
                className="create-receipt-form-select"
-               value={manufacturer}
-               onChange={(e) => {
-                 setManufacturer(e.target.value)
-                 // reset items when change manufacturer
-                 setItems([{ id: 1, product: '', unit: '', quantity: 0, price: 0, total: 0 }])
-               }}
+               value={supplierId}
+               onChange={(e) => handleSupplierChange(e.target.value)}
              >
-               <option value="">Chọn nhà sản xuất</option>
-               {manufacturers.map((m) => (
-                 <option key={m.name} value={m.name}>{m.name}</option>
+               <option value="">Chọn nhà cung cấp</option>
+               {suppliers.map((supplier) => (
+                 <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
                ))}
              </select>
            </div>
@@ -194,11 +279,11 @@ const CreateReceipt = () => {
                           className="create-receipt-product-select"
                           value={item.product}
                           onChange={(e) => handleProductChange(item.id, e.target.value)}
-                           disabled={!manufacturer}
+                           disabled={!supplierId}
                         >
                           <option value="">Chọn sản phẩm</option>
-                            {currentProducts.map((product) => (
-                            <option key={product.name} value={product.name}>
+                            {supplierProducts.map((product) => (
+                            <option key={product.id || product.code} value={product.name}>
                               {product.name}
                             </option>
                           ))}
@@ -214,7 +299,7 @@ const CreateReceipt = () => {
                           value={item.quantity || ''}
                           onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
                           min="0"
-                            disabled={!manufacturer}
+                            disabled={!supplierId || !item.product}
                         />
                       </td>
                         <td className="col-price">
@@ -224,7 +309,8 @@ const CreateReceipt = () => {
                             value={item.price || ''}
                             onChange={(e) => handlePriceChange(item.id, Number(e.target.value))}
                             min="0"
-                            disabled={!manufacturer}
+                            disabled={!supplierId || !item.product}
+                            readOnly
                           />
                         </td>
                       <td className="col-total">
