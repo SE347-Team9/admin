@@ -23,7 +23,8 @@ interface Product {
   name: string
   category: string
   unit: string
-  unitPrice: number
+  costPrice: number
+  sellingPrice: number
   supplierId?: string
   status: 'active' | 'inactive'
   statusLabel: string
@@ -46,16 +47,13 @@ interface Supplier {
 
 const ProductSupplierManagement = () => {
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<'suppliers'>('suppliers')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteItem, setDeleteItem] = useState<Product | Supplier | null>(null)
   const [expandedSupplier, setExpandedSupplier] = useState<string | null>(null)
-  const [products, setProducts] = useState<Product[]>([])
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [supplierProducts, setSupplierProducts] = useState<Record<string, Product[]>>({})
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchData()
@@ -63,7 +61,6 @@ const ProductSupplierManagement = () => {
 
   const fetchData = async () => {
     try {
-      setLoading(true)
       const suppliersRes = await supplierService.getAll()
 
       if (suppliersRes.success) {
@@ -95,7 +92,8 @@ const ProductSupplierManagement = () => {
                   name: p.name,
                   category: p.category || 'Khác',
                   unit: p.unit,
-                  unitPrice: parseFloat(p.unitPrice) || 0,
+                  costPrice: parseFloat(p.costPrice) || 0,
+                  sellingPrice: parseFloat(p.sellingPrice) || 0,
                   supplierId: supplier.id,
                   status: p.status as 'active' | 'inactive',
                   statusLabel: p.status === 'active' ? 'Đang kinh doanh' : 'Ngừng kinh doanh',
@@ -113,8 +111,6 @@ const ProductSupplierManagement = () => {
     } catch (error: any) {
       console.error('Error fetching data:', error)
       toast.error('Không thể tải dữ liệu')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -144,11 +140,6 @@ const ProductSupplierManagement = () => {
   }
 
   // Delete handlers
-  const handleDeleteProduct = (product: Product) => {
-    setDeleteItem(product)
-    setShowDeleteModal(true)
-  }
-
   const handleDeleteSupplier = (supplier: Supplier) => {
     setDeleteItem(supplier)
     setShowDeleteModal(true)
@@ -301,7 +292,7 @@ const ProductSupplierManagement = () => {
                       <button
                         className="ps-action-btn ps-view"
                         title="Xem"
-                        onClick={() => navigate(`/product-supplier/${supplier.id}/view`, {
+                        onClick={() => navigate(`/admin/view-supplier/${supplier.id}`, {
                           state: { supplier, products: getSupplierProducts(supplier.id) }
                         })}
                       >
@@ -310,7 +301,7 @@ const ProductSupplierManagement = () => {
                       <button
                         className="ps-action-btn ps-edit"
                         title="Sửa"
-                        onClick={() => navigate(`/product-supplier/${supplier.id}/edit`, {
+                        onClick={() => navigate(`/admin/edit-supplier/${supplier.id}`, {
                           state: { supplier, products: getSupplierProducts(supplier.id) }
                         })}
                       >
@@ -345,16 +336,16 @@ const ProductSupplierManagement = () => {
                                   <h5 className="ps-product-name">{product.name}</h5>
                                   <div className="ps-product-details">
                                     <div className="ps-product-detail">
-                                      <span className="ps-detail-label">Danh mục:</span>
-                                      <span className="ps-detail-value">{product.category}</span>
-                                    </div>
-                                    <div className="ps-product-detail">
                                       <span className="ps-detail-label">Đơn vị:</span>
                                       <span className="ps-detail-value">{product.unit}</span>
                                     </div>
                                     <div className="ps-product-detail">
-                                      <span className="ps-detail-label">Giá:</span>
-                                      <span className="ps-detail-value ps-detail-selling">{product.unitPrice.toLocaleString('vi-VN')} ₫</span>
+                                      <span className="ps-detail-label">Giá vốn:</span>
+                                      <span className="ps-detail-value">{product.costPrice.toLocaleString('vi-VN')} ₫</span>
+                                    </div>
+                                    <div className="ps-product-detail">
+                                      <span className="ps-detail-label">Giá bán:</span>
+                                      <span className="ps-detail-value ps-detail-selling">{product.sellingPrice.toLocaleString('vi-VN')} ₫</span>
                                     </div>
                                   </div>
                                 </div>

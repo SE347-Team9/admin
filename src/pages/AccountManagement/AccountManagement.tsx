@@ -178,11 +178,11 @@ const AccountManagement = () => {
   }
 
   const handleViewAccount = (accountId: string) => {
-    navigate(`/view-account/${accountId}`)
+    navigate(`/admin/view-account/${accountId}`)
   }
 
   const handleEditAccount = (accountId: string) => {
-    navigate(`/edit-account/${accountId}`)
+    navigate(`/admin/edit-account/${accountId}`)
   }
 
   const handleDeleteAccount = (account: Account) => {

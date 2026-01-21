@@ -56,8 +56,8 @@
 /* Statistics Grid */
 .warehouse-management__stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
   margin-bottom: 20px;
 }
 
@@ -93,6 +93,10 @@
   background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
 }
 
+.warehouse-management__stat-card--green::before {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
 .warehouse-management__stat-card--red::before {
   background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
 }
@@ -103,6 +107,10 @@
 
 .warehouse-management__stat-card--purple::before {
   background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+}
+
+.warehouse-management__stat-card--grey::before {
+  background: linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 100%);
 }
 
 .warehouse-management__stat-icon {
@@ -616,6 +624,11 @@
 .warehouse-management__batch-status--sắp-hết-hạn {
   background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   color: #0369a1;
+}
+
+.warehouse-management__batch-status--đã-hết-hạn {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
 }
 
 .warehouse-management__modal-footer {

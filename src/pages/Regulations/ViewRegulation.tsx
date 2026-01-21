@@ -16,26 +16,26 @@ interface RegulationData {
 
 const ViewRegulation = () => {
   const navigate = useNavigate()
-  const { id } = useParams<{ id: string }>()
+  const { regulationId } = useParams<{ regulationId: string }>()
   const [regulationData, setRegulationData] = useState<RegulationData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadRegulation()
-  }, [id])
+  }, [regulationId])
 
   const loadRegulation = async () => {
     try {
       setLoading(true)
-      const response = await regulationService.getById(id!)
+      const response = await regulationService.getById(regulationId!)
       if (response.success && response.data) {
-        const reg = response.data
+        const reg = response.data as any
         setRegulationData({
-          id: reg.id?.toString() || id!,
-          code: reg.code,
+          id: reg.key || reg.id || regulationId!,
+          code: reg.key || reg.code,
           value: reg.value,
-          description: reg.description,
-          lastUpdated: new Date(reg.updated_at || reg.created_at).toLocaleString('vi-VN'),
+          description: reg.description || '',
+          lastUpdated: new Date(reg.updatedAt || reg.updated_at || reg.createdAt).toLocaleString('vi-VN'),
           notes: 'Quy định trong hệ thống'
         })
       }
@@ -64,7 +64,7 @@ const ViewRegulation = () => {
   }
 
   const handleEdit = () => {
-    navigate(`/edit-regulation/${id}`)
+    navigate(`/admin/edit-regulation/${regulationId}`)
   }
 
   return (

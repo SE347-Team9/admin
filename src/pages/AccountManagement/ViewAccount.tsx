@@ -29,20 +29,20 @@ interface AccountData {
 
 const ViewAccount = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { accountId } = useParams()
   const [account, setAccount] = useState<AccountData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchAccount = async () => {
-      if (!id) return
+      if (!accountId) return
 
       try {
         setLoading(true)
-        const response = await accountService.getById(id)
+        const response = await accountService.getById(accountId)
         if (response.success) {
           const acc = response.data
-          setAccount({
+            setAccount({
             id: acc.id,
             code: acc.code,
             username: acc.username,
@@ -54,8 +54,17 @@ const ViewAccount = () => {
             status: acc.status as 'active' | 'inactive',
             statusLabel: acc.status === 'active' ? 'Hoạt động' : 'Không hoạt động',
             createdAt: new Date(acc.createdAt).toLocaleDateString('vi-VN'),
-            updatedAt: new Date(acc.updatedAt).toLocaleDateString('vi-VN')
-          })
+            updatedAt: new Date(acc.updatedAt).toLocaleDateString('vi-VN'),
+            // Agency specific fields
+            agencyType: (acc as any).agencyType ? String((acc as any).agencyType) : '',
+            agencyTypeLabel: (acc as any).agencyType === 1 || (acc as any).agencyType === '1' ? 'Đại lý cấp 1' : 
+                     (acc as any).agencyType === 2 || (acc as any).agencyType === '2' ? 'Đại lý cấp 2' : 
+                     (acc as any).agencyType === 3 || (acc as any).agencyType === '3' ? 'Đại lý cấp 3' :
+                     'Chưa thiết lập',
+            agencyName: (acc as any).agencyName,
+            agencyAddress: (acc as any).agencyAddress,
+            debtLimit: (acc as any).debtLimit
+            })
         }
       } catch (error) {
         console.error('Error fetching account:', error)
@@ -67,7 +76,7 @@ const ViewAccount = () => {
     }
 
     fetchAccount()
-  }, [id, navigate])
+  }, [accountId, navigate])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
@@ -78,7 +87,7 @@ const ViewAccount = () => {
   }
 
   const handleEdit = () => {
-    navigate(`/admin/edit-account/${id}`)
+    navigate(`/admin/edit-account/${accountId}`)
   }
 
   return (
@@ -175,12 +184,12 @@ const ViewAccount = () => {
 
                 <div className="view-account__info-item">
                   <span className="view-account__info-label">Tên đại lý:</span>
-                  <span className="view-account__info-value">{account.agencyName}</span>
+                  <span className="view-account__info-value">{account.agencyName || 'Chưa thiết lập'}</span>
                 </div>
 
                 <div className="view-account__info-item">
                   <span className="view-account__info-label">Chủ đại lý:</span>
-                  <span className="view-account__info-value">{account.agencyOwner}</span>
+                  <span className="view-account__info-value">{account.fullName}</span>
                 </div>
 
                 <div className="view-account__info-item">
@@ -198,7 +207,7 @@ const ViewAccount = () => {
                     <MapPin size={16} style={{ marginRight: 6, verticalAlign: 'middle' }} />
                     Địa chỉ:
                   </span>
-                  <span className="view-account__info-value">{account.agencyAddress}</span>
+                  <span className="view-account__info-value">{account.agencyAddress || 'Chưa thiết lập'}</span>
                 </div>
               </div>
             </div>

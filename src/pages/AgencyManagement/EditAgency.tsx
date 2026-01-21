@@ -5,9 +5,25 @@ import { toast } from 'react-toastify'
 import { agencyService } from '../../api/endpoints/agencyService'
 import './EditAgency.css'
 
+interface Agency {
+  code: string
+  name: string
+  address: string
+  phone: string
+  email: string
+  location: string
+  status: string
+  level: number
+  debtLimit: number
+  salesVolume?: number
+  currentDebt?: number
+  createdAt?: string
+  updatedAt?: string
+}
+
 const EditAgency = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { agencyId } = useParams()
 
   // Helper function to format currency for display
   const formatCurrency = (amount: number) => {
@@ -21,7 +37,13 @@ const EditAgency = () => {
     phone: '',
     email: '',
     location: '',
-    status: 'active'
+    status: 'active',
+    level: 3,
+    debtLimit: 30000000,
+    totalSales: 0,
+    debt: 0,
+    createdAt: '',
+    updatedAt: ''
   }
 
   const [formData, setFormData] = useState(initialData)
@@ -30,16 +52,22 @@ const EditAgency = () => {
 
   // Fetch agency data on mount
   useEffect(() => {
-    if (id) {
+    if (agencyId) {
       fetchAgency()
     }
-  }, [id])
+  }, [agencyId])
 
   const fetchAgency = async () => {
     try {
       setFetchLoading(true)
-      const response = await agencyService.getById(id!)
+      const response = await agencyService.getById(agencyId!)
       if (response.success) {
+        const formatDate = (dateStr: string) => {
+          if (!dateStr) return 'N/A'
+          const date = new Date(dateStr)
+          return date.toLocaleDateString('vi-VN')
+        }
+        
         setFormData({
           code: response.data.code,
           name: response.data.name,
@@ -47,7 +75,13 @@ const EditAgency = () => {
           phone: response.data.phone || '',
           email: response.data.email || '',
           location: response.data.location || '',
-          status: response.data.status
+          status: response.data.status,
+          level: response.data.level || 3,
+          debtLimit: response.data.debtLimit || 30000000,
+          totalSales: response.data.salesVolume || 0,
+          debt: response.data.currentDebt || 0,
+          createdAt: formatDate(response.data.createdAt),
+          updatedAt: formatDate(response.data.updatedAt)
         })
       }
     } catch (error: any) {
@@ -101,7 +135,7 @@ const EditAgency = () => {
     setIsLoading(true)
 
     try {
-      const response = await agencyService.update(id!, formData)
+      const response = await agencyService.update(agencyId!, formData)
 
       if (response.success) {
         toast.success('Cập nhật thông tin đại lý thành công!')
@@ -232,9 +266,12 @@ const EditAgency = () => {
                   value={formData.level}
                   onChange={handleInputChange}
                   className="edit-agency__form-select"
+                  disabled
+                  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed', opacity: 0.7 }}
                 >
                   <option value="1">Cấp 1</option>
                   <option value="2">Cấp 2</option>
+                  <option value="3">Cấp 3</option>
                 </select>
               </div>
 
@@ -248,10 +285,8 @@ const EditAgency = () => {
                   name="debtLimit"
                   value={formatCurrency(formData.debtLimit)}
                   className="edit-agency__form-input"
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9]/g, '')
-                    setFormData(prev => ({ ...prev, debtLimit: Number(value) }))
-                  }}
+                  disabled
+                  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
                   placeholder="Nhập hạn mức công nợ"
                   required
                 />

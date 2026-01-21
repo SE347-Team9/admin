@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Package, Eye, Trash2, Edit, AlertTriangle, TrendingUp } from 'lucide-react'
+import { Package, Eye, Trash2, Edit, AlertTriangle } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { inventoryService } from '../../../api/endpoints/inventoryService'
 import './WarehouseManagement.css'
@@ -12,6 +12,8 @@ interface ProductBatch {
   expDate: string
   quantity: number
   status: string
+  statusKey?: 'normal' | 'expiring' | 'expired' | 'out'
+  statusLabel?: string
 }
 
 interface Product {
@@ -37,7 +39,32 @@ const WarehouseManagement = () => {
   const [filterStatus, setFilterStatus] = useState<string>('all')
 
   const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+
+  // Format date as DD-MM-YYYY
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return 'N/A'
+    const d = new Date(dateStr)
+    if (Number.isNaN(d.getTime())) return 'N/A'
+    const dd = String(d.getDate()).padStart(2, '0')
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const yyyy = d.getFullYear()
+    return `${dd}-${mm}-${yyyy}`
+  }
+
+  const getBatchStatus = (expiryDate: string | null | undefined, quantity: number) => {
+    const today = new Date()
+    const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+    if (!expiryDate) return { statusKey: 'normal' as const, statusLabel: 'Bình thường' }
+
+    const exp = new Date(expiryDate)
+    if (Number.isNaN(exp.getTime())) return { statusKey: 'normal' as const, statusLabel: 'Bình thường' }
+
+    if (quantity <= 0) return { statusKey: 'out' as const, statusLabel: 'Hết hàng' }
+    if (exp <= today) return { statusKey: 'expired' as const, statusLabel: 'Đã hết hạn' }
+    if (exp <= thirtyDaysLater) return { statusKey: 'expiring' as const, statusLabel: 'Sắp hết hạn' }
+    return { statusKey: 'normal' as const, statusLabel: 'Bình thường' }
+  }
 
   useEffect(() => {
     fetchInventory()
@@ -45,35 +72,101 @@ const WarehouseManagement = () => {
 
   const fetchInventory = async () => {
     try {
-      setLoading(true)
       const response = await inventoryService.getOverview()
       if (response.success && response.data) {
-        const transformed = response.data.products?.map((item: any) => ({
-          id: item.id,
-          code: item.code,
-          name: item.name,
-          totalQuantity: item.quantity || 0,
-          threshold: 100,
-          unit: item.unit,
-          warehouseType: 'Kho thường',
-          status: (item.quantity || 0) === 0 ? 'out' as const : (item.quantity || 0) < 100 ? 'low' as const : 'normal' as const,
-          batches: []
-        })) || []
-        setProducts(transformed)
+        // Group products by product_id and warehouse_id to aggregate batches
+        const productMap = new Map<string, Product>()
+
+        response.data.products?.forEach((item: any) => {
+          const key = `${item.product_id}-${item.warehouse_id}`
+          const batchQuantity = Number(item.quantity) || 0
+
+          if (!productMap.has(key)) {
+            // Create new product entry
+            productMap.set(key, {
+              id: key,
+              code: item.code,
+              name: item.name,
+              totalQuantity: 0,
+              threshold: item.min_stock || 50,
+              unit: item.unit,
+              warehouseType: item.warehouse_name || 'Kho thường',
+              status: 'normal',
+              batches: []
+            })
+          }
+
+          const product = productMap.get(key)!
+          
+          // Add to total stock
+          product.totalQuantity += batchQuantity
+
+          // Add batch if it exists
+          if (item.batch_code && item.expiry_date) {
+            const { statusKey, statusLabel } = getBatchStatus(item.expiry_date, batchQuantity)
+            product.batches.push({
+              id: item.batch_code,
+              batchCode: item.batch_code,
+              mfgDate: formatDate(item.import_date),
+              expDate: formatDate(item.expiry_date),
+              quantity: batchQuantity,
+              status: statusLabel,
+              statusKey,
+              statusLabel
+            })
+          }
+        })
+
+        // Convert map to array and set status based on quantity
+        const transformedData = Array.from(productMap.values()).map(product => ({
+          ...product,
+          status: product.totalQuantity === 0 ? 'out' as const : 
+                  product.totalQuantity <= product.threshold ? 'low' as const : 
+                  'normal' as const
+        }))
+
+        setProducts(transformedData)
       }
     } catch (error: any) {
       console.error('Error fetching inventory:', error)
       toast.error('Không thể tải dữ liệu kho')
-    } finally {
-      setLoading(false)
     }
   }
 
-  const totalProducts = products.length
-  const totalQuantity = products.reduce((sum, p) => sum + p.totalQuantity, 0)
-  const outOfStockProducts = products.filter(p => p.status === 'out').length
-  const lowStockProducts = products.filter(p => p.status === 'low').length
-  const expiredProducts = products.filter(p => p.status === 'expired').length
+  const statistics = useMemo(() => {
+    const totalProducts = products.length
+    const normalCount = products.filter(p => p.status === 'normal').length
+    const lowStockCount = products.filter(p => p.status === 'low').length
+    const outOfStockCount = products.filter(p => p.status === 'out').length
+
+    const today = new Date()
+    const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+    let expiringCount = 0
+    let expiredCount = 0
+
+    products.forEach(product => {
+      product.batches.forEach(batch => {
+        if (!batch.expDate || batch.expDate === 'N/A' || batch.quantity <= 0) return
+        const [day, month, year] = batch.expDate.split('-').map(Number)
+        const expDate = new Date(year, month - 1, day)
+        if (expDate <= today) {
+          expiredCount += 1
+        } else if (expDate <= thirtyDaysLater) {
+          expiringCount += 1
+        }
+      })
+    })
+
+    return {
+      totalProducts,
+      normalCount,
+      lowStockCount,
+      outOfStockCount,
+      expiringCount,
+      expiredCount
+    }
+  }, [products])
 
   // Filter products based on search, warehouse and status
   const filteredProducts = products.filter(product => {
@@ -115,16 +208,20 @@ const WarehouseManagement = () => {
   }
 
   const getNearestExpDate = (batches: ProductBatch[]) => {
-    if (batches.length === 0) return { date: '', daysRemaining: 0, dateString: '' }
+    if (batches.length === 0) return { date: null, daysRemaining: 0, dateString: 'N/A' }
 
     const today = new Date()
-    const batchesWithDays = batches.map(batch => {
-      // Parse date in DD/MM/YYYY format
-      const [day, month, year] = batch.expDate.split('/').map(Number)
-      const expDate = new Date(year, month - 1, day)
-      const daysRemaining = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-      return { ...batch, expDate, daysRemaining }
-    })
+    const batchesWithDays = batches
+      .filter(batch => batch.expDate && batch.expDate !== 'N/A')
+      .map(batch => {
+        // Parse date in DD-MM-YYYY format
+        const [day, month, year] = batch.expDate.split('-').map(Number)
+        const expDate = new Date(year, month - 1, day)
+        const daysRemaining = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+        return { batch, expDate, daysRemaining }
+      })
+
+    if (batchesWithDays.length === 0) return { date: null, daysRemaining: 0, dateString: 'N/A' }
 
     // Sort by days remaining (ascending)
     const nearest = batchesWithDays.sort((a, b) => a.daysRemaining - b.daysRemaining)[0]
@@ -132,7 +229,7 @@ const WarehouseManagement = () => {
     return {
       date: nearest.expDate,
       daysRemaining: nearest.daysRemaining,
-      dateString: nearest.expDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      dateString: nearest.batch.expDate
     }
   }
 
@@ -158,13 +255,6 @@ const WarehouseManagement = () => {
     navigate(`/warehouse-management/edit/${product.id}`)
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(amount)
-  }
-
   return (
     <div className="warehouse-management-page">
       {/* Header Section */}
@@ -178,33 +268,27 @@ const WarehouseManagement = () => {
         </div>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Statistics Cards - align with Admin overview */}
       <div className="warehouse-management__stats-grid">
         <div className="warehouse-management__stat-card warehouse-management__stat-card--blue">
           <div className="warehouse-management__stat-icon">
             <Package size={24} />
           </div>
           <div className="warehouse-management__stat-content">
-            <div className="warehouse-management__stat-label">Tổng tồn kho</div>
-            <div className="warehouse-management__stat-value">{totalQuantity.toLocaleString('vi-VN')}</div>
+            <div className="warehouse-management__stat-label">Tổng sản phẩm</div>
+            <div className="warehouse-management__stat-value">{statistics.totalProducts}</div>
             <div className="warehouse-management__stat-unit">sản phẩm</div>
-          </div>
-          <div className="warehouse-management__stat-badge">
-            <TrendingUp size={16} />
           </div>
         </div>
 
-        <div className="warehouse-management__stat-card warehouse-management__stat-card--red">
+        <div className="warehouse-management__stat-card warehouse-management__stat-card--green">
           <div className="warehouse-management__stat-icon">
-            <AlertTriangle size={24} />
+            <Package size={24} />
           </div>
           <div className="warehouse-management__stat-content">
-            <div className="warehouse-management__stat-label">Hàng đã hết</div>
-            <div className="warehouse-management__stat-value">{outOfStockProducts}</div>
+            <div className="warehouse-management__stat-label">Bình thường</div>
+            <div className="warehouse-management__stat-value">{statistics.normalCount}</div>
             <div className="warehouse-management__stat-unit">sản phẩm</div>
-          </div>
-          <div className="warehouse-management__stat-badge">
-            <TrendingUp size={16} />
           </div>
         </div>
 
@@ -213,12 +297,20 @@ const WarehouseManagement = () => {
             <AlertTriangle size={24} />
           </div>
           <div className="warehouse-management__stat-content">
-            <div className="warehouse-management__stat-label">Hàng sắp hết</div>
-            <div className="warehouse-management__stat-value">{lowStockProducts}</div>
+            <div className="warehouse-management__stat-label">Sắp hết hàng</div>
+            <div className="warehouse-management__stat-value">{statistics.lowStockCount}</div>
             <div className="warehouse-management__stat-unit">sản phẩm</div>
           </div>
-          <div className="warehouse-management__stat-badge">
-            <TrendingUp size={16} />
+        </div>
+
+        <div className="warehouse-management__stat-card warehouse-management__stat-card--red">
+          <div className="warehouse-management__stat-icon">
+            <AlertTriangle size={24} />
+          </div>
+          <div className="warehouse-management__stat-content">
+            <div className="warehouse-management__stat-label">Hết hàng</div>
+            <div className="warehouse-management__stat-value">{statistics.outOfStockCount}</div>
+            <div className="warehouse-management__stat-unit">sản phẩm</div>
           </div>
         </div>
 
@@ -227,12 +319,20 @@ const WarehouseManagement = () => {
             <AlertTriangle size={24} />
           </div>
           <div className="warehouse-management__stat-content">
-            <div className="warehouse-management__stat-label">Hàng sắp hết hạn</div>
-            <div className="warehouse-management__stat-value">{expiredProducts}</div>
+            <div className="warehouse-management__stat-label">Sắp hết hạn</div>
+            <div className="warehouse-management__stat-value">{statistics.expiringCount}</div>
             <div className="warehouse-management__stat-unit">sản phẩm</div>
           </div>
-          <div className="warehouse-management__stat-badge">
-            <TrendingUp size={16} />
+        </div>
+
+        <div className="warehouse-management__stat-card warehouse-management__stat-card--grey">
+          <div className="warehouse-management__stat-icon">
+            <AlertTriangle size={24} />
+          </div>
+          <div className="warehouse-management__stat-content">
+            <div className="warehouse-management__stat-label">Đã hết hạn</div>
+            <div className="warehouse-management__stat-value">{statistics.expiredCount}</div>
+            <div className="warehouse-management__stat-unit">sản phẩm</div>
           </div>
         </div>
       </div>
@@ -314,17 +414,15 @@ const WarehouseManagement = () => {
                   </td>
                   <td>{product.unit}</td>
                   <td>{product.warehouseType}</td>
-                                    <td>
-                                      <span className="warehouse-management__exp-date">
-                                        {getNearestExpDate(product.batches).dateString && (
-                                          <>
-                                            {getNearestExpDate(product.batches).dateString}
-                                            <br />
-                                            <small>({getNearestExpDate(product.batches).daysRemaining} ngày)</small>
-                                          </>
-                                        )}
-                                      </span>
-                                    </td>
+                  <td>
+                    <span className="warehouse-management__exp-date">
+                      {(() => {
+                        const expInfo = getNearestExpDate(product.batches)
+                        if (expInfo.dateString === 'N/A') return 'N/A'
+                        return expInfo.dateString
+                      })()}
+                    </span>
+                  </td>
                   <td>
                     <span className={`warehouse-management__status warehouse-management__status--${getStatusColor(product.status)}`}>
                       {getStatusLabel(product.status)}
@@ -399,8 +497,8 @@ const WarehouseManagement = () => {
                         <span className="warehouse-management__batch-quantity">{batch.quantity.toLocaleString('vi-VN')}</span>
                       </td>
                       <td>
-                        <span className={`warehouse-management__batch-status warehouse-management__batch-status--${batch.status.toLowerCase().replace(/\s+/g, '-')}`}>
-                          {batch.status}
+                        <span className={`warehouse-management__batch-status warehouse-management__batch-status--${(batch.statusKey || 'normal') === 'expiring' ? 'sắp-hết-hạn' : (batch.statusKey === 'expired' ? 'đã-hết-hạn' : 'bình-thường')}`}>
+                          {batch.statusLabel || batch.status}
                         </span>
                       </td>
                     </tr>

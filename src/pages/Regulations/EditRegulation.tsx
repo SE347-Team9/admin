@@ -6,7 +6,7 @@ import './EditRegulation.css'
 
 const EditRegulation = () => {
   const navigate = useNavigate()
-  useParams()
+  const { regulationId } = useParams<{ regulationId: string }>()
 
   // Mock data - should fetch from API based on id
   const initialData = {

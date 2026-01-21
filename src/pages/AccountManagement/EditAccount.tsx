@@ -5,9 +5,22 @@ import { toast } from 'react-toastify'
 import { accountService } from '../../api/endpoints/accountService'
 import './EditAccount.css'
 
+interface Account {
+  username: string
+  fullName: string
+  email: string
+  phone: string
+  role: string
+  status: string
+  agencyType?: string | number
+  agencyName?: string
+  agencyAddress?: string
+  debtLimit?: string | number
+}
+
 const EditAccount = () => {
   const navigate = useNavigate()
-  const { id } = useParams<{ id: string }>()
+  const { accountId } = useParams<{ accountId: string }>()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
@@ -32,14 +45,14 @@ const EditAccount = () => {
   // Load account data based on ID
   useEffect(() => {
     const fetchAccount = async () => {
-      if (!id) return
+      if (!accountId) return
       
       try {
         setLoading(true)
-        const response = await accountService.getById(id)
+        const response = await accountService.getById(accountId)
         if (response.success) {
           const account = response.data
-          setFormData({
+            setFormData({
             username: account.username,
             fullName: account.fullName,
             email: account.email,
@@ -48,12 +61,12 @@ const EditAccount = () => {
             status: account.status,
             password: '',
             confirmPassword: '',
-            agencyType: '1',
-            agencyName: '',
-            agencyOwner: '',
-            agencyAddress: '',
-            debtLimit: ''
-          })
+            agencyType: (account as any).agencyType ? String((account as any).agencyType) : '1',
+            agencyName: (account as any).agencyName || '',
+            agencyOwner: account.fullName || '',
+            agencyAddress: (account as any).agencyAddress || '',
+            debtLimit: (account as any).debtLimit ? String((account as any).debtLimit) : ''
+            })
         }
       } catch (error) {
         console.error('Error fetching account:', error)
@@ -65,7 +78,7 @@ const EditAccount = () => {
     }
 
     fetchAccount()
-  }, [id, navigate])
+  }, [accountId, navigate])
 
   const roles = [
     { value: 'admin', label: 'Quản trị viên' },
@@ -138,7 +151,7 @@ const EditAccount = () => {
       }
     }
 
-    if (!id) return
+    if (!accountId) return
 
     try {
       setSubmitting(true)
@@ -155,7 +168,7 @@ const EditAccount = () => {
         updateData.password = formData.password
       }
 
-      const response = await accountService.update(id, updateData)
+      const response = await accountService.update(accountId, updateData)
       
       if (response.success) {
         toast.success(`Cập nhật tài khoản ${formData.username} thành công!`)
@@ -365,10 +378,13 @@ const EditAccount = () => {
                   className="edit-account__select"
                   value={formData.agencyType}
                   onChange={handleInputChange}
+                  disabled
+                  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed', opacity: 0.7 }}
                   required
                 >
                   <option value="1">Đại lý cấp 1</option>
                   <option value="2">Đại lý cấp 2</option>
+                  <option value="3">Đại lý cấp 3</option>
                 </select>
               </div>
 
@@ -423,6 +439,8 @@ const EditAccount = () => {
                     placeholder="VD: 10000000"
                     value={formData.debtLimit}
                     onChange={handleInputChange}
+                    disabled
+                    style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
                     min="0"
                   />
                 </div>
@@ -435,13 +453,13 @@ const EditAccount = () => {
               </label>
               <div className="edit-account__input-wrapper">
                 <MapPin className="edit-account__input-icon" size={20} />
-                <textarea
+                <input
+                  type="text"
                   name="agencyAddress"
-                  className="edit-account__input edit-account__textarea"
+                  className="edit-account__input"
                   placeholder="Nhập địa chỉ đại lý"
                   value={formData.agencyAddress}
-                  onChange={(e) => setFormData(prev => ({ ...prev, agencyAddress: e.target.value }))}
-                  rows={2}
+                  onChange={handleInputChange}
                   required
                 />
               </div>

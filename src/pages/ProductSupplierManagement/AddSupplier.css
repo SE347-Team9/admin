@@ -194,7 +194,9 @@
 .as-products-table {
   overflow-x: auto;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 2px solid #e2e8f0;
+  margin-top: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .as-products-table table {
@@ -204,26 +206,58 @@
 }
 
 .as-products-table thead {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-bottom: 2px solid #bfdbfe;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-bottom: 2px solid #3b82f6;
 }
 
 .as-products-table th {
-  padding: 14px;
+  padding: 16px 12px;
   text-align: left;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: #475569;
+  color: #1e40af;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  border-right: 1px solid #dbeafe;
+}
+
+.as-products-table th:last-child {
+  border-right: none;
 }
 
 .as-products-table td {
-  padding: 14px;
-  font-size: 13px;
+  padding: 10px;
+  font-size: 14px;
   color: #334155;
   border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.as-products-table td input,
+.as-products-table td select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.as-products-table td input:focus,
+.as-products-table td select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.as-products-table td input[type="number"] {
+  text-align: right;
+}
+
+.as-products-table tbody tr {
+  transition: all 0.2s ease;
 }
 
 .as-products-table tbody tr:hover {
@@ -254,23 +288,25 @@
 }
 
 .as-remove-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border: none;
-  border-radius: 6px;
-  background: #fee2e2;
-  color: #991b1b;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
   padding: 0;
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.1);
 }
 
 .as-remove-btn:hover {
-  background: #fecaca;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.2);
 }
 
 /* Form Actions */

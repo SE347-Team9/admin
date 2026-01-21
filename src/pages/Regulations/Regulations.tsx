@@ -19,7 +19,6 @@ const Regulations = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteRegulation, setDeleteRegulation] = useState<Regulation | null>(null)
   const [regulations, setRegulations] = useState<Regulation[]>([])
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadRegulations()
@@ -27,29 +26,40 @@ const Regulations = () => {
 
   const loadRegulations = async () => {
     try {
-      setLoading(true)
       const response = await regulationService.getAll()
       if (response.success && response.data) {
-        const regulationData = response.data.map((reg: any) => ({
-          id: reg.id?.toString() || reg.code,
-          code: reg.code,
-          value: reg.value,
-          description: reg.description,
-          lastUpdated: new Date(reg.updated_at || reg.created_at).toLocaleString('vi-VN')
-        }))
+        const regulationData = response.data.map((reg: any) => {
+          // Format date to DD-MM-YYYY
+          let formattedDate = 'Invalid Date'
+          if (reg.updatedAt || reg.updated_at) {
+            const date = new Date(reg.updatedAt || reg.updated_at)
+            if (!isNaN(date.getTime())) {
+              const day = String(date.getDate()).padStart(2, '0')
+              const month = String(date.getMonth() + 1).padStart(2, '0')
+              const year = date.getFullYear()
+              formattedDate = `${day}-${month}-${year}`
+            }
+          }
+          
+          return {
+            id: reg.key || reg.id,
+            code: reg.key || reg.code,
+            value: reg.value,
+            description: reg.description || '',
+            lastUpdated: formattedDate
+          }
+        })
         setRegulations(regulationData)
       }
     } catch (error) {
       console.error('Error loading regulations:', error)
       toast.error('Không thể tải danh sách quy định')
-    } finally {
-      setLoading(false)
     }
   }
 
   const filteredRegulations = regulations.filter(regulation =>
-    regulation.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    regulation.description.toLowerCase().includes(searchTerm.toLowerCase())
+    (regulation.code || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (regulation.description || '').toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const formatNumber = (num: number) => {
@@ -57,11 +67,11 @@ const Regulations = () => {
   }
 
   const handleView = (id: string) => {
-    navigate(`/view-regulation/${id}`)
+    navigate(`/admin/view-regulation/${id}`)
   }
 
   const handleEdit = (id: string) => {
-    navigate(`/edit-regulation/${id}`)
+    navigate(`/admin/edit-regulation/${id}`)
   }
 
   const handleDelete = (regulation: Regulation) => {

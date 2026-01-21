@@ -19,22 +19,22 @@ const REGULATIONS = {
 
 const ViewAgency = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { agencyId } = useParams()
 
   const [agency, setAgency] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   // Fetch agency data on mount
   useEffect(() => {
-    if (id) {
+    if (agencyId) {
       fetchAgency()
     }
-  }, [id])
+  }, [agencyId])
 
   const fetchAgency = async () => {
     try {
       setLoading(true)
-      const response = await agencyService.getById(id!)
+      const response = await agencyService.getById(agencyId!)
       if (response.success) {
         setAgency({
           id: response.data.id,
@@ -102,7 +102,7 @@ const ViewAgency = () => {
   }
 
   const handleEdit = () => {
-    navigate(`/edit-agency/${agency.id}`)
+    navigate(`/admin/edit-agency/${agencyId}`)
   }
 
   return (
