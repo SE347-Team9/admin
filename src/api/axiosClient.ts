@@ -27,6 +27,7 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // Trả về data từ response.data (backend format: {success, data, message})
+    console.log('Axios interceptor received:', response.data);
     return response.data;
   },
   (error) => {
@@ -37,11 +38,21 @@ axiosClient.interceptors.response.use(
       window.location.href = '/login';
     }
 
-    // Xử lý lỗi khác
-    const errorMessage = error.response?.data?.message || error.message || 'Unknown error';
-    console.error('API Error:', errorMessage);
+    // Xử lý lỗi khác - trả về error response data nếu có
+    const errorData = error.response?.data || {
+      success: false,
+      message: error.message || 'Unknown error'
+    };
     
-    return Promise.reject(error);
+    console.error('API Error:', errorData);
+    
+    // Throw error object với data đầu đủ để frontend có thể access response.data.message
+    const errorWithResponse = new Error(errorData.message || 'Unknown error');
+    (errorWithResponse as any).response = {
+      data: errorData
+    };
+    
+    return Promise.reject(errorWithResponse);
   }
 );
 

@@ -184,36 +184,54 @@ const CreateReceipt = () => {
       // Prepare import data to match backend API
       const importData = {
         supplierId: parseInt(supplierId),
-        agencyId: null,
         shipDate: new Date().toISOString().split('T')[0],
-        receiveDate: new Date().toISOString().split('T')[0],
         notes: `Nhập hàng từ nhà cung cấp: ${supplierName}`,
         products: items.map(item => {
           const product = supplierProducts.find(p => p.name === item.product)
+          
+          console.log(`Processing item: ${item.product}`)
+          console.log('Matched product:', product)
+          console.log('Product ID:', product?.id)
+          
+          if (!product || !product.id) {
+            throw new Error(`Không thể tìm thấy ID cho sản phẩm: ${item.product}. Product: ${JSON.stringify(product)}`)
+          }
+          
           return {
-            productId: product?.id,
+            productId: product.id || product.product_id,
             batch: `BATCH${Date.now()}`,
             mfgDate: new Date().toISOString().split('T')[0],
             expDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             quantity: item.quantity,
-            price: item.price
+            price: item.price,
+            name: item.product
           }
         })
       }
 
-      console.log('Creating import:', importData)
+      console.log('Creating import with data:', JSON.stringify(importData, null, 2))
       
       const response = await importService.create(importData)
+      
+      console.log('Full import response:', response)
+      console.log('Response success:', response.success)
+      console.log('Response message:', response.message)
       
       if (response.success) {
         toast.success('Tạo phiếu nhập thành công!')
         navigate('/staff/receive-goods')
       } else {
-        toast.error(response.message || 'Không thể tạo phiếu nhập')
+        const errorMsg = response.message || 'Không thể tạo phiếu nhập'
+        console.error('API returned false success:', errorMsg)
+        toast.error(errorMsg)
       }
     } catch (error: any) {
-      console.error('Error creating import:', error)
-      toast.error('Lỗi khi tạo phiếu nhập: ' + (error.response?.data?.message || error.message || 'Unknown error'))
+      console.error('Full error object:', error)
+      console.error('Error response:', error.response)
+      console.error('Error response data:', error.response?.data)
+      const msg = error.response?.data?.message || error.message || 'Unknown error'
+      console.error('Error creating import:', msg)
+      toast.error('Lỗi khi tạo phiếu nhập: ' + msg)
     }
   }
 

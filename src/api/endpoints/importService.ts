@@ -1,12 +1,12 @@
 import axiosClient from '../axiosClient';
 
 export interface ImportProduct {
-  product_id: string;
+  product_id: number;
   product_name?: string;
   product_code?: string;
-  batch: string;
-  mfg_date: string;
-  exp_date: string;
+  batch?: string;
+  mfg_date?: string;
+  exp_date?: string;
   quantity: number;
   unit?: string;
   price: number;
@@ -14,22 +14,18 @@ export interface ImportProduct {
 }
 
 export interface Import {
-  id: number;
-  code: string;
-  distribution_id?: number;
-  distribution_code?: string;
-  agency_id: string;
-  agency_name?: string;
-  agency_code?: string;
-  ship_date?: string;
-  receive_date?: string;
-  status: 'pending' | 'received' | 'cancelled';
+  id?: number;
+  import_id?: number;
+  code?: string;
+  import_code?: string;
+  supplier_id?: number;
+  import_date?: string;
+  status: 'pending' | 'completed' | 'cancelled';
   total_amount: number;
   notes?: string;
-  created_by?: string;
-  created_by_name?: string;
-  created_at: string;
-  updated_at: string;
+  created_by?: number;
+  created_at?: string;
+  updated_at?: string;
   products?: ImportProduct[];
 }
 
@@ -43,39 +39,59 @@ const importService = {
   // Get all imports
   getAll: async (): Promise<ApiResponse<Import[]>> => {
     const response = await axiosClient.get('/imports');
-    return response.data;
+    return response as ApiResponse<Import[]>;
   },
 
   // Get import by ID
   getById: async (id: number): Promise<ApiResponse<Import>> => {
     const response = await axiosClient.get(`/imports/${id}`);
-    return response.data;
+    return response as ApiResponse<Import>;
   },
 
   // Create new import
   create: async (importData: {
-    distribution_id?: number;
-    agency_id: string;
-    ship_date?: string;
-    receive_date?: string;
+    supplierId?: number;
+    shipDate?: string;
+    products: { 
+      productId: string; 
+      batch?: string; 
+      mfgDate?: string; 
+      expDate?: string; 
+      quantity: number; 
+      price: number 
+    }[];
     notes?: string;
-    products: { product_id: string; batch: string; mfg_date: string; exp_date: string; quantity: number; price: number }[];
   }): Promise<ApiResponse<Import>> => {
+    // axios interceptor already returns response.data, so we don't call .data again
     const response = await axiosClient.post('/imports', importData);
-    return response.data;
+    // response here is already {success, message, data} - NOT wrapped again
+    return response as ApiResponse<Import>;
   },
 
-  // Confirm/receive import
-  receive: async (id: number): Promise<ApiResponse<Import>> => {
-    const response = await axiosClient.put(`/imports/${id}/receive`);
-    return response.data;
+  // Confirm import
+  confirm: async (id: number): Promise<ApiResponse<Import>> => {
+    const response = await axiosClient.put(`/imports/${id}/confirm`);
+    return response as ApiResponse<Import>;
+  },
+
+  // Get pending imports for admin approval
+  getPending: async (): Promise<ApiResponse<Import[]>> => {
+    const response = await axiosClient.get('/imports/pending/list');
+    return response as ApiResponse<Import[]>;
+  },
+
+  // Approve import (admin)
+  approve: async (id: number, approved: boolean): Promise<ApiResponse<Import>> => {
+    const response = await axiosClient.put(`/imports/${id}/approve`, { approved });
+    return response as ApiResponse<Import>;
   },
 
   // Cancel import
-  cancel: async (id: number, reason?: string): Promise<ApiResponse<Import>> => {
-    const response = await axiosClient.put(`/imports/${id}/cancel`, { reason });
-    return response.data;
+  cancel: async (id: number): Promise<ApiResponse<Import>> => {
+    const response = await axiosClient.put(`/imports/${id}/cancel`);
+    return response as ApiResponse<Import>;
   }
 };
 
 export default importService;
+

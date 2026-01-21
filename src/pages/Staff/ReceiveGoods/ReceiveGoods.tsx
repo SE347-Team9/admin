@@ -25,37 +25,73 @@ const ReceiveGoods = () => {
 
   useEffect(() => {
     loadData()
+    
+    // Auto-refresh every 5 seconds to sync with admin changes
+    const interval = setInterval(() => {
+      loadData()
+    }, 5000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   const loadData = async () => {
     try {
       setLoading(true)
-      const [importsResponse, inventoryResponse] = await Promise.all([
-        importService.getAll(),
-        inventoryService.getAll()
-      ])
       
-      if (importsResponse.success && importsResponse.data) {
-        const receiptData = importsResponse.data.map(imp => {
-          // Parse date properly
-          const date = new Date(imp.created_at || imp.import_date)
-          const dateString = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
-          
-          return {
-            id: imp.id.toString(),
-            code: imp.code || imp.import_code,
-            supplier: imp.supplier_name || imp.agency_name || 'N/A',
-            date: dateString,
-            total: imp.total_amount || 0,
-            status: imp.status as 'pending' | 'approved' | 'rejected'
-          }
-        })
-        setReceipts(receiptData)
+      // Load imports separately to handle error better
+      try {
+        const importsResponse = await importService.getAll()
+        console.log('importsResponse:', importsResponse)
+        console.log('importsResponse.success:', importsResponse.success)
+        console.log('importsResponse.data:', importsResponse.data)
+        
+        if (importsResponse.success && importsResponse.data) {
+          const receiptData = importsResponse.data.map(imp => {
+            console.log('Processing import:', imp)
+            // Parse date properly
+            const date = new Date(imp.created_at || imp.import_date)
+            const dateString = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
+            
+            // Map backend status to frontend status
+            let displayStatus: 'pending' | 'approved' | 'rejected' = 'pending'
+            if (imp.status === 'completed') {
+              displayStatus = 'approved'
+            } else if (imp.status === 'rejected') {
+              displayStatus = 'rejected'
+            } else if (imp.status === 'pending') {
+              displayStatus = 'pending'
+            }
+            
+            return {
+              id: (imp.id || imp.import_id).toString(),
+              code: imp.code || imp.import_code,
+              supplier: imp.supplier_name || imp.agency_name || 'N/A',
+              date: dateString,
+              total: imp.total_amount || 0,
+              status: displayStatus
+            }
+          })
+          console.log('receiptData:', receiptData)
+          setReceipts(receiptData)
+        } else {
+          console.log('importsResponse is not successful:', importsResponse)
+        }
+      } catch (importError) {
+        console.error('Error loading imports:', importError)
+        toast.error('Không thể tải danh sách phiếu nhập')
       }
       
-      if (inventoryResponse.success && inventoryResponse.data) {
-        setInventoryItems(inventoryResponse.data)
+      // Load inventory separately
+      try {
+        const inventoryResponse = await inventoryService.getAll()
+        if (inventoryResponse.success && inventoryResponse.data) {
+          setInventoryItems(inventoryResponse.data)
+        }
+      } catch (inventoryError) {
+        console.error('Error loading inventory:', inventoryError)
+        // Don't show toast for inventory error, it's not critical
       }
+      
     } catch (error) {
       console.error('Error loading data:', error)
       toast.error('Không thể tải dữ liệu')

@@ -12,6 +12,8 @@ import {
   ClipboardCheck
 } from 'lucide-react'
 import { inventoryService } from '../../api/endpoints/inventoryService'
+import importService from '../../api/endpoints/importService'
+import { toast } from 'react-toastify'
 import './InventoryOverview.css'
 
 interface Batch {
@@ -64,6 +66,7 @@ const InventoryOverview = () => {
   const [receiptApprovalMap, setReceiptApprovalMap] = useState<Record<string, 'approved' | 'rejected'>>({})
   const [expandedReceipts, setExpandedReceipts] = useState<Record<string, boolean>>({})
   const [inventory, setInventory] = useState<InventoryItem[]>([])
+  const [pendingImports, setPendingImports] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   // Format date as DD-MM-YYYY
@@ -80,6 +83,12 @@ const InventoryOverview = () => {
   useEffect(() => {
     fetchInventory()
   }, [])
+
+  useEffect(() => {
+    if (showApproveCenter) {
+      fetchPendingImports()
+    }
+  }, [showApproveCenter])
 
   const fetchInventory = async () => {
     try {
@@ -147,45 +156,71 @@ const InventoryOverview = () => {
     }
   }
 
-  const receiptGroups = useMemo(() => {
-    const receiptMap: Record<string, {
-      receiptCode: string
-      supplier: string
-      createdDate: string
-      totalAmount: number
-      products: Array<{
-        productName: string
-        unit: string
-        quantity: number
-        remainingQuantity: number
-        costPrice: number
-      }>
-    }> = {}
-
-    inventory.forEach(item => {
-      item.batches.forEach(batch => {
-        if (!receiptMap[batch.importReceiptCode]) {
-          receiptMap[batch.importReceiptCode] = {
-            receiptCode: batch.importReceiptCode,
-            supplier: '', // Get from imports API when available
-            createdDate: batch.importDate,
-            totalAmount: 0,
-            products: []
+  const fetchPendingImports = async () => {
+    try {
+      // Load all imports (not just pending) to show approval status
+      const response = await importService.getAll()
+      if (response.success && response.data) {
+        setPendingImports(response.data)
+        // Initialize approval map based on current status
+        const initialMap: Record<string, 'approved' | 'rejected'> = {}
+        response.data.forEach((imp: any) => {
+          if (imp.status === 'completed') {
+            initialMap[imp.code] = 'approved'
+          } else if (imp.status === 'rejected') {
+            initialMap[imp.code] = 'rejected'
           }
-        }
-        receiptMap[batch.importReceiptCode].products.push({
-          productName: item.productName,
-          unit: item.unit,
-          quantity: batch.quantity,
-          remainingQuantity: batch.remainingQuantity,
-          costPrice: item.costPrice
         })
-        receiptMap[batch.importReceiptCode].totalAmount += batch.quantity * item.costPrice
-      })
-    })
+        setReceiptApprovalMap(initialMap)
+      }
+    } catch (error: any) {
+      console.error('Error fetching pending imports:', error)
+      toast.error('Không thể tải phiếu nhập chờ duyệt')
+    }
+  }
 
-    return Object.values(receiptMap)
-  }, [inventory])
+  const handleApproveImport = async (importId: number, receiptCode: string, approved: boolean) => {
+    try {
+      const response = await importService.approve(importId, approved)
+      if (response.success) {
+        // Update local state to show approval status without reloading
+        setReceiptApprovalMap(prev => ({
+          ...prev, 
+          [receiptCode]: approved ? 'approved' : 'rejected'
+        }))
+        const statusText = approved ? 'Đã duyệt' : 'Đã từ chối'
+        toast.success(`${statusText} phiếu nhập hàng thành công!`)
+      } else {
+        toast.error(response.message || 'Lỗi khi duyệt phiếu nhập')
+      }
+    } catch (error: any) {
+      console.error('Error approving import:', error)
+      toast.error('Lỗi khi duyệt phiếu nhập')
+    }
+  }
+
+  const receiptGroups = useMemo(() => {
+    // Only show pending imports in approval center, don't fallback to inventory batches
+    if (showApproveCenter && pendingImports.length > 0) {
+      return pendingImports.map(imp => ({
+        receiptCode: imp.code,
+        supplier: imp.supplier_name || 'N/A',
+        createdDate: formatDate(imp.created_at),
+        totalAmount: imp.total_amount,
+        products: imp.products?.map((prod: any) => ({
+          productName: prod.product_name,
+          unit: prod.unit,
+          quantity: prod.quantity,
+          remainingQuantity: prod.quantity,
+          costPrice: prod.price
+        })) || [],
+        import_id: imp.id
+      }))
+    }
+    
+    // When modal is closed, return empty array
+    return []
+  }, [showApproveCenter, pendingImports])
 
   // Tính toán thống kê
   const statistics = useMemo(() => {
@@ -811,13 +846,13 @@ const InventoryOverview = () => {
                               <>
                                 <button 
                                   className="inventory-overview__modal-btn-reject"
-                                  onClick={() => setReceiptApprovalMap(prev => ({...prev, [receipt.receiptCode]: 'rejected'}))}
+                                  onClick={() => handleApproveImport(receipt.import_id, receipt.receiptCode, false)}
                                 >
                                   Từ chối
                                 </button>
                                 <button 
                                   className="inventory-overview__modal-btn-approve"
-                                  onClick={() => setReceiptApprovalMap(prev => ({...prev, [receipt.receiptCode]: 'approved'}))}
+                                  onClick={() => handleApproveImport(receipt.import_id, receipt.receiptCode, true)}
                                 >
                                   Duyệt nhập
                                 </button>
