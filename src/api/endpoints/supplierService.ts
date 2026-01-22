@@ -51,3 +51,5 @@ export const supplierService = {
     return await axiosClient.get(`/suppliers/${id}/products`);
   }
 };
+
+export default supplierService;

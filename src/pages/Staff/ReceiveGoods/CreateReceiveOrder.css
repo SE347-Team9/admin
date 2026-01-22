@@ -1,17 +1,18 @@
 /* Create Receipt Page - Extended for Receive Order */
 .create-receipt-page {
-  min-height: calc(100vh - 80px);
+  height: calc(100vh - 80px);
   background: #f8fafc;
-  padding: 16px;
+  padding: 12px;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
 .create-receipt-container {
-  max-width: none;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
   background: white;
-  border-radius: 16px;
+  border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   overflow: visible;
   border: 1px solid #e2e8f0;
@@ -20,16 +21,17 @@
 /* Header */
 .create-receipt-header {
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  padding: 16px 24px;
+  padding: 12px 20px;
   color: white;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   position: relative;
+  border-radius: 12px 12px 0 0;
 }
 
 .create-receipt-title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   margin: 0;
   flex: 1;
@@ -54,12 +56,12 @@
 
 /* Form */
 .create-receipt-form {
-  padding: 20px;
+  padding: 16px 20px;
   overflow-x: visible;
 }
 
 .create-receipt-page .form-section {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   overflow-x: visible;
 }
 
@@ -92,29 +94,31 @@
 
 /* Products Section */
 .create-receipt-page .products-section {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .create-receipt-page .section-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #1e293b;
-  margin: 0 0 16px 0;
+  margin: 0 0 12px 0;
 }
 
 .create-receipt-page .products-table-wrapper {
   overflow-x: auto;
   border: 1.5px solid #cbd5e1;
-  border-radius: 10px;
-  margin-bottom: 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
   -webkit-overflow-scrolling: touch;
+  max-height: calc(100vh - 420px);
+  overflow-y: auto;
 }
 
 .create-receipt-page .products-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  min-width: 1100px;
+  min-width: 1000px;
 }
 
 .create-receipt-page .products-table thead {
@@ -355,22 +359,22 @@
 .create-receipt-page .total-section {
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
   border: 2px solid #93c5fd;
-  border-radius: 10px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .create-receipt-page .total-label {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #1e40af;
 }
 
 .create-receipt-page .total-amount {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #3b82f6;
 }
@@ -381,13 +385,13 @@
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  padding-top: 20px;
+  padding-top: 14px;
   border-top: 2px solid #e2e8f0;
 }
 
 .create-receipt-page .btn-cancel,
 .create-receipt-page .btn-submit {
-  padding: 12px 32px;
+  padding: 10px 28px;
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -431,26 +435,45 @@
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .create-receipt-page {
-    padding: 16px;
+    padding: 10px;
+  }
+  
+  .create-receipt-container {
+    border-radius: 8px;
   }
 
   .create-receipt-header {
-    padding: 16px 20px;
+    padding: 10px 16px;
+  }
+
+  .create-receipt-form {
+    padding: 14px 16px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .create-receipt-page {
+    padding: 8px;
+  }
+
+  .create-receipt-header {
+    padding: 10px 14px;
     flex-wrap: wrap;
   }
 
   .create-receipt-title {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .create-receipt-form {
-    padding: 20px;
+    padding: 12px;
   }
 
   .products-table-wrapper {
     overflow-x: scroll;
+    max-height: calc(100vh - 380px);
   }
 
   .form-actions {

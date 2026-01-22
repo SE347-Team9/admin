@@ -8,7 +8,6 @@ import './ReceiveManagement.css'
 interface ReceiveTicket {
   id: string
   receiveCode: string
-  importCode: string
   receiveDate: string
 }
 
@@ -27,16 +26,9 @@ const ReceiveManagement = () => {
   const loadTickets = async () => {
     try {
       setLoading(true)
-      const response = await importService.getAll()
-      if (response.success && response.data) {
-        const receiveTickets = response.data.map(imp => ({
-          id: imp.id.toString(),
-          receiveCode: imp.code,
-          importCode: imp.code,
-          receiveDate: imp.receive_date || new Date(imp.created_at).toLocaleDateString('vi-VN')
-        }))
-        setTickets(receiveTickets)
-      }
+      // Phiếu nhận được tạo thủ công, không tự động từ phiếu nhập
+      // TODO: Implement API riêng cho phiếu nhận khi cần
+      setTickets([])
     } catch (error) {
       console.error('Error loading tickets:', error)
       toast.error('Không thể tải danh sách phiếu nhận')
@@ -168,7 +160,6 @@ const ReceiveManagement = () => {
             <thead>
               <tr>
                 <th>MÃ PHIẾU NHẬN</th>
-                <th>MÃ PHIẾU NHẬP</th>
                 <th>NGÀY NHẬN</th>
                 <th>THAO TÁC</th>
               </tr>
@@ -179,9 +170,6 @@ const ReceiveManagement = () => {
                   <tr key={ticket.id}>
                     <td>
                       <span className="receive-management__code-badge">{ticket.receiveCode}</span>
-                    </td>
-                    <td>
-                      <span className="receive-management__code-badge receive-management__code-badge--secondary">{ticket.importCode}</span>
                     </td>
                     <td>{ticket.receiveDate}</td>
                     <td>

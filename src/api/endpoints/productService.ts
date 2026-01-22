@@ -45,3 +45,5 @@ export const productService = {
     return await axiosClient.delete(`/products/${id}`);
   }
 };
+
+export default productService;

@@ -1,12 +1,15 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Package, Plus, X, Upload } from 'lucide-react'
 import * as XLSX from 'xlsx'
+import supplierService from '../../../api/endpoints/supplierService'
+import productService from '../../../api/endpoints/productService'
 import './CreateReceiveOrder.css'
 
 interface ReceiveOrderItem {
   id: number
-  product: string
+  productId: number
+  productName: string
   unit: string
   warehouse: string
   quantity: number
@@ -16,39 +19,109 @@ interface ReceiveOrderItem {
   total: number
 }
 
+interface Supplier {
+  id: number
+  code: string
+  name: string
+  contactPerson?: string
+  phone?: string
+  email?: string
+  address?: string
+}
+
+interface Product {
+  id: number
+  code: string
+  name: string
+  category: string
+  unit: string
+  unitPrice: string
+  sellingPrice: string
+  supplierId: number
+  supplierName: string
+}
+
 const CreateReceiveOrder = () => {
   const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [manufacturer, setManufacturer] = useState('')
+  const [supplierId, setSupplierId] = useState<number>(0)
+  const [suppliers, setSuppliers] = useState<Supplier[]>([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(false)
   const [items, setItems] = useState<ReceiveOrderItem[]>([
-    { id: 1, product: '', unit: '', warehouse: '', quantity: 0, price: 0, mfgDate: '', expDate: '', total: 0 }
+    { id: 1, productId: 0, productName: '', unit: '', warehouse: '', quantity: 0, price: 0, mfgDate: '', expDate: '', total: 0 }
   ])
-
-  // Mock manufacturers and products
-  const manufacturers = [
-    {
-      name: 'Công ty A',
-      products: [
-        { name: 'Bia Hà Nội', unit: 'Thùng', price: 250000 },
-        { name: 'Nước ngọt Coca', unit: 'Chai', price: 10000 },
-        { name: 'Snack Oishi', unit: 'Gói', price: 12000 }
-      ]
-    },
-    {
-      name: 'Công ty B',
-      products: [
-        { name: 'Gạo ST25', unit: 'Kg', price: 25000 },
-        { name: 'Sữa Vinamilk', unit: 'Lốc', price: 60000 },
-        { name: 'Nước ngọt Pepsi', unit: 'Lon', price: 9000 }
-      ]
-    }
-  ]
 
   const warehouses = ['Kho thường', 'Kho mát', 'Kho đông lạnh']
 
-  const currentProducts = manufacturer
-    ? manufacturers.find(m => m.name === manufacturer)?.products || []
-    : []
+  // Load suppliers and products on mount
+  useEffect(() => {
+    loadSuppliers()
+    loadProducts()
+  }, [])
+
+  const loadSuppliers = async () => {
+    try {
+      setLoading(true)
+      const response = await supplierService.getAll()
+      console.log('Suppliers response:', response)
+      
+      // Handle different response formats
+      if (response && response.success) {
+        const suppliersData = response.data || []
+        console.log('Suppliers data:', suppliersData)
+        if (suppliersData.length > 0) {
+          console.log('First supplier structure:', suppliersData[0])
+        }
+        setSuppliers(Array.isArray(suppliersData) ? suppliersData : [])
+      } else if (Array.isArray(response)) {
+        // If response is directly an array
+        console.log('Direct array response:', response)
+        if (response.length > 0) {
+          console.log('First supplier structure:', response[0])
+        }
+        setSuppliers(response)
+      } else {
+        console.error('Invalid suppliers response format:', response)
+        setSuppliers([])
+      }
+    } catch (error) {
+      console.error('Error loading suppliers:', error)
+      setSuppliers([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadProducts = async () => {
+    try {
+      const response = await productService.getAll()
+      console.log('Products response:', response)
+      
+      // Handle different response formats
+      if (response && response.success) {
+        const productsData = response.data || []
+        console.log('Products data:', productsData)
+        if (productsData.length > 0) {
+          console.log('First product structure:', productsData[0])
+        }
+        setProducts(Array.isArray(productsData) ? productsData : [])
+      } else if (Array.isArray(response)) {
+        // If response is directly an array
+        console.log('Direct array response:', response)
+        if (response.length > 0) {
+          console.log('First product structure:', response[0])
+        }
+        setProducts(response)
+      } else {
+        console.error('Invalid products response format:', response)
+        setProducts([])
+      }
+    } catch (error) {
+      console.error('Error loading products:', error)
+      setProducts([])
+    }
+  }
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => sum + item.total, 0)
@@ -56,7 +129,7 @@ const CreateReceiveOrder = () => {
 
   const handleAddItem = () => {
     const newId = items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1
-    setItems([...items, { id: newId, product: '', unit: '', warehouse: '', quantity: 0, price: 0, mfgDate: '', expDate: '', total: 0 }])
+    setItems([...items, { id: newId, productId: 0, productName: '', unit: '', warehouse: '', quantity: 0, price: 0, mfgDate: '', expDate: '', total: 0 }])
   }
 
   const handlePriceChange = (id: number, price: number) => {
@@ -75,17 +148,19 @@ const CreateReceiveOrder = () => {
     }
   }
 
-  const handleProductChange = (id: number, productName: string) => {
-    const selectedProduct = currentProducts.find(p => p.name === productName)
+  const handleProductChange = (id: number, productId: number) => {
+    const selectedProduct = products.find(p => p.id === productId)
     if (selectedProduct) {
       setItems(items.map(item => {
         if (item.id === id) {
+          const price = parseFloat(selectedProduct.unitPrice) || 0
           const updatedItem = {
             ...item,
-            product: productName,
+            productId: selectedProduct.id,
+            productName: selectedProduct.name,
             unit: selectedProduct.unit,
-            price: selectedProduct.price,
-            total: item.quantity * selectedProduct.price
+            price: price,
+            total: item.quantity * price
           }
           return updatedItem
         }
@@ -179,7 +254,7 @@ const CreateReceiveOrder = () => {
 
         // Convert Excel data to items format
         const importedItems: ReceiveOrderItem[] = jsonData.map((row, index) => {
-          const product = row['Sản phẩm'] || row['Product'] || ''
+          const productName = row['Sản phẩm'] || row['Product'] || ''
           const quantity = Number(row['Số lượng'] || row['Quantity'] || 0)
           const price = Number(row['Đơn giá'] || row['Unit Price'] || 0)
           let warehouse = row['Kho'] || row['Warehouse'] || ''
@@ -202,30 +277,29 @@ const CreateReceiveOrder = () => {
           const mfgDate = convertExcelDate(row['NSX'] || row['Manufacturing Date'] || '')
           const expDate = convertExcelDate(row['HSD'] || row['Expiry Date'] || '')
 
+          // Try to match product from the products list
+          const matchedProduct = products.find(p => 
+            p.name.toLowerCase().trim() === productName.toLowerCase().trim()
+          )
+
+          const matchedPrice = matchedProduct ? parseFloat(matchedProduct.unitPrice) : price
+
           return {
             id: index + 1,
-            product,
-            unit: '', // Unit sẽ được tự động điền từ currentProducts
+            productId: matchedProduct?.id || 0,
+            productName: matchedProduct?.name || productName,
+            unit: matchedProduct?.unit || '',
             warehouse,
             quantity,
-            price,
+            price: matchedPrice || price,
             mfgDate,
             expDate,
-            total: quantity * price
+            total: quantity * (matchedPrice || price)
           }
         })
 
-        // Try to match units from currentProducts
-        const matchedItems = importedItems.map(item => {
-          const matchedProduct = currentProducts.find(p => p.name === item.product)
-          return {
-            ...item,
-            unit: matchedProduct?.unit || ''
-          }
-        })
-
-        setItems(matchedItems)
-        alert(`Đã import thành công ${matchedItems.length} sản phẩm`)
+        setItems(importedItems)
+        alert(`Đã import thành công ${importedItems.length} sản phẩm`)
       } catch (error) {
         console.error('Error importing Excel:', error)
         alert('Lỗi khi đọc file Excel. Vui lòng kiểm tra định dạng file.')
@@ -239,18 +313,19 @@ const CreateReceiveOrder = () => {
 
   const handleSubmit = () => {
     // Validate form
-    if (!manufacturer) {
-      alert('Vui lòng chọn nhà sản xuất')
+    if (!supplierId) {
+      alert('Vui lòng chọn nhà cung cấp')
       return
     }
 
-    if (items.some(item => !item.product || !item.warehouse || item.quantity === 0 || item.price === 0 || !item.mfgDate || !item.expDate)) {
+    if (items.some(item => !item.productId || !item.warehouse || item.quantity === 0 || item.price === 0 || !item.mfgDate || !item.expDate)) {
       alert('Vui lòng điền đầy đủ thông tin sản phẩm')
       return
     }
 
     const receiveOrderData = {
-      manufacturer,
+      supplierId,
+      supplierName: suppliers.find(s => s.id === supplierId)?.name || '',
       items,
       total: calculateTotal()
     }
@@ -258,11 +333,11 @@ const CreateReceiveOrder = () => {
     console.log('Receive order data:', receiveOrderData)
     // TODO: Call API to save receive order
     alert('Tạo phiếu nhận thành công!')
-    navigate('/staff/receive-goods')
+    navigate('/staff/receive-management')
   }
 
   const handleCancel = () => {
-    navigate('/staff/receive-goods')
+    navigate('/staff/receive-management')
   }
 
   const formatCurrency = (amount: number) => {
@@ -283,21 +358,24 @@ const CreateReceiveOrder = () => {
 
         {/* Form */}
         <div className="create-receipt-form">
-          {/* Manufacturer */}
+          {/* Supplier */}
           <div className="form-section">
-            <label className="form-label">Nhà sản xuất</label>
+            <label className="form-label">Nhà cung cấp</label>
             <select
               className="form-select"
-              value={manufacturer}
+              value={supplierId}
               onChange={(e) => {
-                setManufacturer(e.target.value)
-                // reset items when change manufacturer
-                setItems([{ id: 1, product: '', unit: '', warehouse: '', quantity: 0, price: 0, mfgDate: '', expDate: '', total: 0 }])
+                setSupplierId(Number(e.target.value))
+                // reset items when change supplier
+                setItems([{ id: 1, productId: 0, productName: '', unit: '', warehouse: '', quantity: 0, price: 0, mfgDate: '', expDate: '', total: 0 }])
               }}
+              disabled={loading}
             >
-              <option value="">Chọn nhà sản xuất</option>
-              {manufacturers.map((m) => (
-                <option key={m.name} value={m.name}>{m.name}</option>
+              <option value="0">Chọn nhà cung cấp</option>
+              {suppliers.map((supplier) => (
+                <option key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </option>
               ))}
             </select>
           </div>
@@ -306,7 +384,7 @@ const CreateReceiveOrder = () => {
           <div className="products-section">
             <div className="section-header">
               <h3 className="section-title">Danh sách sản phẩm</h3>
-              <button className="btn-import-excel" onClick={handleImportExcel} disabled={!manufacturer}>
+              <button className="btn-import-excel" onClick={handleImportExcel} disabled={!supplierId}>
                 <Upload size={20} />
                 <span>Import từ Excel</span>
               </button>
@@ -340,13 +418,13 @@ const CreateReceiveOrder = () => {
                       <td className="col-product">
                         <select
                           className="product-select"
-                          value={item.product}
-                          onChange={(e) => handleProductChange(item.id, e.target.value)}
-                          disabled={!manufacturer}
+                          value={item.productId}
+                          onChange={(e) => handleProductChange(item.id, Number(e.target.value))}
+                          disabled={!supplierId}
                         >
-                          <option value="">Chọn sản phẩm</option>
-                          {currentProducts.map((product) => (
-                            <option key={product.name} value={product.name}>
+                          <option value="0">Chọn sản phẩm</option>
+                          {products.map((product) => (
+                            <option key={product.id} value={product.id}>
                               {product.name}
                             </option>
                           ))}
@@ -356,7 +434,7 @@ const CreateReceiveOrder = () => {
                         <span className="unit-value">{item.unit || '--'}</span>
                       </td>
                       <td className="col-warehouse">
-                        {manufacturer ? (
+                        {supplierId ? (
                           <select
                             className="warehouse-select"
                             value={item.warehouse}
@@ -378,7 +456,7 @@ const CreateReceiveOrder = () => {
                           value={item.quantity || ''}
                           onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
                           min="0"
-                          disabled={!manufacturer}
+                          disabled={!supplierId}
                         />
                       </td>
                       <td className="col-price">
@@ -388,7 +466,7 @@ const CreateReceiveOrder = () => {
                           value={item.price || ''}
                           onChange={(e) => handlePriceChange(item.id, Number(e.target.value))}
                           min="0"
-                          disabled={!manufacturer}
+                          disabled={!supplierId}
                         />
                       </td>
                       <td className="col-date">
@@ -397,7 +475,7 @@ const CreateReceiveOrder = () => {
                           className="date-input"
                           value={item.mfgDate}
                           onChange={(e) => handleMfgDateChange(item.id, e.target.value)}
-                          disabled={!manufacturer}
+                          disabled={!supplierId}
                         />
                       </td>
                       <td className="col-date">
@@ -406,7 +484,7 @@ const CreateReceiveOrder = () => {
                           className="date-input"
                           value={item.expDate}
                           onChange={(e) => handleExpDateChange(item.id, e.target.value)}
-                          disabled={!manufacturer}
+                          disabled={!supplierId}
                         />
                       </td>
                       <td className="col-total">
